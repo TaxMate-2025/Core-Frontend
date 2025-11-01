@@ -9,7 +9,8 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { Inter, Montserrat } from "next/font/google";
 import Image from "next/image";
-import UNION from "../public/Union.png";
+import UNION from '../public/Union.png';
+import { AnimatedSection } from "@/components/ui/animated-section";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -37,7 +38,7 @@ export default function Home() {
           onClose={() => setIsWaitlistOpen(false)}
         />
         {/* Hero Section */}
-        <section className="relative px-4 sm:px-6 lg:px-8 py-16 sm:py-20 md:py-28 min-h-screen flex items-center hero_gradient">
+        <AnimatedSection type="fade" direction="up" delay={0.2} className="relative px-4 sm:px-6 lg:px-8 py-16 sm:py-20 md:py-28 min-h-screen flex items-center hero_gradient">
           <div className="absolute inset-0">
             <Image
               src={UNION}
@@ -63,7 +64,7 @@ export default function Home() {
             </p>
 
             {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
+            <AnimatedSection type="fade" direction="up" delay={0.2} className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
               <Button className="bg-[#1e3a8a] hover:bg-[#162e5c] text-white px-6 sm:px-8 py-4 sm:py-5 text-sm sm:text-base flex items-center gap-2 cursor-pointer">
                 Get Started Free
                 <ArrowUpRight className="w-4 h-4" />
@@ -75,47 +76,62 @@ export default function Home() {
                 Learn more
                 <ArrowUpRight className="w-4 h-4 ml-2" />
               </Button>
-            </div>
+            </AnimatedSection>
           </div>
-        </section>
+        </AnimatedSection>
 
         {/* How it works */}
-        <section className="relative z-10 mx-auto w-full sm:max-w-[90%] md:max-w-[85%] lg:max-w-[80%] xl:max-w-[70%] px-4 sm:px-6 lg:px-8 -mt-30 sm:-mt-16 md:-mt-12 lg:-mt-8 mb-5 sm:mb-10 md:mb-12">
+        <AnimatedSection 
+          type="fade"
+          direction="up"
+          delay={0.2}
+          className="relative z-10 mx-auto w-full sm:max-w-[90%] md:max-w-[85%] lg:max-w-[80%] xl:max-w-[70%] px-4 sm:px-6 lg:px-8 -mt-30 sm:-mt-16 md:-mt-12 lg:-mt-8 mb-5 sm:mb-10 md:mb-12"
+        >
           <div className="bg-white rounded-xl shadow-lg p-6 sm:p-8 md:p-12 lg:p-16">
             <div className="flex flex-col md:flex-row justify-between gap-8 md:gap-12 mb-12 md:mb-16">
               <div className="md:w-1/3 lg:w-1/4">
-                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#16a34a] mb-4">
-                  How it works
-                </h2>
+                <AnimatedSection type="fade" direction="right" delay={0.3}>
+                  <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#16a34a] mb-4">
+                    How it works
+                  </h2>
+                </AnimatedSection>
               </div>
               <div className="md:w-2/3 lg:w-3/4">
-                <p className="text-base sm:text-lg text-gray-600 leading-relaxed">
-                  With just a few inputs, our system automates the complex
-                  calculations, gives you clear breakdowns, and ensures your
-                  filings match the 2026 standards.
-                </p>
+                <AnimatedSection type="fade" direction="left" delay={0.4}>
+                  <p className="text-base sm:text-lg text-gray-600 leading-relaxed">
+                    With just a few inputs, our system automates the complex
+                    calculations, gives you clear breakdowns, and ensures your
+                    filings match the 2026 standards.
+                  </p>
+                </AnimatedSection>
               </div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-              <ProcessCard
-                number="1"
-                title="Choose Your Category"
-                description="Select if you're an individual, freelancer, or business owner."
-              />
-              <ProcessCard
-                number="2"
-                title="Input Your Details"
-                description="Enter your income, deductions, and any relevant tax data."
-              />
-              <ProcessCard
-                number="3"
-                title="Get Instant Results"
-                description="View your estimated tax break-down and personalized insights."
-              />
+              <AnimatedSection type="fade" direction="up" delay={0.2}>
+                <ProcessCard
+                  number="1"
+                  title="Choose Your Category"
+                  description="Select if you're an individual, freelancer, or business owner."
+                />
+              </AnimatedSection>
+              <AnimatedSection type="fade" direction="up" delay={0.3}>
+                <ProcessCard
+                  number="2"
+                  title="Input Your Details"
+                  description="Enter your income, deductions, and any relevant tax data."
+                />
+              </AnimatedSection>
+              <AnimatedSection type="fade" direction="up" delay={0.4}>
+                <ProcessCard
+                  number="3"
+                  title="Get Instant Results"
+                  description="View your estimated tax break-down and personalized insights."
+                />
+              </AnimatedSection>
             </div>
           </div>
-        </section>
+        </AnimatedSection>
 
         {/* Value Proposition */}
         <section className="px-4 sm:px-6 lg:px-8 py-16 sm:py-20 md:py-24 bg-white">

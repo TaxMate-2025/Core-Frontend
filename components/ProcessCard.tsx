@@ -8,15 +8,17 @@ interface ProcessCardProps {
 
 export default function ProcessCard({ number, title, description }: ProcessCardProps) {
     return (
-        <Card className="bg-white border border-gray-100 p-8 text-center hover:shadow-lg transition-shadow">
-            {/* Number Badge */}
-            <div className="text-6xl font-bold text-blue-200 mb-4">{number}</div>
+        <Card className="h-full bg-white border border-gray-100 p-8 text-center hover:shadow-lg transition-shadow flex flex-col">
+      <div className="flex-1 flex flex-col">
+        {/* Number Badge */}
+        <div className="text-6xl font-bold text-blue-200 mb-4">{number}</div>
 
-            {/* Title */}
-            <h3 className="text-xl font-semibold text-[#1e3a8a] mb-3">{title}</h3>
+        {/* Title */}
+        <h3 className="text-xl font-semibold text-[#1e3a8a] mb-3">{title}</h3>
 
-            {/* Description */}
-            <p className="text-gray-600 leading-relaxed">{description}</p>
-        </Card>
+        {/* Description */}
+        <p className="text-gray-600 leading-relaxed">{description}</p>
+      </div>
+    </Card>
     )
 }
