@@ -49,7 +49,7 @@ export default function Home() {
             />
           </div>
 
-          <div className="max-w-4xl mx-auto text-center relative z-10 px-4 sm:px-6 w-full">
+          <div className="max-w-4xl mx-auto text-center relative z-10 px-4 mb:10 md:mb-0 sm:px-6 w-full">
             {/* Main Heading */}
             <h1 className="text-[#1e3a8a] mx-auto text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-semibold mb-7 sm:mb-9 leading-tight">
               Master your <span className="text-[#059669]">Taxes</span> with
