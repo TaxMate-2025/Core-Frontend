@@ -65,11 +65,15 @@ export default function Home() {
 
             {/* CTA Buttons */}
             <AnimatedSection type="fade" direction="up" delay={0.2} className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
-              <Button className="bg-[#1e3a8a] hover:bg-[#162e5c] text-white px-6 sm:px-8 py-4 sm:py-5 text-sm sm:text-base flex items-center gap-2 cursor-pointer">
+              <Button 
+                onClick={openWaitlist}
+                className="bg-[#1e3a8a] hover:bg-[#162e5c] text-white px-6 sm:px-8 py-4 sm:py-5 text-sm sm:text-base flex items-center gap-2 cursor-pointer"
+              >
                 Get Started Free
                 <ArrowUpRight className="w-4 h-4" />
               </Button>
               <Button
+                onClick={openWaitlist}
                 variant="outline"
                 className="bg-white shadow-[0_4px_12px_rgba(0,0,0,0.12)] px-6 sm:px-8 py-4 sm:py-5 text-sm sm:text-base cursor-pointer"
               >
