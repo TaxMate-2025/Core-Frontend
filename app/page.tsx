@@ -51,12 +51,6 @@ export default function Home() {
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Button 
-                onClick={openWaitlist}
-                className="bg-[#1e3a8a] hover:bg-[#162e6c] text-white mt-6"
-              >
-                Join Waitlist <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
               <Button className="bg-[#1e3a8a] hover:bg-[#162e5c] text-white px-8 py-6 text-base flex items-center gap-2">
                 Get Started Free
                 <ArrowUpRight className="w-4 h-4" />

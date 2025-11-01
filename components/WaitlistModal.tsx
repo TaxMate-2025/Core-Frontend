@@ -94,25 +94,35 @@ export function WaitlistModal({ isOpen, onClose }: WaitlistModalProps) {
 
   if (!isOpen) return null
 
+  if (!isOpen) return null;
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-      <div className="relative bg-white rounded-xl max-w-md w-full mx-4 overflow-hidden shadow-2xl">
+      <div className="relative bg-white rounded-xl max-w-2xl w-full mx-4 overflow-y-auto max-h-[90vh] shadow-2xl">
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 transition-colors"
+          className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 transition-colors z-10"
           aria-label="Close modal"
         >
-          <X className="h-5 w-5" />
+          <X className="h-6 w-6" />
         </button>
 
-        <div className="p-6 sm:p-8">
-          <div className="text-center mb-6">
-            <h2 className="text-2xl font-bold text-[#1e3a8a] mb-2">Join Our Waitlist</h2>
-            <p className="text-gray-600">Be the first to know when we launch!</p>
+        <div className="p-6 sm:p-8 md:p-12">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl md:text-4xl font-bold text-[#1e3a8a] mb-4">
+              Join Our Waitlist
+            </h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Be among the first to experience Nigeria's smartest tax calculator when we launch in 2026.
+              Get updates, insights, and early access.
+            </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
+          <form 
+            onSubmit={handleSubmit} 
+            className="space-y-4 md:space-y-0 md:flex md:gap-4 max-w-2xl mx-auto"
+          >
+            <div className="flex-1 space-y-2">
               <input
                 type="text"
                 name="name"
@@ -125,7 +135,7 @@ export function WaitlistModal({ isOpen, onClose }: WaitlistModalProps) {
               />
             </div>
 
-            <div className="space-y-2">
+            <div className="flex-1 space-y-2">
               <input
                 type="email"
                 name="email"
@@ -140,14 +150,14 @@ export function WaitlistModal({ isOpen, onClose }: WaitlistModalProps) {
 
             <Button 
               type="submit" 
-              className="w-full py-3 bg-[#1e3a8a] hover:bg-[#162e6c] text-base"
+              className="w-full md:w-auto px-8 py-3 bg-[#1e3a8a] hover:bg-[#162e6c] text-base"
               disabled={loading}
             >
               {loading ? "Joining..." : "Join Waitlist"}
             </Button>
           </form>
 
-          <p className="text-center text-sm text-gray-500 mt-4">
+          <p className="text-center text-sm text-gray-500 mt-6">
             We respect your privacy. No spam, ever.
           </p>
         </div>
