@@ -1,11 +1,12 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { useToast } from "@/hooks/use-toast"
 import { Button } from "./ui/button"
 import { X } from "lucide-react"
 import { Inter } from "next/font/google"
-import Image from "next/image";
+import Image from "next/image"
+import { AnimatePresence, motion } from "framer-motion"
 import WAIT from '../public/waitlist-bg.png'
 
 const inter = Inter({
@@ -102,34 +103,104 @@ export function WaitlistModal({ isOpen, onClose }: WaitlistModalProps) {
     }
   }
 
-  if (!isOpen) return null;
+  const modalRef = useRef<HTMLDivElement>(null);
+
+  // Handle click outside to close modal
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
+        onClose();
+      }
+    }
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isOpen, onClose]);
+
+  // Animation variants
+  const backdropVariants = {
+    hidden: { opacity: 0 },
+    visible: { 
+      opacity: 1,
+      transition: { duration: 0.3 }
+    },
+    exit: { 
+      opacity: 0,
+      transition: { duration: 0.2 }
+    }
+  };
+
+  const modalVariants = {
+    hidden: { 
+      opacity: 0, 
+      scale: 0.95,
+      y: 20
+    },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      y: 0,
+      transition: {
+        type: 'spring',
+        damping: 25,
+        stiffness: 500
+      }
+    },
+    exit: {
+      opacity: 0,
+      scale: 0.95,
+      y: 20,
+      transition: {
+        duration: 0.2
+      }
+    }
+  };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-      <div className="relative rounded-xl max-w-2xl w-full mx-4 overflow-hidden max-h-[90vh] shadow-2xl">
-        {/* Background Image */}
-        <div className="absolute inset-0">
-          <Image 
-            src={WAIT} 
-            alt="Background pattern" 
-            fill
-            className="object-cover opacity-20"
-            priority
-          />
-        </div>
-        
-        
-        {/* Content Container with Glass Effect */}
-        <div className="relative bg-white/95 backdrop-blur-sm rounded-xl border border-white/20 shadow-lg">
-          <button
-            onClick={onClose}
-            className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 transition-colors z-10"
-            aria-label="Close modal"
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          initial="hidden"
+          animate="visible"
+          exit="exit"
+          variants={backdropVariants}
+        >
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
+          
+          <motion.div 
+            ref={modalRef}
+            className="relative rounded-xl max-w-2xl w-full mx-4 overflow-hidden max-h-[90vh] shadow-2xl"
+            variants={modalVariants}
           >
-            <X className="h-6 w-6" />
-          </button>
+            {/* Background Image */}
+            <div className="absolute inset-0">
+              <Image 
+                src={WAIT} 
+                alt="Background pattern" 
+                fill
+                className="object-cover opacity-20"
+                priority
+              />
+            </div>
+            
+            {/* Content Container with Glass Effect */}
+            <div className="relative bg-white/95 backdrop-blur-sm rounded-xl border border-white/20 shadow-lg">
+              <motion.button
+                onClick={onClose}
+                className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 transition-colors z-10"
+                aria-label="Close modal"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <X className="h-6 w-6" />
+              </motion.button>
 
-        <div className="relative p-6 sm:p-8 md:p-12">
+            <div className="relative p-6 sm:p-8 md:p-12">
           <div className="text-center mb-8">
             <h2 className="text-3xl md:text-4xl font-bold text-[#1e3a8a] mb-4">
               Join Our Waitlist
@@ -183,8 +254,10 @@ export function WaitlistModal({ isOpen, onClose }: WaitlistModalProps) {
             We respect your privacy. No spam, ever.
           </p>
         </div>
-      </div>
-    </div>
-    </div>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   )
 }
