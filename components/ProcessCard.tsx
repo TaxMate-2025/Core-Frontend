@@ -11,7 +11,7 @@ export default function ProcessCard({ number, title, description }: ProcessCardP
         <Card className="group h-full bg-white border border-gray-100 p-8 text-center hover:shadow-lg transition-all duration-200 flex flex-col">
       <div className="flex-1 flex flex-col">
         {/* Number Badge */}
-        <div className="text-6xl font-bold text-blue-200 mb-4 group-hover:text-blue-600 transition-colors duration-200">
+        <div className="text-6xl font-bold text-blue-200 mb-4 group-hover:text-[#1e3a8a] transition-colors duration-200">
           {number}
         </div>
 
