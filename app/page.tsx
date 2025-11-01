@@ -1,6 +1,8 @@
+import { useState } from "react";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import ProcessCard from "@/components/ProcessCard";
+import { WaitlistModal } from "@/components/WaitlistModal";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { Inter, Montserrat } from "next/font/google";
@@ -16,10 +18,21 @@ const montserrat = Montserrat({
 })
 
 export default function Home() {
+  const [isWaitlistOpen, setIsWaitlistOpen] = useState(false);
+
+  const openWaitlist = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsWaitlistOpen(true);
+  };
+
   return (
     <main>
-      <Navbar />
+      <Navbar onJoinWaitlist={openWaitlist} />
       <div className={`${montserrat.className}`}>
+        <WaitlistModal 
+          isOpen={isWaitlistOpen} 
+          onClose={() => setIsWaitlistOpen(false)} 
+        />
         {/* Hero Section */}
         <section className="px-4 sm:px-6 lg:px-8 py-20 hero_gradient">
           <div className="max-w-4xl mx-auto text-center">
@@ -36,6 +49,12 @@ export default function Home() {
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <Button 
+                onClick={openWaitlist}
+                className="bg-[#1e3a8a] hover:bg-[#162e6c] text-white mt-6"
+              >
+                Join Waitlist <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
               <Button className="bg-[#1e3a8a] hover:bg-[#162e5c] text-white px-8 py-6 text-base flex items-center gap-2">
                 Get Started Free
                 <ArrowUpRight className="w-4 h-4" />

@@ -4,12 +4,16 @@ import LOGO from '../public/main_logo.svg'
 import { Inter } from "next/font/google"
 import Link from "next/link"
 
+interface NavbarProps {
+  onJoinWaitlist: (e: React.MouseEvent) => void;
+}
+
 const inter = Inter({
     weight: "500",
     subsets: ['latin']
 })
 
-const Navbar = () => {
+const Navbar = ({ onJoinWaitlist }: NavbarProps) => {
     return (
         <header className={`${inter.className} sticky top-0 z-50`}>
             <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
@@ -35,7 +39,12 @@ const Navbar = () => {
                 </div>
 
                 {/* Join Waitlist Button */}
-                <Button className="bg-[#1e3a8a] hover:bg-[#162e5c] cursor-pointer text-white">Join Waitlist</Button>
+                <Button 
+                  onClick={onJoinWaitlist}
+                  className="bg-[#1e3a8a] hover:bg-[#162e5c] cursor-pointer text-white"
+                >
+                  Join Waitlist
+                </Button>
             </nav>
         </header>
     )
