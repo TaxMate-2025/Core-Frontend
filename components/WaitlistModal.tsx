@@ -243,7 +243,7 @@ export function WaitlistModal({ isOpen, onClose }: WaitlistModalProps) {
 
             <Button 
               type="submit" 
-              className="w-full md:w-auto px-8 h-[52px] flex items-center justify-center bg-[#1e3a8a] hover:bg-[#162e6c] text-base"
+              className="w-full md:w-auto px-8 h-[52px] flex items-center justify-center bg-[#1e3a8a] hover:bg-[#162e6c] text-base cursor-pointer"
               disabled={loading}
             >
               {loading ? "Joining..." : "Join Waitlist"}
