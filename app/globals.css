@@ -123,3 +123,11 @@
 .hero_gradient {
   background: linear-gradient(180deg, #F2F4FB 19.41%, #DEE3F8 100%);
 }
+
+.shadow-custom {
+  box-shadow: 0px 4px 56px 0px #00000014;
+}
+
+.how-it-works-text {
+  color: linear-gradient(180deg, #1E3A8A 0%, rgba(30, 58, 138, 0.04) 79.81%);
+}

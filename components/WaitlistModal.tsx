@@ -92,31 +92,59 @@ export function WaitlistModal({ isOpen, onClose }: WaitlistModalProps) {
     }
   }
 
-  if (!isOpen) return null
+  const [bgImage, setBgImage] = useState<string | null>(null);
+  const [bgError, setBgError] = useState(false);
+
+  // Preloads the background image
+  useEffect(() => {
+    if (!isOpen) return;
+    
+    const img = new Image();
+    img.src = '/waitlist-bg.png';
+    
+    img.onload = () => {
+      setBgImage('/waitlist-bg.png');
+      setBgError(false);
+    };
+    
+    img.onerror = () => {
+      console.error('Failed to load background image');
+      setBgError(true);
+    };
+    
+    return () => {
+      img.onload = null;
+      img.onerror = null;
+    };
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-      <div 
-        className="relative rounded-xl max-w-2xl w-full mx-4 overflow-y-auto max-h-[90vh] shadow-2xl"
-        style={{
-          backgroundImage: "url('/waitlist-bg.png')",
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
-        }}
-      >
-        <div className="absolute inset-0 bg-white/90 backdrop-blur-sm rounded-xl" />
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 transition-colors z-10"
-          aria-label="Close modal"
-        >
-          <X className="h-6 w-6" />
-        </button>
+      <div className="relative rounded-xl max-w-2xl w-full mx-4 overflow-hidden max-h-[90vh] shadow-2xl">
+        {/* Background Image */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{
+            backgroundImage: bgImage ? `url(${bgImage})` : 'none',
+          }}
+        />
+        
+        {/* Overlay */}
+        <div className="absolute inset-0 bg-white/90 rounded-xl" />
+        
+        {/* Content Container with Glass Effect */}
+        <div className="relative bg-white/10 backdrop-blur-md rounded-xl border border-white/20 shadow-lg">
+          <button
+            onClick={onClose}
+            className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 transition-colors z-10"
+            aria-label="Close modal"
+          >
+            <X className="h-6 w-6" />
+          </button>
 
-        <div className="relative p-6 sm:p-8 md:p-12 z-10">
+        <div className="relative p-6 sm:p-8 md:p-12">
           <div className="text-center mb-8">
             <h2 className="text-3xl md:text-4xl font-bold text-[#1e3a8a] mb-4">
               Join Our Waitlist
@@ -171,6 +199,7 @@ export function WaitlistModal({ isOpen, onClose }: WaitlistModalProps) {
           </p>
         </div>
       </div>
+    </div>
     </div>
   )
 }
