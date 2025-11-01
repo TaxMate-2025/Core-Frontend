@@ -156,7 +156,7 @@ export default function Home() {
             </h2>
 
             <p className="mx-auto text-base sm:text-lg mb-8 sm:mb-10 leading-relaxed max-w-2xl">
-              Tax reforms are coming — don't be left behind. Get early access
+              Tax reforms are coming — don&apos;t be left behind. Get early access
               and exclusive tools to simplify your tax filing and management
               process.
             </p>
