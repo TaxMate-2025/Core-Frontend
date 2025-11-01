@@ -33,9 +33,12 @@ const Navbar = ({ onJoinWaitlist }: NavbarProps) => {
                     <a href="#" className="text-gray-700 hover:text-[#1e3a8a] font-medium text-base md:text-lg">
                         How It Works
                     </a>
-                    <Link href="/waitlist" className="text-gray-700 hover:text-[#1e3a8a] font-medium text-base md:text-lg">
-                        Waitlist
-                    </Link>
+                    <button 
+                      onClick={onJoinWaitlist}
+                      className="text-gray-700 hover:text-[#1e3a8a] font-medium text-base md:text-lg bg-transparent border-none p-0 cursor-pointer"
+                    >
+                      Waitlist
+                    </button>
                 </div>
 
                 {/* Join Waitlist Button */}

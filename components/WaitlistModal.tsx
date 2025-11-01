@@ -127,7 +127,7 @@ export function WaitlistModal({ isOpen, onClose }: WaitlistModalProps) {
               Join Our Waitlist
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Be among the first to experience Nigeria's smartest tax calculator when we launch in 2026.
+              Be among the first to experience Nigeria&apos;s smartest tax calculator when we launch in 2026.
               Get updates, insights, and early access.
             </p>
           </div>
@@ -164,7 +164,7 @@ export function WaitlistModal({ isOpen, onClose }: WaitlistModalProps) {
 
             <Button 
               type="submit" 
-              className="w-full md:w-auto px-8 py-3 bg-[#1e3a8a] hover:bg-[#162e6c] text-base"
+              className="w-full md:w-auto px-8 h-[52px] flex items-center justify-center bg-[#1e3a8a] hover:bg-[#162e6c] text-base"
               disabled={loading}
             >
               {loading ? "Joining..." : "Join Waitlist"}
