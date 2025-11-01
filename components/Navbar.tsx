@@ -11,7 +11,7 @@ const inter = Inter({
 
 const Navbar = () => {
     return (
-        <header className={`${inter.className} sticky top-0 z-50`}>
+        <header className={`${inter.className} sticky top-0 z-50 bg-transparent backdrop-blur-xl`}>
             <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
                 {/* Logo */}
                 <Link href={''} className="cursor-pointer">
@@ -29,9 +29,9 @@ const Navbar = () => {
                     <a href="#" className="text-gray-700 hover:text-[#1e3a8a] font-medium text-base md:text-lg">
                         How It Works
                     </a>
-                    <a href="#" className="text-gray-700 hover:text-[#1e3a8a] font-medium text-base md:text-lg">
+                    <Link href="/waitlist" className="text-gray-700 hover:text-[#1e3a8a] font-medium text-base md:text-lg">
                         Waitlist
-                    </a>
+                    </Link>
                 </div>
 
                 {/* Join Waitlist Button */}
