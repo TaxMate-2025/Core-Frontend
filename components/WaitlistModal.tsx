@@ -68,13 +68,20 @@ export function WaitlistModal({ isOpen, onClose }: WaitlistModalProps) {
     if (!validateForm()) return
 
     setLoading(true)
+    
     try {
-      // TODO: send POST request to backend API: /api/waitlist
-      // await fetch("/api/waitlist", {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify(formData),
-      // })
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      /*
+      const response = await fetch("/api/waitlist", {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to submit form');
+      }
+      */
 
       toast({
         title: "Success!",
@@ -84,6 +91,7 @@ export function WaitlistModal({ isOpen, onClose }: WaitlistModalProps) {
       setFormData({ name: "", email: "" })
       onClose()
     } catch (error) {
+      console.error('Error submitting form:', error);
       toast({
         title: "Error",
         description: "Something went wrong. Please try again.",
