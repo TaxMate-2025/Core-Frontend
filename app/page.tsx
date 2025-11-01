@@ -64,13 +64,13 @@ export default function Home() {
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
-              <Button className="bg-[#1e3a8a] hover:bg-[#162e5c] text-white px-6 sm:px-8 py-4 sm:py-5 text-sm sm:text-base flex items-center gap-2">
+              <Button className="bg-[#1e3a8a] hover:bg-[#162e5c] text-white px-6 sm:px-8 py-4 sm:py-5 text-sm sm:text-base flex items-center gap-2 cursor-pointer">
                 Get Started Free
                 <ArrowUpRight className="w-4 h-4" />
               </Button>
               <Button
                 variant="outline"
-                className="bg-white shadow-[0_4px_12px_rgba(0,0,0,0.12)] px-6 sm:px-8 py-4 sm:py-5 text-sm sm:text-base"
+                className="bg-white shadow-[0_4px_12px_rgba(0,0,0,0.12)] px-6 sm:px-8 py-4 sm:py-5 text-sm sm:text-base cursor-pointer"
               >
                 Learn more
                 <ArrowUpRight className="w-4 h-4 ml-2" />
@@ -80,7 +80,7 @@ export default function Home() {
         </section>
 
         {/* How it works */}
-        <section className="relative z-10 mx-auto w-full sm:max-w-[90%] md:max-w-[85%] lg:max-w-[80%] xl:max-w-[70%] px-4 sm:px-6 lg:px-8 -mt-20 sm:-mt-16 md:-mt-12 lg:-mt-8 mb-20 sm:mb-28 md:mb-32">
+        <section className="relative z-10 mx-auto w-full sm:max-w-[90%] md:max-w-[85%] lg:max-w-[80%] xl:max-w-[70%] px-4 sm:px-6 lg:px-8 -mt-30 sm:-mt-16 md:-mt-12 lg:-mt-8 mb-20 sm:mb-28 md:mb-32">
           <div className="bg-white rounded-xl shadow-lg p-6 sm:p-8 md:p-12 lg:p-16">
             <div className="flex flex-col md:flex-row justify-between gap-8 md:gap-12 mb-12 md:mb-16">
               <div className="md:w-1/3 lg:w-1/4">
@@ -147,7 +147,7 @@ export default function Home() {
 
             <Button
               onClick={openWaitlist}
-              className="bg-white hover:bg-gray-100 text-[#1e3a8a] font-semibold px-6 sm:px-8 py-4 sm:py-5 text-sm sm:text-base transition-colors duration-200"
+              className="bg-white hover:bg-gray-100 text-[#1e3a8a] font-semibold px-6 sm:px-8 py-4 sm:py-5 text-sm sm:text-base transition-colors duration-200 cursor-pointer"
             >
               Join the Waitlist Now
             </Button>
