@@ -91,7 +91,7 @@ export default function Home() {
           delay={0.2}
           className="relative z-10 mx-auto w-full sm:max-w-[90%] md:max-w-[85%] lg:max-w-[80%] xl:max-w-[70%] px-4 sm:px-6 lg:px-8 -mt-50 sm:-mt-16 md:-mt-12 lg:-mt-8 mb-5 sm:mb-10 md:mb-12"
         >
-          <div className="bg-white rounded-xl shadow-lg p-6 sm:p-8 md:p-12 lg:p-16 mt-15 md:mt-0">
+          <div className="bg-white rounded-xl shadow-lg p-6 sm:p-8 md:p-12 lg:p-16 mt-25 md:mt-0">
             <div className="flex flex-col md:flex-row justify-between gap-8 md:gap-12 mb-12 md:mb-16">
               <div className="md:w-1/3 lg:w-1/4">
                 <AnimatedSection type="fade" direction="right" delay={0.3}>
