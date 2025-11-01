@@ -147,7 +147,7 @@ export function WaitlistModal({ isOpen, onClose }: WaitlistModalProps) {
       scale: 1,
       y: 0,
       transition: {
-        type: 'spring',
+        type: 'spring' as const,
         damping: 25,
         stiffness: 500
       }
