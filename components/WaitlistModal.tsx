@@ -72,17 +72,19 @@ export function WaitlistModal({ isOpen, onClose }: WaitlistModalProps) {
     
     try {
       await new Promise(resolve => setTimeout(resolve, 1500));
-      /*
-      const response = await fetch("/api/waitlist", {
+      
+      const response = await fetch("/api/waiting-list/join", {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          source: 'DEV_FEST'
+        }),
       });
 
       if (!response.ok) {
         throw new Error('Failed to submit form');
       }
-      */
 
       toast({
         title: "Success!",
