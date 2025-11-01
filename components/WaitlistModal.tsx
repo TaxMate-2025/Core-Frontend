@@ -146,12 +146,11 @@ export function WaitlistModal({ isOpen, onClose }: WaitlistModalProps) {
       opacity: 1,
       scale: 1,
       y: 0,
-      // narrow the 'type' literal or cast the transition to avoid the TS incompatibility
       transition: {
         type: 'spring' as const,
         damping: 25,
         stiffness: 500,
-      } as any,
+      },
     },
     exit: {
       opacity: 0,
