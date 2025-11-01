@@ -5,6 +5,8 @@ import { useToast } from "@/hooks/use-toast"
 import { Button } from "./ui/button"
 import { X } from "lucide-react"
 import { Inter } from "next/font/google"
+import Image from "next/image";
+import WAIT from '../public/waitlist-bg.png'
 
 const inter = Inter({
   weight: ["400", "500", "600", "700"],
@@ -92,50 +94,25 @@ export function WaitlistModal({ isOpen, onClose }: WaitlistModalProps) {
     }
   }
 
-  const [bgImage, setBgImage] = useState<string | null>(null);
-  const [bgError, setBgError] = useState(false);
-
-  // Preloads the background image
-  useEffect(() => {
-    if (!isOpen) return;
-    
-    const img = new Image();
-    img.src = '/waitlist-bg.png';
-    
-    img.onload = () => {
-      setBgImage('/waitlist-bg.png');
-      setBgError(false);
-    };
-    
-    img.onerror = () => {
-      console.error('Failed to load background image');
-      setBgError(true);
-    };
-    
-    return () => {
-      img.onload = null;
-      img.onerror = null;
-    };
-  }, [isOpen]);
-
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
       <div className="relative rounded-xl max-w-2xl w-full mx-4 overflow-hidden max-h-[90vh] shadow-2xl">
         {/* Background Image */}
-        <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{
-            backgroundImage: bgImage ? `url(${bgImage})` : 'none',
-          }}
-        />
+        <div className="absolute inset-0">
+          <Image 
+            src={WAIT} 
+            alt="Background pattern" 
+            fill
+            className="object-cover opacity-20"
+            priority
+          />
+        </div>
         
-        {/* Overlay */}
-        <div className="absolute inset-0 bg-white/90 rounded-xl" />
         
         {/* Content Container with Glass Effect */}
-        <div className="relative bg-white/10 backdrop-blur-md rounded-xl border border-white/20 shadow-lg">
+        <div className="relative bg-white/95 backdrop-blur-sm rounded-xl border border-white/20 shadow-lg">
           <button
             onClick={onClose}
             className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 transition-colors z-10"
