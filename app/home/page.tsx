@@ -1,61 +1,14 @@
 "use client"
 
-import Link from "next/link"
-import { Calculator, TrendingUp, Building2, User } from "lucide-react"
-import { Logo } from "@/components/Logo"
-import { Button } from "@/components/ui/button"
+import { Calculator, TrendingUp, Building2 } from "lucide-react"
 import { CalculatorCard } from "@/components/CalculatorCard"
+import { MainNavbar } from "@/components/MainNavbar"
 
 export default function HomePage() {
     return (
         <div className="min-h-screen flex flex-col">
             {/* Navigation Bar */}
-            <nav className="bg-white border-b border-gray-200 px-6 py-4">
-                <div className="max-w-7xl mx-auto flex items-center justify-between">
-                    {/* Logo */}
-                    <Logo />
-
-                    {/* Navigation Links */}
-                    <div className="hidden md:flex items-center gap-8">
-                        <Link
-                            href="/home"
-                            className="text-[#1E3A8A] font-medium text-sm hover:text-[#1E3A8A]/80 transition-colors"
-                        >
-                            Dashboard
-                        </Link>
-                        <Link
-                            href="/calculator"
-                            className="text-foreground font-medium text-sm hover:text-[#1E3A8A] transition-colors"
-                        >
-                            Calculator
-                        </Link>
-                        <Link
-                            href="/payment"
-                            className="text-foreground font-medium text-sm hover:text-[#1E3A8A] transition-colors"
-                        >
-                            Payment
-                        </Link>
-                        <Link
-                            href="/feedback"
-                            className="text-foreground font-medium text-sm hover:text-[#1E3A8A] transition-colors"
-                        >
-                            Feedback
-                        </Link>
-                    </div>
-
-                    {/* Right Side Actions */}
-                    <div className="flex items-center gap-3">
-                        <Button
-                            className="bg-[#1E3A8A] hover:bg-[#1E3A8A]/90 text-white h-9 px-6"
-                        >
-                            Log Out
-                        </Button>
-                        <button className="w-9 h-9 rounded-full bg-[#1E3A8A] flex items-center justify-center text-white hover:bg-[#1E3A8A]/90 transition-colors">
-                            <User className="w-4 h-4" />
-                        </button>
-                    </div>
-                </div>
-            </nav>
+            <MainNavbar />
 
             {/* Main Content Area with Grid Background */}
             <main className="flex-1 relative overflow-hidden">
