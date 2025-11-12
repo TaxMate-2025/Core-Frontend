@@ -131,3 +131,26 @@
 .how-it-works-text {
   color: linear-gradient(180deg, #1E3A8A 0%, rgba(30, 58, 138, 0.04) 79.81%);
 }
+
+/* Login page specific styles */
+.login-gradient {
+  background: linear-gradient(180deg, #4C6EBF 0%, #1E3A8A 100%);
+}
+
+/* Custom checkbox styles */
+input[type="checkbox"]:checked {
+  background-color: #1E3A8A;
+  border-color: #1E3A8A;
+}
+
+/* Home page grid gradient background */
+/* Home page grid gradient background */
+.grid-gradient-bg {
+  background-color: #E8EAF6;
+  background-image:
+    linear-gradient(to bottom right, rgba(232, 234, 246, 0.5), rgba(227, 242, 253, 0.5)),
+    linear-gradient(to right, rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+  background-size: 100% 100%, 80px 80px, 80px 80px;
+  background-position: 0 0, 0 0, 0 0;
+}
