@@ -4,6 +4,7 @@ import { Calculator, TrendingUp, Building2 } from "lucide-react"
 import { CalculatorCard } from "@/components/CalculatorCard"
 import { MainNavbar } from "@/components/MainNavbar"
 import Footer from "@/components/Footer"
+import Link from "next/link"
 
 export default function HomePage() {
     return (
@@ -51,25 +52,40 @@ export default function HomePage() {
                     {/* Calculator Cards Grid */}
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
                         {/* Simple Calculator */}
-                        <CalculatorCard
-                            icon={Calculator}
-                            title="Simple Calculator"
-                            description="Ideal for individuals and salaried employees. Enter your monthly or annual income to compute PAYE."
-                        />
+                        <Link
+                            href="/simple-tax-calculator"
+                            className="col-span-1"
+                        >
+                            <CalculatorCard
+                                icon={Calculator}
+                                title="Simple Calculator"
+                                description="Ideal for individuals and salaried employees. Enter your monthly or annual income to compute PAYE."
+                            />
+                        </Link>
 
                         {/* Advanced Calculator */}
-                        <CalculatorCard
-                            icon={TrendingUp}
-                            title="Advanced Calculator"
-                            description="For multiple income sources, deductions, and allowances. Get a precise tax estimate for complex profiles."
-                        />
+                        <Link
+                            href="/advanced-tax-calculator"
+                            className="col-span-1"
+                        >
+                            <CalculatorCard
+                                icon={TrendingUp}
+                                title="Advanced Calculator"
+                                description="For multiple income sources, deductions, and allowances. Get a precise tax estimate for complex profiles."
+                            />
+                        </Link>
 
                         {/* Business Calculator */}
-                        <CalculatorCard
-                            icon={Building2}
-                            title="Business Calculator"
-                            description="Tailored for SMEs and registered companies. Input revenue, expenses, and reliefs for accurate CIT results."
-                        />
+                        <Link
+                            href="/business-tax-calculator"
+                            className="col-span-1"
+                        >
+                            <CalculatorCard
+                                icon={Building2}
+                                title="Business Calculator"
+                                description="Tailored for SMEs and registered companies. Input revenue, expenses, and reliefs for accurate CIT results."
+                            />
+                        </Link>
                     </div>
                 </div>
             </main>
