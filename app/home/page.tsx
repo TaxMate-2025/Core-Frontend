@@ -3,6 +3,7 @@
 import { Calculator, TrendingUp, Building2 } from "lucide-react"
 import { CalculatorCard } from "@/components/CalculatorCard"
 import { MainNavbar } from "@/components/MainNavbar"
+import Footer from "@/components/Footer"
 
 export default function HomePage() {
     return (
@@ -74,13 +75,7 @@ export default function HomePage() {
             </main>
 
             {/* Footer */}
-            <footer className="bg-white border-t border-gray-200 py-6">
-                <div className="max-w-7xl mx-auto px-6 text-center">
-                    <p className="text-sm text-muted-foreground">
-                        Built for Nigerians. © 2025 TaxMate — All Rights Reserved.
-                    </p>
-                </div>
-            </footer>
+            <Footer />
         </div>
     )
 }
