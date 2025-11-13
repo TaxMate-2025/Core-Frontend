@@ -10,13 +10,16 @@ import { Loader2 } from "lucide-react"
 
 const CHART_COLORS = ["#1E3A8A", "#3B82F6", "#60A5FA"]
 
+type Frequency = 'monthly' | 'annual'
+
 interface CalculatorState {
-  frequency: "monthly" | "annual"
-  monthlyIncome: number
+  monthlyIncome: number | null
+  frequency: Frequency
   pensionContribution: number
-  rentPaid: number
+  rentPaid: number | null
   nhfContribution: number
-  dependents: number
+  nhisContribution: number
+  dependents: number | null
 }
 
 interface Results {
@@ -30,25 +33,57 @@ export function SimpleTaxCalculator() {
   const { toast } = useToast()
   const [isLoading, setIsLoading] = useState(false)
   const [state, setState] = useState<CalculatorState>({
-    frequency: "monthly",
-    monthlyIncome: 0,
+    monthlyIncome: null,
+    frequency: 'monthly',
     pensionContribution: 0,
-    rentPaid: 0,
+    rentPaid: null,
     nhfContribution: 0,
-    dependents: 0,
+    nhisContribution: 0,
+    dependents: null,
   })
-
+  
   const [results, setResults] = useState<Results | null>(null)
 
-  const handleInputChange = (field: keyof CalculatorState, value: string | number) => {
-    setState((prev) => ({
-      ...prev,
-      [field]: typeof value === "number" ? value : Number.parseFloat(value) || 0,
-    }))
+  // Format number with commas for display
+  const formatNumber = (num: number | null): string => {
+    if (num === null || isNaN(num)) return ''
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+  }
+
+  // Parse formatted number string back to number
+  const parseNumber = (str: string): number | null => {
+    if (!str) return null
+    const num = Number(str.replace(/[^0-9.]/g, ''))
+    return isNaN(num) ? null : num
+  }
+
+  const handleInputChange = (field: keyof CalculatorState, value: string) => {
+    if (field === 'frequency') {
+      setState(prev => ({
+        ...prev,
+        frequency: value as Frequency
+      }))
+      return
+    }
+    
+    // For income and rent, we'll handle the formatted display
+    if (field === 'monthlyIncome' || field === 'rentPaid' || field === 'dependents') {
+      const numValue = parseNumber(value)
+      setState(prev => ({
+        ...prev,
+        [field]: numValue
+      }))
+    } else if (field === 'pensionContribution' || field === 'nhfContribution' || field === 'nhisContribution') {
+      const numValue = value === '' ? 0 : Number(value)
+      setState(prev => ({
+        ...prev,
+        [field]: numValue as number
+      }))
+    }
   }
 
   const calculateTax = async () => {
-    if (state.monthlyIncome <= 0) {
+    if (!state.monthlyIncome || state.monthlyIncome <= 0) {
       toast({
         title: "Invalid Input",
         description: "Please enter a valid income amount",
@@ -59,72 +94,104 @@ export function SimpleTaxCalculator() {
 
     setIsLoading(true)
     
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 800))
-
-    // Calculate gross annual income
-    const grossAnnual = state.frequency === "monthly" ? state.monthlyIncome * 12 : state.monthlyIncome
-
-    // Calculate total deductions
-    const pensionDed = (state.pensionContribution / 100) * grossAnnual
-    const nhfDed = state.nhfContribution
-    const totalDeductions = pensionDed + nhfDed
-
-    // Calculate taxable income
-    const taxableIncome = Math.max(0, grossAnnual - state.rentPaid - totalDeductions)
-
-    // Simplified PAYE calculation for Nigeria
-    let estimatedPAYE = 0
-    if (taxableIncome <= 300000) {
-      estimatedPAYE = taxableIncome * 0.01
-    } else if (taxableIncome <= 600000) {
-      estimatedPAYE = 300000 * 0.01 + (taxableIncome - 300000) * 0.05
-    } else if (taxableIncome <= 1100000) {
-      estimatedPAYE = 300000 * 0.01 + 300000 * 0.05 + (taxableIncome - 600000) * 0.1
-    } else {
-      estimatedPAYE = 300000 * 0.01 + 300000 * 0.05 + 500000 * 0.1 + (taxableIncome - 1100000) * 0.15
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 800))
+      
+      // Calculate gross annual income
+      const grossAnnual = state.frequency === "monthly" 
+        ? (state.monthlyIncome! * 12) 
+        : state.monthlyIncome!
+        
+      if (!grossAnnual) {
+        throw new Error("Invalid income calculation")
+      }
+      
+      // Calculate deductions
+      const pensionDed = (state.pensionContribution / 100) * grossAnnual
+      const nhfDed = (state.nhfContribution / 100) * grossAnnual
+      const nhisDed = state.nhisContribution
+      const totalDeductions = pensionDed + nhfDed + nhisDed
+      
+      // Calculate taxable income
+      const rentDeduction = state.rentPaid || 0
+      const taxableIncome = Math.max(0, grossAnnual - rentDeduction - totalDeductions)
+      
+      // Calculate PAYE
+      let estimatedPAYE = 0
+      if (taxableIncome <= 300000) {
+        estimatedPAYE = taxableIncome * 0.01
+      } else if (taxableIncome <= 600000) {
+        estimatedPAYE = 3000 + (taxableIncome - 300000) * 0.05
+      } else if (taxableIncome <= 1100000) {
+        estimatedPAYE = 18000 + (taxableIncome - 600000) * 0.1
+      } else {
+        estimatedPAYE = 68000 + (taxableIncome - 1100000) * 0.2
+      }
+      
+      setResults({
+        grossAnnualIncome: grossAnnual,
+        taxableIncome,
+        totalDeductions,
+        estimatedPAYE,
+      })
+      
+      toast({
+        title: "Calculation Complete",
+        description: "Your tax estimate has been calculated",
+      })
+      
+    } catch (error) {
+      console.error("Tax calculation error:", error)
+      toast({
+        title: "Error",
+        description: "Failed to calculate tax. Please try again.",
+        variant: "destructive",
+      })
+    } finally {
+      setIsLoading(false)
     }
-
-    setResults({
-      grossAnnualIncome: grossAnnual,
-      taxableIncome,
-      totalDeductions,
-      estimatedPAYE: Math.round(estimatedPAYE),
-    })
-
-    setIsLoading(false)
-    
-    toast({
-      title: "Calculation Complete",
-      description: "Your tax estimate is ready",
-    })
   }
 
   const handleReset = () => {
     setState({
-      frequency: "monthly",
-      monthlyIncome: 0,
+      monthlyIncome: null,
+      frequency: 'monthly',
       pensionContribution: 0,
-      rentPaid: 0,
+      rentPaid: null,
       nhfContribution: 0,
-      dependents: 0,
+      nhisContribution: 0,
+      dependents: null,
     })
     setResults(null)
   }
 
   const chartData = results
     ? [
-        { name: "Annual Income", value: results.grossAnnualIncome, fill: CHART_COLORS[0] },
-        { name: "Total Deductions", value: results.totalDeductions, fill: CHART_COLORS[1] },
-        { name: "Annual Taxes", value: results.estimatedPAYE, fill: CHART_COLORS[2] },
+        { 
+          name: "Annual Income", 
+          value: results.grossAnnualIncome, 
+          fill: CHART_COLORS[0] 
+        },
+        { 
+          name: "Total Deductions", 
+          value: results.totalDeductions, 
+          fill: CHART_COLORS[1] 
+        },
+        { 
+          name: "Annual Taxes", 
+          value: results.estimatedPAYE, 
+          fill: CHART_COLORS[2] 
+        },
       ]
     : []
 
   const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat("en-NG", {
-      style: "currency",
-      currency: "NGN",
-      minimumFractionDigits: 0,
+    return new Intl.NumberFormat('en-NG', {
+      style: 'currency',
+      currency: 'NGN',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
     }).format(value)
   }
 
@@ -143,25 +210,31 @@ export function SimpleTaxCalculator() {
       {/* Form Card */}
       <Card className="p-8 space-y-6">
         {/* Income Frequency */}
-        <div className="space-y-3">
-          <h2 className="text-lg font-semibold text-foreground">Income Frequency</h2>
-          <div className="flex flex-wrap gap-3">
-            <Button
+        <div className="flex items-center space-x-2 mb-6">
+          <span className="text-sm font-medium text-foreground">Frequency:</span>
+          <div className="flex bg-gray-100 rounded-lg p-1">
+            <button
               type="button"
-              variant={state.frequency === "monthly" ? "default" : "outline"}
-              className={`${state.frequency === "monthly" ? "bg-[#1E3A8A] hover:bg-[#1E3A8A]/90" : ""}`}
-              onClick={() => handleInputChange("frequency", "monthly")}
+              className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+                state.frequency === 'monthly' 
+                  ? 'bg-[#1E3A8A] text-white shadow-sm' 
+                  : 'text-gray-600 hover:bg-gray-200'
+              }`}
+              onClick={() => setState(prev => ({ ...prev, frequency: 'monthly' }))}
             >
               Monthly
-            </Button>
-            <Button
+            </button>
+            <button
               type="button"
-              variant={state.frequency === "annual" ? "default" : "outline"}
-              className={`${state.frequency === "annual" ? "bg-[#1E3A8A] hover:bg-[#1E3A8A]/90" : ""}`}
-              onClick={() => handleInputChange("frequency", "annual")}
+              className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+                state.frequency === 'annual' 
+                  ? 'bg-[#1E3A8A] text-white shadow-sm' 
+                  : 'text-gray-600 hover:bg-gray-200'
+              }`}
+              onClick={() => setState(prev => ({ ...prev, frequency: 'annual' }))}
             >
-              Annually
-            </Button>
+              Annual
+            </button>
           </div>
         </div>
 
@@ -171,11 +244,12 @@ export function SimpleTaxCalculator() {
             {state.frequency === "monthly" ? "Monthly Income (₦)" : "Annual Income (₦)"}
           </label>
           <Input
-            type="number"
+            type="text"
+            inputMode="decimal"
             placeholder="0"
-            value={state.monthlyIncome || ""}
+            value={state.monthlyIncome ? formatNumber(state.monthlyIncome) : ''}
             onChange={(e) => handleInputChange("monthlyIncome", e.target.value)}
-            className="text-base"
+            className="text-base [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
           />
         </div>
 
@@ -186,11 +260,12 @@ export function SimpleTaxCalculator() {
               Pension Contribution (%) <span className="text-muted-foreground">(Optional)</span>
             </label>
             <Input
-              type="number"
+              type="text"
+              inputMode="decimal"
               placeholder="0"
-              value={state.pensionContribution || ""}
+              value={state.pensionContribution || ''}
               onChange={(e) => handleInputChange("pensionContribution", e.target.value)}
-              className="text-base"
+              className="text-base [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
             />
           </div>
 
@@ -199,24 +274,40 @@ export function SimpleTaxCalculator() {
               Rent Paid (₦) <span className="text-muted-foreground">(Optional)</span>
             </label>
             <Input
-              type="number"
+              type="text"
+              inputMode="decimal"
               placeholder="0"
-              value={state.rentPaid || ""}
+              value={state.rentPaid ? formatNumber(state.rentPaid) : ''}
               onChange={(e) => handleInputChange("rentPaid", e.target.value)}
-              className="text-base"
+              className="text-base [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
             />
           </div>
 
           <div className="space-y-2">
             <label className="text-sm font-medium text-foreground">
-              NHF Contribution (₦) <span className="text-muted-foreground">(Optional)</span>
+              NHF Contribution (%) <span className="text-muted-foreground">(Optional)</span>
             </label>
             <Input
-              type="number"
+              type="text"
+              inputMode="decimal"
               placeholder="0"
-              value={state.nhfContribution || ""}
+              value={state.nhfContribution || ''}
               onChange={(e) => handleInputChange("nhfContribution", e.target.value)}
-              className="text-base"
+              className="text-base [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-foreground">
+              NHIS Contribution (₦) <span className="text-muted-foreground">(Optional)</span>
+            </label>
+            <Input
+              type="text"
+              inputMode="decimal"
+              placeholder="0"
+              value={state.nhisContribution ? formatNumber(state.nhisContribution) : ''}
+              onChange={(e) => handleInputChange("nhisContribution", e.target.value)}
+              className="text-base [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
             />
           </div>
 
@@ -278,7 +369,7 @@ export function SimpleTaxCalculator() {
               <p className="text-2xl font-bold text-[#1E3A8A]">{formatCurrency(results.grossAnnualIncome)}</p>
               <p className="text-xs text-muted-foreground">
                 {state.frequency === 'monthly' 
-                  ? `${formatCurrency(state.monthlyIncome)} per month`
+                  ? `${formatCurrency(state.monthlyIncome || 0)} per month`
                   : `${formatCurrency(results.grossAnnualIncome / 12)} per month`}
               </p>
             </Card>
