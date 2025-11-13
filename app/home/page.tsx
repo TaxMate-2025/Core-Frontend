@@ -1,61 +1,16 @@
 "use client"
 
-import Link from "next/link"
-import { Calculator, TrendingUp, Building2, User } from "lucide-react"
-import { Logo } from "@/components/Logo"
-import { Button } from "@/components/ui/button"
+import { Calculator, TrendingUp, Building2 } from "lucide-react"
 import { CalculatorCard } from "@/components/CalculatorCard"
+import { MainNavbar } from "@/components/MainNavbar"
+import Footer from "@/components/Footer"
+import Link from "next/link"
 
 export default function HomePage() {
     return (
         <div className="min-h-screen flex flex-col">
             {/* Navigation Bar */}
-            <nav className="bg-white border-b border-gray-200 px-6 py-4">
-                <div className="max-w-7xl mx-auto flex items-center justify-between">
-                    {/* Logo */}
-                    <Logo />
-
-                    {/* Navigation Links */}
-                    <div className="hidden md:flex items-center gap-8">
-                        <Link
-                            href="/home"
-                            className="text-[#1E3A8A] font-medium text-sm hover:text-[#1E3A8A]/80 transition-colors"
-                        >
-                            Dashboard
-                        </Link>
-                        <Link
-                            href="/calculator"
-                            className="text-foreground font-medium text-sm hover:text-[#1E3A8A] transition-colors"
-                        >
-                            Calculator
-                        </Link>
-                        <Link
-                            href="/payment"
-                            className="text-foreground font-medium text-sm hover:text-[#1E3A8A] transition-colors"
-                        >
-                            Payment
-                        </Link>
-                        <Link
-                            href="/feedback"
-                            className="text-foreground font-medium text-sm hover:text-[#1E3A8A] transition-colors"
-                        >
-                            Feedback
-                        </Link>
-                    </div>
-
-                    {/* Right Side Actions */}
-                    <div className="flex items-center gap-3">
-                        <Button
-                            className="bg-[#1E3A8A] hover:bg-[#1E3A8A]/90 text-white h-9 px-6"
-                        >
-                            Log Out
-                        </Button>
-                        <button className="w-9 h-9 rounded-full bg-[#1E3A8A] flex items-center justify-center text-white hover:bg-[#1E3A8A]/90 transition-colors">
-                            <User className="w-4 h-4" />
-                        </button>
-                    </div>
-                </div>
-            </nav>
+            <MainNavbar />
 
             {/* Main Content Area with Grid Background */}
             <main className="flex-1 relative overflow-hidden">
@@ -97,37 +52,46 @@ export default function HomePage() {
                     {/* Calculator Cards Grid */}
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
                         {/* Simple Calculator */}
-                        <CalculatorCard
-                            icon={Calculator}
-                            title="Simple Calculator"
-                            description="Ideal for individuals and salaried employees. Enter your monthly or annual income to compute PAYE."
-                        />
+                        <Link
+                            href="/simple-tax-calculator"
+                            className="col-span-1"
+                        >
+                            <CalculatorCard
+                                icon={Calculator}
+                                title="Simple Calculator"
+                                description="Ideal for individuals and salaried employees. Enter your monthly or annual income to compute PAYE."
+                            />
+                        </Link>
 
                         {/* Advanced Calculator */}
-                        <CalculatorCard
-                            icon={TrendingUp}
-                            title="Advanced Calculator"
-                            description="For multiple income sources, deductions, and allowances. Get a precise tax estimate for complex profiles."
-                        />
+                        <Link
+                            href="/advanced-tax-calculator"
+                            className="col-span-1"
+                        >
+                            <CalculatorCard
+                                icon={TrendingUp}
+                                title="Advanced Calculator"
+                                description="For multiple income sources, deductions, and allowances. Get a precise tax estimate for complex profiles."
+                            />
+                        </Link>
 
                         {/* Business Calculator */}
-                        <CalculatorCard
-                            icon={Building2}
-                            title="Business Calculator"
-                            description="Tailored for SMEs and registered companies. Input revenue, expenses, and reliefs for accurate CIT results."
-                        />
+                        <Link
+                            href="/business-tax-calculator"
+                            className="col-span-1"
+                        >
+                            <CalculatorCard
+                                icon={Building2}
+                                title="Business Calculator"
+                                description="Tailored for SMEs and registered companies. Input revenue, expenses, and reliefs for accurate CIT results."
+                            />
+                        </Link>
                     </div>
                 </div>
             </main>
 
             {/* Footer */}
-            <footer className="bg-white border-t border-gray-200 py-6">
-                <div className="max-w-7xl mx-auto px-6 text-center">
-                    <p className="text-sm text-muted-foreground">
-                        Built for Nigerians. © 2025 TaxMate — All Rights Reserved.
-                    </p>
-                </div>
-            </footer>
+            <Footer />
         </div>
     )
 }

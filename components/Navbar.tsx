@@ -1,8 +1,6 @@
 import { Button } from "@/components/ui/button"
-import Image from "next/image"
-import LOGO from '../public/main_logo.svg'
 import { Inter } from "next/font/google"
-import Link from "next/link"
+import { Logo } from "./Logo"
 
 interface NavbarProps {
   onJoinWaitlist: (e: React.MouseEvent) => void;
@@ -18,10 +16,7 @@ const Navbar = ({ onJoinWaitlist }: NavbarProps) => {
         <header className={`${inter.className} sticky top-0 z-50 bg-transparent backdrop-blur-xl`}>
             <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
                 {/* Logo */}
-                <Link href={''} className="cursor-pointer">
-                    <Image src={LOGO} alt="TaxMate_Logo" width={140} height={140} />
-                </Link>
-
+                <Logo />
                 {/* Navigation Links */}
                 <div className="hidden md:flex items-center gap-8">
                     <a href="#" className="text-gray-700 hover:text-[#1e3a8a] font-medium text-base md:text-lg">

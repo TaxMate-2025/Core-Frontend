@@ -10,7 +10,7 @@ const montserrat = Montserrat({
 
 export default function WaitlistPage() {
   return (
-    <div className={`${montserrat.className} min-h-screen from-blue-50 to-white flex items-center justify-center p-4`}>
+    <div className={`${montserrat.className} min-h-screen bg-linear-to-b from-blue-50 to-white flex items-center justify-center p-4`}>
       <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Join Our Waitlist</h1>

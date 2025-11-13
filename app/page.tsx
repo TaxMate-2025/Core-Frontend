@@ -6,15 +6,13 @@ import Navbar from "@/components/Navbar";
 import ProcessCard from "@/components/ProcessCard";
 import { WaitlistModal } from "@/components/WaitlistModal";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, ArrowUpRight } from "lucide-react";
-import { Inter, Montserrat } from "next/font/google";
+import { ArrowUpRight } from "lucide-react";
+import { Montserrat } from "next/font/google";
 import Image from "next/image";
 import UNION from '../public/Union.png';
 import { AnimatedSection } from "@/components/ui/animated-section";
 
-const inter = Inter({
-  subsets: ["latin"],
-});
+
 
 const montserrat = Montserrat({
   weight: "400",
