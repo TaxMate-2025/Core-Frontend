@@ -1,23 +1,19 @@
 "use client"
 
-import { useState } from "react"
 import Link from "next/link"
 import { Logo } from "@/components/Logo"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { PasswordInput } from "@/components/ui/password-input"
 import { SocialLoginButton } from "@/components/ui/social-login-button"
+import { useLogin } from "@/hooks/use-login"
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [rememberMe, setRememberMe] = useState(false)
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    // Handle login logic here
-    console.log({ email, password, rememberMe })
-  }
+  const { form, isLoading, onSubmit } = useLogin()
+  const {
+    register,
+    formState: { errors },
+  } = form
 
   return (
     <div className="min-h-screen flex">
@@ -40,7 +36,7 @@ export default function LoginPage() {
           </div>
 
           {/* Login Form */}
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={onSubmit} className="space-y-5">
             {/* Email Input */}
             <div className="space-y-2">
               <label
@@ -53,11 +49,15 @@ export default function LoginPage() {
                 id="email"
                 type="email"
                 placeholder="Enter your email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                {...register("email")}
                 className="h-11"
-                required
+                aria-invalid={errors.email ? "true" : "false"}
               />
+              {errors.email && (
+                <p className="text-sm text-destructive">
+                  {errors.email.message}
+                </p>
+              )}
             </div>
 
             {/* Password Input */}
@@ -71,10 +71,14 @@ export default function LoginPage() {
               <PasswordInput
                 id="password"
                 placeholder="Input your password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
+                {...register("password")}
+                aria-invalid={errors.password ? "true" : "false"}
               />
+              {errors.password && (
+                <p className="text-sm text-destructive">
+                  {errors.password.message}
+                </p>
+              )}
             </div>
 
             {/* Remember Me & Forgot Password */}
@@ -83,8 +87,7 @@ export default function LoginPage() {
                 <input
                   type="checkbox"
                   id="remember"
-                  checked={rememberMe}
-                  onChange={(e) => setRememberMe(e.target.checked)}
+                  {...register("rememberMe")}
                   className="w-4 h-4 rounded border-input text-primary focus:ring-2 focus:ring-ring/50 cursor-pointer"
                 />
                 <label
@@ -106,8 +109,9 @@ export default function LoginPage() {
             <Button
               type="submit"
               className="w-full h-11 bg-[#1E3A8A] hover:bg-[#1E3A8A]/90 text-white font-medium"
+              disabled={isLoading}
             >
-              Log in
+              {isLoading ? "Logging in..." : "Log in"}
             </Button>
 
             {/* Divider */}

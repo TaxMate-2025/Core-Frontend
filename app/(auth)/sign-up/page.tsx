@@ -1,25 +1,19 @@
 "use client"
 
-import { useState } from "react"
 import Link from "next/link"
 import { Logo } from "@/components/Logo"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { PasswordInput } from "@/components/ui/password-input"
 import { SocialLoginButton } from "@/components/ui/social-login-button"
+import { useSignUp } from "@/hooks/use-sign-up"
 
 export default function SignUpPage() {
-  const [firstName, setFirstName] = useState("")
-  const [lastName, setLastName] = useState("")
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [agreedToTerms, setAgreedToTerms] = useState(false)
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    // Handle sign up logic here
-    console.log({ firstName, lastName, email, password, agreedToTerms })
-  }
+  const { form, isLoading, onSubmit } = useSignUp()
+  const {
+    register,
+    formState: { errors },
+  } = form
 
   return (
     <div className="min-h-screen flex">
@@ -42,7 +36,7 @@ export default function SignUpPage() {
           </div>
 
           {/* Sign Up Form */}
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={onSubmit} className="space-y-5">
             {/* First Name */}
             <div className="space-y-2">
               <label
@@ -55,11 +49,15 @@ export default function SignUpPage() {
                 id="firstName"
                 type="text"
                 placeholder="Enter your first name"
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
+                {...register("firstName")}
                 className="h-11"
-                required
+                aria-invalid={errors.firstName ? "true" : "false"}
               />
+              {errors.firstName && (
+                <p className="text-sm text-destructive">
+                  {errors.firstName.message}
+                </p>
+              )}
             </div>
 
             {/* Last Name */}
@@ -74,11 +72,15 @@ export default function SignUpPage() {
                 id="lastName"
                 type="text"
                 placeholder="Enter your last name"
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
+                {...register("lastName")}
                 className="h-11"
-                required
+                aria-invalid={errors.lastName ? "true" : "false"}
               />
+              {errors.lastName && (
+                <p className="text-sm text-destructive">
+                  {errors.lastName.message}
+                </p>
+              )}
             </div>
 
             {/* Email Address */}
@@ -93,11 +95,15 @@ export default function SignUpPage() {
                 id="email"
                 type="email"
                 placeholder="Enter your email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                {...register("email")}
                 className="h-11"
-                required
+                aria-invalid={errors.email ? "true" : "false"}
               />
+              {errors.email && (
+                <p className="text-sm text-destructive">
+                  {errors.email.message}
+                </p>
+              )}
             </div>
 
             {/* Create Password */}
@@ -111,43 +117,52 @@ export default function SignUpPage() {
               <PasswordInput
                 id="password"
                 placeholder="Create strong password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
+                {...register("password")}
+                aria-invalid={errors.password ? "true" : "false"}
               />
+              {errors.password && (
+                <p className="text-sm text-destructive">
+                  {errors.password.message}
+                </p>
+              )}
             </div>
 
             {/* Terms & Privacy Agreement */}
-            <div className="flex items-start gap-2">
-              <input
-                type="checkbox"
-                id="terms"
-                checked={agreedToTerms}
-                onChange={(e) => setAgreedToTerms(e.target.checked)}
-                className="w-4 h-4 mt-0.5 rounded border-input text-primary focus:ring-2 focus:ring-ring/50 cursor-pointer transition-colors checked:bg-[#1E3A8A] checked:border-[#1E3A8A]"
-                required
-              />
-              <label
-                htmlFor="terms"
-                className="text-sm text-muted-foreground cursor-pointer select-none"
-              >
-                I agree to the{" "}
-                <Link
-                  href="/terms"
-                  className="text-[#1E3A8A] hover:underline font-medium"
+            <div className="space-y-2">
+              <div className="flex items-start gap-2">
+                <input
+                  type="checkbox"
+                  id="terms"
+                  {...register("agreedToTerms")}
+                  className="w-4 h-4 mt-0.5 rounded border-input text-primary focus:ring-2 focus:ring-ring/50 cursor-pointer transition-colors checked:bg-[#1E3A8A] checked:border-[#1E3A8A]"
+                />
+                <label
+                  htmlFor="terms"
+                  className="text-sm text-muted-foreground cursor-pointer select-none"
                 >
-                  Terms & Privacy
-                </Link>
-              </label>
+                  I agree to the{" "}
+                  <Link
+                    href="/terms"
+                    className="text-[#1E3A8A] hover:underline font-medium"
+                  >
+                    Terms & Privacy
+                  </Link>
+                </label>
+              </div>
+              {errors.agreedToTerms && (
+                <p className="text-sm text-destructive">
+                  {errors.agreedToTerms.message}
+                </p>
+              )}
             </div>
 
             {/* Sign Up Button */}
             <Button
               type="submit"
-              className="w-full h-11 bg-[#1E3A8A] hover:bg-[#1E3A8A]/90 text-white font-medium"
-              disabled={!agreedToTerms}
+              className="w-full h-11 bg-[#1E3A8A] hover:bg-[#1E3A8A]/90 text-white font-medium cursor-pointer"
+              disabled={isLoading}
             >
-              Sign up
+              {isLoading ? "Creating account..." : "Sign up"}
             </Button>
 
             {/* Divider */}
