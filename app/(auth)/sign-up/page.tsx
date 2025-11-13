@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input"
 import { PasswordInput } from "@/components/ui/password-input"
 import { SocialLoginButton } from "@/components/ui/social-login-button"
 import { useSignUp } from "@/hooks/use-sign-up"
+import { UserType } from "@/types/auth"
 
 export default function SignUpPage() {
   const { form, isLoading, onSubmit } = useSignUp()
@@ -79,6 +80,34 @@ export default function SignUpPage() {
               {errors.lastName && (
                 <p className="text-sm text-destructive">
                   {errors.lastName.message}
+                </p>
+              )}
+            </div>
+
+            {/* User Type */}
+            <div className="space-y-2">
+              <label
+                htmlFor="userType"
+                className="text-sm font-medium text-foreground"
+              >
+                User Type
+              </label>
+              <select
+                id="userType"
+                {...register("userType")}
+                className="flex h-11 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                aria-invalid={errors.userType ? "true" : "false"}
+              >
+                <option value="">Select your user type</option>
+                <option value={UserType.FREELANCER}>Freelancer</option>
+                <option value={UserType.CONTENT_CREATOR}>Content Creator</option>
+                <option value={UserType.SMALL_BUSINESS_OWNER}>Small Business Owner</option>
+                <option value={UserType.STUDENT}>Student</option>
+                <option value={UserType.OTHER}>Other</option>
+              </select>
+              {errors.userType && (
+                <p className="text-sm text-destructive">
+                  {errors.userType.message}
                 </p>
               )}
             </div>
@@ -226,7 +255,7 @@ export default function SignUpPage() {
               Already have an account?{" "}
             </span>
             <Link
-              href="/sign-in"
+              href="/login"
               className="text-sm text-[#1E3A8A] hover:underline font-medium"
             >
               Login

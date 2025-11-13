@@ -1,6 +1,17 @@
 // Authentication related TypeScript types and interfaces
 
 /**
+ * User type enum
+ */
+export enum UserType {
+  FREELANCER = 'FREELANCER',
+  CONTENT_CREATOR = 'CONTENT_CREATOR',
+  SMALL_BUSINESS_OWNER = 'SMALL_BUSINESS_OWNER',
+  STUDENT = 'STUDENT',
+  OTHER = 'OTHER',
+}
+
+/**
  * User object returned from authentication endpoints
  */
 export interface User {
@@ -25,6 +36,7 @@ export interface User {
 export interface SignUpFormData {
   firstName: string;
   lastName: string;
+  userType: UserType | '';
   email: string;
   password: string;
   agreedToTerms: boolean;
@@ -36,6 +48,7 @@ export interface SignUpFormData {
 export interface SignUpRequest {
   firstName: string;
   lastName: string;
+  userType: UserType;
   email: string;
   password: string;
 }
@@ -81,4 +94,22 @@ export interface AuthResponse {
   user: User;
   message: string;
   token?: string;
+}
+
+export interface VerifyEmailRequest {
+  email: string;
+  otp: string;
+}
+
+export interface VerifyEmailResponse {
+  message: string;
+  emailVerified?: boolean;
+}
+
+export interface ResendVerificationRequest {
+  email: string;
+}
+
+export interface ResendVerificationResponse {
+  message: string;
 }

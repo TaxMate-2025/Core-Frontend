@@ -1,16 +1,11 @@
-/**
- * Zod validation schemas for authentication forms
- */
-
+// Zod validation schemas for authentication forms
 import { z } from 'zod';
+import { UserType } from '@/types/auth';
 
 
 const passwordValidation = z
   .string()
   .min(8, 'Password must be at least 8 characters')
-  .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
-  .regex(/[a-z]/, 'Password must contain at least one lowercase letter')
-  .regex(/[0-9]/, 'Password must contain at least one number');
 
 // Sign-up form validation schema
 export const signUpSchema = z.object({
@@ -26,6 +21,10 @@ export const signUpSchema = z.object({
     .min(2, 'Last name must be at least 2 characters')
     .max(50, 'Last name must not exceed 50 characters')
     .trim(),
+  userType: z
+    .nativeEnum(UserType, {
+      message: 'Please select your user type',
+    }),
   email: z
     .string()
     .min(1, 'Email is required')
@@ -54,8 +53,13 @@ export const loginSchema = z.object({
   rememberMe: z.boolean().optional(),
 });
 
-/**
- * Type inference from schemas
- */
+export const verifyEmailSchema = z.object({
+  email: z.string().email('Invalid email'),
+  otp: z.string().length(6, 'OTP must be 6 digits').regex(/^\d+$/, 'OTP must contain only numbers'),
+});
+
+
+// Type inference from schemas
 export type SignUpSchemaType = z.infer<typeof signUpSchema>;
 export type LoginSchemaType = z.infer<typeof loginSchema>;
+export type VerifyEmailFormInputs = z.infer<typeof verifyEmailSchema>;

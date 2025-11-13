@@ -23,6 +23,7 @@ export function useSignUp() {
     defaultValues: {
       firstName: '',
       lastName: '',
+      userType: '' as any,
       email: '',
       password: '',
       agreedToTerms: false,
@@ -41,6 +42,7 @@ export function useSignUp() {
       const signUpData: SignUpRequest = {
         firstName: data.firstName,
         lastName: data.lastName,
+        userType: data.userType,
         email: data.email,
         password: data.password,
       };
@@ -66,10 +68,11 @@ export function useSignUp() {
 
       // Redirect to email verification page if email is not verified
       if (response.user && !response.user.emailVerified) {
-        router.push('/verify-email');
+        // Pass email as query parameter to pre-fill the verification form
+        router.push(`/sign-up/verify-email?email=${encodeURIComponent(data.email)}`);
       } else {
         // Otherwise redirect to home
-        router.push('/home');
+        router.push('/login');
       }
     } catch (error) {
       // Handle API errors
