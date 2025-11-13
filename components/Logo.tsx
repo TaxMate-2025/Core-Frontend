@@ -1,15 +1,13 @@
-import { Receipt } from "lucide-react"
+import Link from "next/link";
+import Image from "next/image";
+import LOGO from "../public/main_logo.svg";
 
 export function Logo() {
   return (
     <div className="flex items-center gap-2">
-      <div className="bg-[#1E3A8A] p-1.5 rounded">
-        <Receipt className="w-5 h-5 text-white" />
-      </div>
-      <span className="text-xl font-semibold">
-        <span className="text-[#1E3A8A]">Tax</span>
-        <span className="text-[#10B981]">Mate</span>
-      </span>
+      <Link href={""} className="cursor-pointer hover:opacity-80 shrink-0">
+        <Image src={LOGO} alt="TaxMate_Logo" width={140} height={140} />
+      </Link>
     </div>
-  )
+  );
 }
