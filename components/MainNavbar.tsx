@@ -6,6 +6,7 @@ import Image from "next/image";
 import { Menu, X, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import LOGO from "../public/main_logo.svg";
+import { Logo } from "./Logo";
 
 interface NavLinkProps {
   href: string;
@@ -73,9 +74,7 @@ export function MainNavbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <Link href={""} className="cursor-pointer hover:opacity-80 shrink-0">
-            <Image src={LOGO} alt="TaxMate_Logo" width={140} height={140} />
-          </Link>
+          <Logo />
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
