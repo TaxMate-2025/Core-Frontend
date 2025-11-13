@@ -230,17 +230,17 @@ export function SimpleTaxCalculator() {
       {/* Form Card */}
       <Card className="p-8 space-y-6">
         {/* Income Frequency */}
-        <div className="flex items-center space-x-2 mb-6">
-          <span className="text-sm font-medium text-foreground">
-            Frequency:
+        <div className="flex items-center justify-between space-x-2 mb-6">
+          <span className="text-xl md:text-2xl lg:text-[28px] font-semibold leading-tight tracking-normal text-[#1E3A8A]">
+            Income Frequency:
           </span>
-          <div className="flex bg-gray-100 rounded-lg p-1">
+          <div className="flex bg-gray-100 rounded-lg p-1 gap-2">
             <button
               type="button"
               className={`px-4 py-2 text-sm font-medium rounded-md transition-colors cursor-pointer ${
                 state.frequency === "monthly"
-                  ? "bg-[#1E3A8A] text-white shadow-sm"
-                  : "text-gray-600"
+                  ? "bg-[#ffffff] shadow-md"
+                  : "text-gray-600 hover:bg-gray-200"
               }`}
               onClick={() =>
                 setState((prev) => ({ ...prev, frequency: "monthly" }))
@@ -252,8 +252,8 @@ export function SimpleTaxCalculator() {
               type="button"
               className={`px-4 py-2 text-sm font-medium rounded-md transition-colors cursor-pointer ${
                 state.frequency === "annual"
-                  ? "bg-[#1E3A8A] text-white shadow-sm"
-                  : "text-gray-600"
+                  ? "bg-[#ffffff] shadow-md"
+                  : "text-gray-600 hover:bg-gray-200"
               }`}
               onClick={() =>
                 setState((prev) => ({ ...prev, frequency: "annual" }))
