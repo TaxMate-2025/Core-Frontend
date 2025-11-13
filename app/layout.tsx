@@ -15,25 +15,25 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: 'TaskMate - Smart Tax Solutions',
-    template: '%s | TaskMate'
+    default: 'TaxMate - Smart Tax Solutions',
+    template: '%s | TaxMate'
   },
-  description: 'Simplify your tax calculations and financial planning with TaskMate. Know your taxes, secure your finances, and make informed financial decisions.',
+  description: 'Simplify your tax calculations and financial planning with TaxMate. Know your taxes, secure your finances, and make informed financial decisions.',
   keywords: ['tax calculator', 'financial planning', 'tax management', 'personal finance', 'tax returns', 'tax savings'],
-  authors: [{ name: 'TaskMate Team' }],
-  creator: 'TaskMate',
-  publisher: 'TaskMate',
+  authors: [{ name: 'TaxMate Team' }],
+  creator: 'TaxMate',
+  publisher: 'TaxMate',
   formatDetection: {
     email: false,
     address: false,
     telephone: false,
   },
-  metadataBase: new URL('https://taskmate.com.ng'),
+  metadataBase: new URL('https://Taxmate.com.ng'),
   openGraph: {
-    title: 'TaskMate - Smart Tax Solutions',
+    title: 'TaxMate - Smart Tax Solutions',
     description: 'Know your taxes, secure your finances with our intelligent tax calculation tools.',
-    url: 'https://taskmate.com.ng',
-    siteName: 'TaskMate',
+    url: 'https://taxmate.com.ng',
+    siteName: 'TaxMate',
     locale: 'en_US',
     type: 'website',
     images: [
@@ -41,16 +41,16 @@ export const metadata: Metadata = {
         url: '/og-image.jpg', // Add a proper OG image to your public folder
         width: 1200,
         height: 630,
-        alt: 'TaskMate - Smart Tax Solutions',
+        alt: 'TaxMate - Smart Tax Solutions',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'TaskMate - Smart Tax Solutions',
+    title: 'TaxMate - Smart Tax Solutions',
     description: 'Know your taxes, secure your finances with our intelligent tax calculation tools.',
     images: ['/twitter-image.jpg'],
-    creator: '@TaskmateNG',
+    creator: '@TaxmateNG',
   },
   icons: {
     icon: '/main_logo.svg',
