@@ -3,7 +3,6 @@
 import Link from "next/link"
 import { Logo } from "@/components/Logo"
 import { Button } from "@/components/ui/button"
-import { OTPInput } from "@/components/ui/otp-input"
 import { SocialLoginButton } from "@/components/ui/social-login-button"
 
 export default function ConfirmationPage() {
@@ -31,7 +30,6 @@ export default function ConfirmationPage() {
                     <form className="space-y-6">
                         {/* OTP Input */}
                         <div className="flex flex-col items-center space-y-4">
-                            <OTPInput length={4} />
 
                             {/* Resend Link */}
                             <div className="text-sm">
