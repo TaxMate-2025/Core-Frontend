@@ -237,10 +237,10 @@ export function SimpleTaxCalculator() {
           <div className="flex bg-gray-100 rounded-lg p-1">
             <button
               type="button"
-              className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+              className={`px-4 py-2 text-sm font-medium rounded-md transition-colors cursor-pointer ${
                 state.frequency === "monthly"
                   ? "bg-[#1E3A8A] text-white shadow-sm"
-                  : "text-gray-600 hover:bg-gray-200"
+                  : "text-gray-600"
               }`}
               onClick={() =>
                 setState((prev) => ({ ...prev, frequency: "monthly" }))
@@ -250,10 +250,10 @@ export function SimpleTaxCalculator() {
             </button>
             <button
               type="button"
-              className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+              className={`px-4 py-2 text-sm font-medium rounded-md transition-colors cursor-pointer ${
                 state.frequency === "annual"
                   ? "bg-[#1E3A8A] text-white shadow-sm"
-                  : "text-gray-600 hover:bg-gray-200"
+                  : "text-gray-600"
               }`}
               onClick={() =>
                 setState((prev) => ({ ...prev, frequency: "annual" }))
