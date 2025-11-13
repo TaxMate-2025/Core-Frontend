@@ -9,10 +9,8 @@ import { Button } from "@/components/ui/button";
 import { ArrowUpRight } from "lucide-react";
 import { Montserrat } from "next/font/google";
 import Image from "next/image";
-import UNION from '../public/Union.png';
+import layout_grid from '../public/layout_grid.svg'
 import { AnimatedSection } from "@/components/ui/animated-section";
-
-
 
 const montserrat = Montserrat({
   weight: "400",
@@ -39,10 +37,10 @@ export default function Home() {
         <AnimatedSection type="fade" direction="up" delay={0.2} className="relative px-4 sm:px-6 lg:px-8 py-16 sm:py-20 md:py-28 hero_gradient">
           <div className="absolute inset-0">
             <Image
-              src={UNION}
-              alt="background pattern"
+              src={layout_grid}
+              alt="background_layout_grid"
               fill
-              className="object-cover opacity-20"
+              className="object-cover opacity-30"
               priority
             />
           </div>
@@ -63,7 +61,7 @@ export default function Home() {
 
             {/* CTA Buttons */}
             <AnimatedSection type="fade" direction="up" delay={0.2} className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
-              <Button 
+              <Button
                 onClick={openWaitlist}
                 className="bg-[#1e3a8a] hover:bg-[#162e5c] text-white px-6 sm:px-8 py-4 sm:py-5 text-sm sm:text-base flex items-center gap-2 cursor-pointer"
               >
@@ -83,7 +81,7 @@ export default function Home() {
         </AnimatedSection>
 
         {/* How it works */}
-        <AnimatedSection 
+        <AnimatedSection
           type="fade"
           direction="up"
           delay={0.2}

@@ -8,10 +8,6 @@ import { Input } from '@/components/ui/input';
 import { useEmailVerification } from '@/hooks/useEmailVerification';
 import { Logo } from '@/components/Logo';
 
-/**
- * Verify Email Page Content
- * Separated to use useSearchParams in client component
- */
 function VerifyEmailContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -55,12 +51,12 @@ function VerifyEmailContent() {
             <div className="flex-1 flex items-center justify-center p-8 bg-white">
                 <div className="w-full max-w-[400px] space-y-8">
                     {/* Logo */}
-                    <div className="flex justify-start">
+                    <div className="flex justify-start mb-10">
                         <Logo />
                     </div>
 
                     {/* Header */}
-                    <div className="space-y-2">
+                    <div className="space-y-2 text-center">
                         <h1 className="text-[32px] font-bold text-foreground leading-tight">
                             Verify Your Email
                         </h1>
@@ -119,7 +115,7 @@ function VerifyEmailContent() {
                         <Button
                             type="submit"
                             disabled={isLoading || (otpValue?.length || 0) !== 6}
-                            className="w-full h-11 bg-[#1E3A8A] hover:bg-[#1E3A8A]/90 text-white font-medium"
+                            className="w-full h-11 bg-[#1E3A8A] hover:bg-[#1E3A8A]/90 text-white font-medium cursor-pointer"
                         >
                             {isLoading ? (
                                 <>
@@ -137,7 +133,7 @@ function VerifyEmailContent() {
                         <button
                             type="button"
                             onClick={() => setShowEmailInput(true)}
-                            className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                            className="text-sm md:text-base cursor-pointer text-muted-foreground hover:text-foreground transition-colors"
                         >
                             Didn't receive the code?
                         </button>
@@ -172,7 +168,7 @@ function VerifyEmailContent() {
                             onClick={onResendOtp}
                             disabled={!canResend || isResending || isLoading || (showEmailInput && !form.watch('email'))}
                             variant="outline"
-                            className="w-full h-11"
+                            className="w-full h-11 cursor-pointer"
                         >
                             {isResending ? (
                                 <>
@@ -210,7 +206,6 @@ function VerifyEmailContent() {
                     <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-[#3B5BA5] opacity-40 rounded-tr-[100px]"></div>
                 </div>
 
-                {/* Content */}
                 <div className="relative z-10 max-w-md text-center">
                     <h2 className="text-white text-3xl font-bold mb-12 leading-tight px-8">
                         Secure Your Account
@@ -218,12 +213,10 @@ function VerifyEmailContent() {
                         with Email Verification
                     </h2>
 
-                    {/* Illustration - Email icon */}
                     <div className="relative flex justify-center items-center h-[400px]">
                         {/* Purple circle background */}
                         <div className="absolute w-72 h-72 bg-[#B8A3D8] rounded-full opacity-70"></div>
 
-                        {/* Email Icon/Placeholder */}
                         <div className="relative z-10 flex items-center justify-center">
                             <div className="text-white text-6xl">
                                 =�
@@ -236,9 +229,7 @@ function VerifyEmailContent() {
     );
 }
 
-/**
- * Main Page Component with Suspense boundary
- */
+
 export default function VerifyEmailPage() {
     return (
         <Suspense

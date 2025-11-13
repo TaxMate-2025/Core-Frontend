@@ -12,17 +12,16 @@ export default function ForgotPasswordPage() {
       {/* Left side - Forgot Password Form */}
       <div className="flex-1 flex items-center justify-center p-8 bg-white">
         <div className="w-full max-w-[400px] space-y-8">
-          {/* Logo */}
-          <div className="flex justify-start">
+          <div className="flex justify-start mb-10">
             <Logo />
           </div>
 
           {/* Header */}
-          <div className="space-y-2">
+          <div className="space-y-2 text-center">
             <h1 className="text-[32px] font-bold text-foreground leading-tight">
               Forgot Password?
             </h1>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm md:text-base text-muted-foreground">
               Input your email address to receive a one-time code
               <br />
               to reset your password
@@ -35,7 +34,7 @@ export default function ForgotPasswordPage() {
             <div className="space-y-2">
               <label
                 htmlFor="email"
-                className="text-sm font-medium text-foreground"
+                className="text-sm md:text-base font-medium text-foreground"
               >
                 Email
               </label>
@@ -50,7 +49,7 @@ export default function ForgotPasswordPage() {
             {/* Continue Button */}
             <Button
               type="submit"
-              className="w-full h-11 bg-[#1E3A8A] hover:bg-[#1E3A8A]/90 text-white font-medium"
+              className="w-full h-11 bg-[#1E3A8A] hover:bg-[#1E3A8A]/90 text-white font-medium cursor-pointer"
             >
               Continue
             </Button>
@@ -112,12 +111,12 @@ export default function ForgotPasswordPage() {
 
           {/* Sign Up Link */}
           <div className="text-center">
-            <span className="text-sm text-muted-foreground">
+            <span className="text-sm md:text-base text-muted-foreground">
               Don't have an account?{" "}
             </span>
             <Link
               href="/sign-up"
-              className="text-sm text-[#1E3A8A] hover:underline font-medium"
+              className="text-sm md:text-base text-[#1E3A8A] hover:underline font-medium"
             >
               Sign up
             </Link>
@@ -151,7 +150,7 @@ export default function ForgotPasswordPage() {
             {/* Placeholder for illustration */}
             <div className="absolute inset-0 flex items-end justify-center">
               {/* You can replace this with an actual illustration image */}
-              <div className="text-white text-sm opacity-75">
+              <div className="text-white text-sm md:text-base opacity-75">
                 [Person Illustration]
               </div>
             </div>
