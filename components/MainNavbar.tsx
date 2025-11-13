@@ -1,76 +1,87 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import Link from "next/link"
-import { Menu, X, User } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Logo } from "@/components/Logo"
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { Menu, X, User } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import LOGO from "../public/main_logo.svg";
 
 interface NavLinkProps {
-  href: string
-  children: React.ReactNode
-  isActive?: boolean
-  onClick?: () => void
+  href: string;
+  children: React.ReactNode;
+  isActive?: boolean;
+  onClick?: () => void;
 }
 
-const NavLink = ({ href, children, isActive, onClick, className = '' }: NavLinkProps & { className?: string }) => (
+const NavLink = ({
+  href,
+  children,
+  isActive,
+  onClick,
+  className = "",
+}: NavLinkProps & { className?: string }) => (
   <Link
     href={href}
     onClick={onClick}
-    className={`${isActive ? 'text-[#1E3A8A]' : 'text-foreground'} font-medium text-sm md:text-base hover:text-[#1E3A8A]/80 transition-colors ${className}`}
+    className={`${
+      isActive ? "text-[#1E3A8A]" : "text-foreground"
+    } font-medium text-sm md:text-base hover:text-[#1E3A8A]/80 transition-colors ${className}`}
   >
     {children}
   </Link>
-)
+);
 
 export function MainNavbar() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [isScrolled, setIsScrolled] = useState(false)
-  const [activePath, setActivePath] = useState('')
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [activePath, setActivePath] = useState("");
 
   // Set initial active path on component mount
   useEffect(() => {
     // Using setTimeout to defer state update to avoid layout thrashing
     const timer = setTimeout(() => {
-      setActivePath(window.location.pathname)
-    }, 0)
-    
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10)
-    }
-    
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => {
-      clearTimeout(timer)
-      window.removeEventListener('scroll', handleScroll)
-    }
-  }, [])
+      setActivePath(window.location.pathname);
+    }, 0);
 
-  const toggleMenu = () => setIsMenuOpen(!isMenuOpen)
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
+  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
   const navItems = [
     { href: "/home", label: "Dashboard" },
     { href: "/calculator", label: "Calculator" },
     { href: "/payment", label: "Payment" },
     { href: "/feedback", label: "Feedback" },
-  ]
+  ];
 
   return (
-    <header className={`sticky top-0 z-50 transition-all duration-300 ${
-      isScrolled ? 'bg-white/95 shadow-sm' : 'bg-white'
-    }`}>
+    <header
+      className={`sticky top-0 z-50 transition-all duration-300 ${
+        isScrolled ? "bg-white/95 shadow-sm" : "bg-white"
+      }`}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <div className="shrink-0">
-            <Logo />
-          </div>
+          <Link href={""} className="cursor-pointer hover:opacity-80 shrink-0">
+            <Image src={LOGO} alt="TaxMate_Logo" width={140} height={140} />
+          </Link>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
             {navItems.map((item) => (
-              <NavLink 
-                key={item.href} 
+              <NavLink
+                key={item.href}
                 href={item.href}
                 isActive={activePath === item.href}
               >
@@ -139,5 +150,5 @@ export function MainNavbar() {
         </div>
       )}
     </header>
-  )
+  );
 }

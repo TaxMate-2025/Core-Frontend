@@ -133,7 +133,7 @@ export function SimpleTaxCalculator() {
     <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       {/* Header */}
       <div className="text-center space-y-2">
-        <h1 className="text-4xl font-bold text-foreground">Simple Tax Calculator</h1>
+        <h1 className="font-semibold text-[48px] leading-none text-center tracking-normal text-[#1E3A8A]">Simple Tax Calculator</h1>
         <p className="text-muted-foreground max-w-2xl mx-auto">
           Estimate your PAYE tax quickly. Enter your income and a few common deductions — results will appear after you
           click Calculate.
