@@ -4,19 +4,25 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
+import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
+import { useTaxCalculation } from "@/hooks/useTaxCalculation";
 import {
   PieChart,
   Pie,
   Cell,
   ResponsiveContainer,
-  Legend,
   Tooltip,
+  Legend,
 } from "recharts";
-import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
 
 const CHART_COLORS = ["#1E3A8A", "#3B82F6", "#60A5FA"];
 
+interface ChartData extends Record<string, any> {
+  name: string;
+  value: number;
+  fill: string;
+}
 type Frequency = "monthly" | "annual";
 
 interface CalculatorState {
@@ -29,15 +35,8 @@ interface CalculatorState {
   dependents: number | null;
 }
 
-interface Results {
-  grossAnnualIncome: number;
-  taxableIncome: number;
-  totalDeductions: number;
-  estimatedPAYE: number;
-}
-
 export function SimpleTaxCalculator() {
-  const [isLoading, setIsLoading] = useState(false);
+  const { calculateTax, result, isLoading, reset } = useTaxCalculation();
   const [state, setState] = useState<CalculatorState>({
     monthlyIncome: null,
     frequency: "monthly",
@@ -48,15 +47,11 @@ export function SimpleTaxCalculator() {
     dependents: null,
   });
 
-  const [results, setResults] = useState<Results | null>(null);
-
-  // Format number with commas for display
   const formatNumber = (num: number | null): string => {
     if (num === null || isNaN(num)) return "";
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   };
 
-  // Parse formatted number string back to number
   const parseNumber = (str: string): number | null => {
     if (!str) return null;
     const num = Number(str.replace(/[^0-9.]/g, ""));
@@ -72,7 +67,6 @@ export function SimpleTaxCalculator() {
       return;
     }
 
-    // For income and rent, we'll handle the formatted display
     if (
       field === "monthlyIncome" ||
       field === "rentPaid" ||
@@ -91,77 +85,32 @@ export function SimpleTaxCalculator() {
       const numValue = value === "" ? 0 : Number(value);
       setState((prev) => ({
         ...prev,
-        [field]: numValue as number,
+        [field]: numValue,
       }));
     }
   };
 
-  const calculateTax = async () => {
+  const handleCalculateTax = async () => {
     if (!state.monthlyIncome || state.monthlyIncome <= 0) {
-      toast.error("Invalid Input", {
-        description: "Please enter a valid income amount",
-      });
+      toast.error("Please enter a valid income amount");
       return;
     }
 
-    setIsLoading(true);
-
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 800));
-
-      // Calculate gross annual income
-      const grossAnnual =
+      const annualIncome =
         state.frequency === "monthly"
-          ? state.monthlyIncome! * 12
-          : state.monthlyIncome!;
+          ? state.monthlyIncome * 12
+          : state.monthlyIncome;
 
-      if (!grossAnnual) {
-        throw new Error("Invalid income calculation");
-      }
-
-      // Calculate deductions
-      const pensionDed = (state.pensionContribution / 100) * grossAnnual;
-      const nhfDed = (state.nhfContribution / 100) * grossAnnual;
-      const nhisDed = state.nhisContribution;
-      const totalDeductions = pensionDed + nhfDed + nhisDed;
-
-      // Calculate taxable income
-      const rentDeduction = state.rentPaid || 0;
-      const taxableIncome = Math.max(
-        0,
-        grossAnnual - rentDeduction - totalDeductions
-      );
-
-      // Calculate PAYE
-      let estimatedPAYE = 0;
-      if (taxableIncome <= 300000) {
-        estimatedPAYE = taxableIncome * 0.01;
-      } else if (taxableIncome <= 600000) {
-        estimatedPAYE = 3000 + (taxableIncome - 300000) * 0.05;
-      } else if (taxableIncome <= 1100000) {
-        estimatedPAYE = 18000 + (taxableIncome - 600000) * 0.1;
-      } else {
-        estimatedPAYE = 68000 + (taxableIncome - 1100000) * 0.2;
-      }
-
-      setResults({
-        grossAnnualIncome: grossAnnual,
-        taxableIncome,
-        totalDeductions,
-        estimatedPAYE,
+      await calculateTax({
+        income: annualIncome,
+        rent: state.rentPaid || undefined,
+        lifeInsurance: state.nhisContribution || undefined,
       });
 
-      toast.success("Calculation Complete", {
-        description: "Your tax estimate has been calculated",
-      });
-    } catch (error) {
-      console.error("Tax calculation error:", error);
-      toast.error("Error", {
-        description: "Failed to calculate tax. Please try again.",
-      });
-    } finally {
-      setIsLoading(false);
+      toast.success("Your tax estimate has been calculated");
+    } catch (err) {
+      // Error is handled in the hook
     }
   };
 
@@ -175,28 +124,8 @@ export function SimpleTaxCalculator() {
       nhisContribution: 0,
       dependents: null,
     });
-    setResults(null);
+    reset();
   };
-
-  const chartData = results
-    ? [
-        {
-          name: "Annual Income",
-          value: results.grossAnnualIncome,
-          fill: CHART_COLORS[0],
-        },
-        {
-          name: "Total Deductions",
-          value: results.totalDeductions,
-          fill: CHART_COLORS[1],
-        },
-        {
-          name: "Annual Taxes",
-          value: results.estimatedPAYE,
-          fill: CHART_COLORS[2],
-        },
-      ]
-    : [];
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat("en-NG", {
@@ -207,10 +136,28 @@ export function SimpleTaxCalculator() {
     }).format(value);
   };
 
-  // Add responsive padding and max-width
+  const chartData: ChartData[] = result
+    ? [
+        {
+          name: "Gross Income",
+          value: result.grossIncome,
+          fill: CHART_COLORS[0],
+        },
+        {
+          name: "Tax Amount",
+          value: result.taxWithRelief,
+          fill: CHART_COLORS[1],
+        },
+        {
+          name: "Deductions",
+          value: result.deductions,
+          fill: CHART_COLORS[2],
+        },
+      ]
+    : [];
+
   return (
     <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-      {/* Header */}
       <div className="text-center space-y-2">
         <h1 className="text-3xl md:text-4xl lg:text-5xl xl:text-[48px] font-semibold leading-tight text-center tracking-normal text-[#1E3A8A]">
           Simple Tax Calculator
@@ -221,9 +168,7 @@ export function SimpleTaxCalculator() {
         </p>
       </div>
 
-      {/* Form Card */}
       <Card className="p-8 space-y-6">
-        {/* Income Frequency */}
         <div className="flex items-center justify-between space-x-2 mb-6">
           <span className="text-xl md:text-2xl lg:text-[28px] font-semibold leading-tight tracking-normal text-[#1E3A8A]">
             Income Frequency:
@@ -233,7 +178,7 @@ export function SimpleTaxCalculator() {
               type="button"
               className={`px-4 py-2 text-sm font-medium rounded-md transition-colors cursor-pointer ${
                 state.frequency === "monthly"
-                  ? "bg-[#ffffff] shadow-md"
+                  ? "bg-white shadow-md"
                   : "text-gray-600 hover:bg-gray-200"
               }`}
               onClick={() =>
@@ -246,7 +191,7 @@ export function SimpleTaxCalculator() {
               type="button"
               className={`px-4 py-2 text-sm font-medium rounded-md transition-colors cursor-pointer ${
                 state.frequency === "annual"
-                  ? "bg-[#ffffff] shadow-md"
+                  ? "bg-white shadow-md"
                   : "text-gray-600 hover:bg-gray-200"
               }`}
               onClick={() =>
@@ -258,7 +203,6 @@ export function SimpleTaxCalculator() {
           </div>
         </div>
 
-        {/* Income Input */}
         <div className="space-y-2">
           <label className="text-sm font-medium text-foreground">
             {state.frequency === "monthly"
@@ -275,25 +219,7 @@ export function SimpleTaxCalculator() {
           />
         </div>
 
-        {/* Two Column Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-foreground">
-              Pension Contribution (%){" "}
-              <span className="text-muted-foreground">(Optional)</span>
-            </label>
-            <Input
-              type="text"
-              inputMode="decimal"
-              placeholder="0"
-              value={state.pensionContribution || ""}
-              onChange={(e) =>
-                handleInputChange("pensionContribution", e.target.value)
-              }
-              className="text-base [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-            />
-          </div>
-
           <div className="space-y-2">
             <label className="text-sm font-medium text-foreground">
               Rent Paid (₦){" "}
@@ -310,23 +236,6 @@ export function SimpleTaxCalculator() {
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-foreground">
-              NHF Contribution (%){" "}
-              <span className="text-muted-foreground">(Optional)</span>
-            </label>
-            <Input
-              type="text"
-              inputMode="decimal"
-              placeholder="0"
-              value={state.nhfContribution || ""}
-              onChange={(e) =>
-                handleInputChange("nhfContribution", e.target.value)
-              }
-              className="text-base [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-            />
-          </div>
-
-          {/* <div className="space-y-2">
             <label className="text-sm font-medium text-foreground">
               NHIS Contribution (₦){" "}
               <span className="text-muted-foreground">(Optional)</span>
@@ -345,27 +254,12 @@ export function SimpleTaxCalculator() {
               }
               className="text-base [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
             />
-          </div> */}
-
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-foreground">
-              Dependents{" "}
-              <span className="text-muted-foreground">(Optional)</span>
-            </label>
-            <Input
-              type="number"
-              placeholder="0"
-              value={state.dependents || ""}
-              onChange={(e) => handleInputChange("dependents", e.target.value)}
-              className="text-base"
-            />
           </div>
         </div>
 
-        {/* Buttons */}
         <div className="flex flex-col sm:flex-row gap-3 pt-4">
           <Button
-            onClick={calculateTax}
+            onClick={handleCalculateTax}
             className="bg-[#1E3A8A] hover:bg-[#1E3A8A]/90 transition-colors"
             disabled={isLoading}
           >
@@ -389,8 +283,7 @@ export function SimpleTaxCalculator() {
         </div>
       </Card>
 
-      {/* Results Section */}
-      {results && (
+      {result && (
         <div className="space-y-6 animate-fade-in">
           <div className="text-center space-y-2">
             <h2 className="text-2xl font-bold text-foreground">
@@ -402,109 +295,83 @@ export function SimpleTaxCalculator() {
             </p>
           </div>
 
-          {/* Results Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Card className="p-6 space-y-2 border border-gray-200 hover:border-[#1E3A8A]/50 transition-colors">
-              <p className="text-sm text-muted-foreground">
-                Gross Annual Income
-              </p>
+              <p className="text-sm text-muted-foreground">Gross Income</p>
               <p className="text-2xl font-bold text-[#1E3A8A]">
-                {formatCurrency(results.grossAnnualIncome)}
-              </p>
-              <p className="text-xs text-muted-foreground">
-                {state.frequency === "monthly"
-                  ? `${formatCurrency(state.monthlyIncome || 0)} per month`
-                  : `${formatCurrency(
-                      results.grossAnnualIncome / 12
-                    )} per month`}
+                {formatCurrency(result.grossIncome)}
               </p>
             </Card>
 
             <Card className="p-6 space-y-2 border border-gray-200 hover:border-[#1E3A8A]/50 transition-colors">
-              <p className="text-sm text-muted-foreground">Taxable Income</p>
+              <p className="text-sm text-muted-foreground">Estimated Tax</p>
               <p className="text-2xl font-bold text-[#1E3A8A]">
-                {formatCurrency(results.taxableIncome)}
+                {formatCurrency(result.taxWithRelief)}
               </p>
-              <p className="text-xs text-muted-foreground">
-                After deductions and allowances
-              </p>
+              {result.taxWithRelief < result.tax && (
+                <p className="text-xs text-muted-foreground line-through">
+                  {formatCurrency(result.tax)}
+                </p>
+              )}
             </Card>
 
             <Card className="p-6 space-y-2 border border-gray-200 hover:border-[#1E3A8A]/50 transition-colors">
               <p className="text-sm text-muted-foreground">Total Deductions</p>
               <p className="text-2xl font-bold text-[#1E3A8A]">
-                {formatCurrency(results.totalDeductions)}
-              </p>
-              <p className="text-xs text-muted-foreground">
-                Includes pension, NHF, and other allowances
-              </p>
-            </Card>
-
-            <Card className="p-6 space-y-2 border border-gray-200 hover:border-[#1E3A8A]/50 transition-colors">
-              <p className="text-sm text-muted-foreground">
-                Estimated PAYE (Annual)
-              </p>
-              <p className="text-2xl font-bold text-[#1E3A8A]">
-                {formatCurrency(results.estimatedPAYE)}
-              </p>
-              <p className="text-xs text-muted-foreground">
-                ~{formatCurrency(Math.round(results.estimatedPAYE / 12))} per
-                month
+                {formatCurrency(result.deductions)}
               </p>
             </Card>
           </div>
 
-          {/* Breakdown Chart */}
-          <Card className="p-8 space-y-6">
-            <div className="space-y-2">
-              <h3 className="text-lg font-semibold text-foreground">
-                Breakdown
-              </h3>
+          {/* Tax Charts*/}
+          <Card className="p-6">
+            <h3 className="text-lg font-semibold mb-4">Tax Breakdown</h3>
+            <div className="h-[300px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={chartData}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={60}
+                    outerRadius={100}
+                    paddingAngle={2}
+                    dataKey="value"
+                    label={({ name = "", percent = 0 }) =>
+                      `${name}: ${(percent * 100).toFixed(0)}%`
+                    }
+                  >
+                    {chartData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.fill} />
+                    ))}
+                  </Pie>
+                  <Tooltip
+                    formatter={(value) => formatCurrency(Number(value))}
+                    contentStyle={{
+                      backgroundColor: "hsl(var(--background))",
+                      border: "1px solid hsl(var(--border))",
+                      borderRadius: "8px",
+                    }}
+                  />
+                  <Legend />
+                </PieChart>
+              </ResponsiveContainer>
             </div>
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie
-                  data={chartData}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={80}
-                  outerRadius={120}
-                  paddingAngle={2}
-                  dataKey="value"
-                >
-                  {chartData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.fill} />
-                  ))}
-                </Pie>
-                <Tooltip
-                  formatter={(value) => formatCurrency(value as number)}
-                  contentStyle={{
-                    backgroundColor: "hsl(var(--background))",
-                    border: "1px solid hsl(var(--border))",
-                    borderRadius: "8px",
-                  }}
-                />
-                <Legend />
-              </PieChart>
-            </ResponsiveContainer>
           </Card>
 
-          {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row gap-3 justify-center pt-6">
-            <Button
-              variant="outline"
-              className="text-[#1E3A8A] border-[#1E3A8A] hover:bg-[#1E3A8A]/10"
-              disabled={isLoading}
-            >
-              Download PDF
-            </Button>
-            <Button
-              className="bg-[#1E3A8A] hover:bg-[#1E3A8A]/90 transition-colors"
-              disabled={isLoading}
-            >
-              Save Calculation
-            </Button>
-          </div>
+          {result.tips && result.tips.length > 0 && (
+            <Card className="p-6">
+              <h3 className="text-lg font-semibold mb-4 text-[#1E3A8A]">💡 Helpful Tax Tips</h3>
+              <ul className="space-y-2">
+                {result.tips.map((tip, index) => (
+                  <li key={index} className="flex items-start">
+                    <span className="text-[#1E3A8A] mr-2">•</span>
+                    <span className="text-sm text-muted-foreground">{tip}</span>
+                  </li>
+                ))}
+              </ul>
+            </Card>
+          )}
         </div>
       )}
     </div>
