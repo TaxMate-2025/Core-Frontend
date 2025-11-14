@@ -12,15 +12,12 @@ import { useToast } from '@/hooks/use-toast';
 import type { LoginRequest } from '@/types/auth';
 import { ApiError } from '@/lib/apiClient';
 
-/**
- * Hook for managing login form state and submission
- */
+
 export function useLogin() {
   const router = useRouter();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
 
-  // Initialize React Hook Form with Zod validation
   const form = useForm<LoginSchemaType>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -28,39 +25,31 @@ export function useLogin() {
       password: '',
       rememberMe: false,
     },
-    mode: 'onBlur', // Validate on blur for better UX
+    mode: 'onBlur',
   });
 
-  /**
-   * Handle form submission
-   */
+
   const onSubmit = async (data: LoginSchemaType) => {
     setIsLoading(true);
 
     try {
-      // Prepare API request (exclude rememberMe as it's UI-only)
       const loginData: LoginRequest = {
         email: data.email,
         password: data.password,
       };
 
-      // Call login API
       const response = await authService.login(loginData);
 
-      // Determine storage type based on "Remember Me" option
       const storage = data.rememberMe ? localStorage : sessionStorage;
 
-      // Store token if provided in response or headers
       if (response.token) {
         storage.setItem('authToken', response.token);
       }
 
-      // Store user data
       if (response.user) {
         storage.setItem('user', JSON.stringify(response.user));
       }
 
-      // Show success message
       toast({
         title: 'Login successful!',
         description: `Welcome back, ${response.user.firstName}!`,
