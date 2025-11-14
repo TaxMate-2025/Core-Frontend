@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { ApiError } from '@/lib/apiClient';
 import { waitlistService } from '@/services/waitlistService';
 import { WaitlistFormData } from '@/types/waitlist';
@@ -13,7 +13,6 @@ export function useWaitlistForm() {
     email: '',
   });
   const [loading, setLoading] = useState(false);
-  const { toast } = useToast();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -30,10 +29,8 @@ export function useWaitlistForm() {
     // Validate form
     const validationError = validateWaitlistForm(formData);
     if (validationError) {
-      toast({
-        title: 'Error',
+      toast.error('Error', {
         description: validationError.message,
-        variant: 'destructive',
       });
       return;
     }
@@ -46,8 +43,7 @@ export function useWaitlistForm() {
         source: WAITLIST_SOURCE,
       });
 
-      toast({
-        title: 'Success!',
+      toast.success('Success!', {
         description:
           'You have been added to the waitlist. Check your email for updates.',
       });
@@ -64,10 +60,8 @@ export function useWaitlistForm() {
         errorMessage = error.message;
       }
 
-      toast({
-        title: 'Error',
+      toast.error('Error', {
         description: errorMessage,
-        variant: 'destructive',
       });
     } finally {
       setLoading(false);

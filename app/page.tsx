@@ -66,7 +66,7 @@ export default function Home() {
                 className="bg-[#1e3a8a] hover:bg-[#162e5c] text-white px-6 sm:px-8 py-4 sm:py-5 text-sm sm:text-base flex items-center gap-2 cursor-pointer"
               >
                 <Link href="/login">
-                  Get Started Free
+                  Start Calculating
                 </Link>
                 <ArrowUpRight className="w-4 h-4" />
               </Button>
@@ -167,7 +167,7 @@ export default function Home() {
               className="bg-white hover:bg-gray-100 text-[#1e3a8a] font-semibold px-6 sm:px-8 py-4 sm:py-5 text-sm sm:text-base transition-colors duration-200 cursor-pointer"
             >
               <Link href={'/login'}>
-                Start knowing your taxes today
+                Get Started
               </Link>
             </Button>
           </div>

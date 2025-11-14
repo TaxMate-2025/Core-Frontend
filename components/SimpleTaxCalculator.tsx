@@ -12,7 +12,7 @@ import {
   Legend,
   Tooltip,
 } from "recharts";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 
 const CHART_COLORS = ["#1E3A8A", "#3B82F6", "#60A5FA"];
@@ -37,7 +37,6 @@ interface Results {
 }
 
 export function SimpleTaxCalculator() {
-  const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [state, setState] = useState<CalculatorState>({
     monthlyIncome: null,
@@ -99,10 +98,8 @@ export function SimpleTaxCalculator() {
 
   const calculateTax = async () => {
     if (!state.monthlyIncome || state.monthlyIncome <= 0) {
-      toast({
-        title: "Invalid Input",
+      toast.error("Invalid Input", {
         description: "Please enter a valid income amount",
-        variant: "destructive",
       });
       return;
     }
@@ -155,16 +152,13 @@ export function SimpleTaxCalculator() {
         estimatedPAYE,
       });
 
-      toast({
-        title: "Calculation Complete",
+      toast.success("Calculation Complete", {
         description: "Your tax estimate has been calculated",
       });
     } catch (error) {
       console.error("Tax calculation error:", error);
-      toast({
-        title: "Error",
+      toast.error("Error", {
         description: "Failed to calculate tax. Please try again.",
-        variant: "destructive",
       });
     } finally {
       setIsLoading(false);

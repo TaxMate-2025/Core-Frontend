@@ -1,13 +1,9 @@
-/**
- * Custom hook for handling email verification with OTP
- */
-
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState, useEffect, useCallback } from 'react';
 import { verifyEmailSchema, type VerifyEmailFormInputs } from '@/schemas/auth';
 import { authService } from '@/services/authService';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import type { VerifyEmailRequest } from '@/types/auth';
 import { ApiError } from '@/lib/apiClient';
 
@@ -17,7 +13,6 @@ const RESEND_COOLDOWN = 60; // seconds
  * Hook for managing email verification form state and submission
  */
 export function useEmailVerification(initialEmail: string = '') {
-  const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [isResending, setIsResending] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -100,10 +95,8 @@ export function useEmailVerification(initialEmail: string = '') {
         response.message || 'Email verified successfully! Redirecting...'
       );
 
-      toast({
-        title: 'Email verified!',
+      toast.success('Email verified!', {
         description: 'Your email has been verified successfully.',
-        variant: 'default',
       });
 
       // Update user's emailVerified status in storage
@@ -124,7 +117,7 @@ export function useEmailVerification(initialEmail: string = '') {
 
         // Handle specific error cases
         if (errorMessage.toLowerCase().includes('invalid') ||
-            errorMessage.toLowerCase().includes('incorrect')) {
+          errorMessage.toLowerCase().includes('incorrect')) {
           errorMessage = 'Invalid OTP. Please check the code and try again.';
         } else if (errorMessage.toLowerCase().includes('expired')) {
           errorMessage = 'OTP has expired. Please request a new code.';
@@ -135,10 +128,8 @@ export function useEmailVerification(initialEmail: string = '') {
 
       setError(errorMessage);
 
-      toast({
-        title: 'Verification failed',
+      toast.error('Verification failed', {
         description: errorMessage,
-        variant: 'destructive',
       });
 
       console.error('Email verification error:', error);
@@ -154,10 +145,8 @@ export function useEmailVerification(initialEmail: string = '') {
     const email = form.getValues('email');
 
     if (!email) {
-      toast({
-        title: 'Error',
+      toast.error('Error', {
         description: 'Please enter your email address.',
-        variant: 'destructive',
       });
       return;
     }
@@ -169,10 +158,8 @@ export function useEmailVerification(initialEmail: string = '') {
       // Call resend verification API
       const response = await authService.resendVerification({ email });
 
-      toast({
-        title: 'OTP sent!',
+      toast.success('OTP sent!', {
         description: response.message || 'A new verification code has been sent to your email.',
-        variant: 'default',
       });
 
       // Clear OTP field
@@ -186,10 +173,8 @@ export function useEmailVerification(initialEmail: string = '') {
           ? error.message
           : 'Failed to resend OTP. Please try again.';
 
-      toast({
-        title: 'Resend failed',
+      toast.error('Resend failed', {
         description: errorMessage,
-        variant: 'destructive',
       });
 
       console.error('Resend OTP error:', error);

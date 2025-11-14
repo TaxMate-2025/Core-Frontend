@@ -8,14 +8,13 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { loginSchema, type LoginSchemaType } from '@/schemas/auth';
 import { authService } from '@/services/authService';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import type { LoginRequest } from '@/types/auth';
 import { ApiError } from '@/lib/apiClient';
 
 
 export function useLogin() {
   const router = useRouter();
-  const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<LoginSchemaType>({
@@ -50,10 +49,8 @@ export function useLogin() {
         storage.setItem('user', JSON.stringify(response.user));
       }
 
-      toast({
-        title: 'Login successful!',
+      toast.success('Login successful!', {
         description: `Welcome back, ${response.user.firstName}!`,
-        variant: 'default',
       });
 
       // Check if email is verified
@@ -71,29 +68,21 @@ export function useLogin() {
         const errorMessage = error.message.toLowerCase();
 
         if (errorMessage.includes('invalid') || errorMessage.includes('incorrect')) {
-          toast({
-            title: 'Invalid credentials',
+          toast.error('Invalid credentials', {
             description: 'The email or password you entered is incorrect.',
-            variant: 'destructive',
           });
         } else if (errorMessage.includes('not found') || errorMessage.includes('does not exist')) {
-          toast({
-            title: 'Account not found',
+          toast.error('Account not found', {
             description: 'No account exists with this email address.',
-            variant: 'destructive',
           });
         } else {
-          toast({
-            title: 'Login failed',
+          toast.error('Login failed', {
             description: error.message || 'Failed to log in. Please try again.',
-            variant: 'destructive',
           });
         }
       } else {
-        toast({
-          title: 'Error',
+        toast.error('Error', {
           description: 'An unexpected error occurred. Please try again.',
-          variant: 'destructive',
         });
       }
       console.error('Login error:', error);
