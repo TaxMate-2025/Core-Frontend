@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
-import { useTaxCalculation } from "@/hooks/useTaxCalculation";
+import { useTaxCalculation } from "@/hooks/useSimpleTaxCalculator";
 import {
   PieChart,
   Pie,
@@ -31,7 +31,7 @@ interface CalculatorState {
   pensionContribution: number;
   rentPaid: number | null;
   nhfContribution: number;
-  nhisContribution: number;
+  lifeInsurance: number | null;
   dependents: number | null;
 }
 
@@ -43,7 +43,7 @@ export function SimpleTaxCalculator() {
     pensionContribution: 0,
     rentPaid: null,
     nhfContribution: 0,
-    nhisContribution: 0,
+    lifeInsurance: null,
     dependents: null,
   });
 
@@ -70,7 +70,8 @@ export function SimpleTaxCalculator() {
     if (
       field === "monthlyIncome" ||
       field === "rentPaid" ||
-      field === "dependents"
+      field === "dependents" ||
+      field === "lifeInsurance"
     ) {
       const numValue = parseNumber(value);
       setState((prev) => ({
@@ -79,8 +80,7 @@ export function SimpleTaxCalculator() {
       }));
     } else if (
       field === "pensionContribution" ||
-      field === "nhfContribution" ||
-      field === "nhisContribution"
+      field === "nhfContribution"
     ) {
       const numValue = value === "" ? 0 : Number(value);
       setState((prev) => ({
@@ -105,7 +105,7 @@ export function SimpleTaxCalculator() {
       await calculateTax({
         income: annualIncome,
         rent: state.rentPaid || undefined,
-        lifeInsurance: state.nhisContribution || undefined,
+        lifeInsurance: state.lifeInsurance || undefined,
       });
 
       toast.success("Your tax estimate has been calculated");
@@ -121,7 +121,7 @@ export function SimpleTaxCalculator() {
       pensionContribution: 0,
       rentPaid: null,
       nhfContribution: 0,
-      nhisContribution: 0,
+      lifeInsurance: null,
       dependents: null,
     });
     reset();
@@ -237,7 +237,7 @@ export function SimpleTaxCalculator() {
 
           <div className="space-y-2">
             <label className="text-sm font-medium text-foreground">
-              NHIS Contribution (₦){" "}
+              Life Insurance (₦){" "}
               <span className="text-muted-foreground">(Optional)</span>
             </label>
             <Input
@@ -245,12 +245,10 @@ export function SimpleTaxCalculator() {
               inputMode="decimal"
               placeholder="0"
               value={
-                state.nhisContribution
-                  ? formatNumber(state.nhisContribution)
-                  : ""
+                state.lifeInsurance ? formatNumber(state.lifeInsurance) : ""
               }
               onChange={(e) =>
-                handleInputChange("nhisContribution", e.target.value)
+                handleInputChange("lifeInsurance", e.target.value)
               }
               className="text-base [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
             />
@@ -361,7 +359,9 @@ export function SimpleTaxCalculator() {
 
           {result.tips && result.tips.length > 0 && (
             <Card className="p-6">
-              <h3 className="text-lg font-semibold mb-4 text-[#1E3A8A]">💡 Helpful Tax Tips</h3>
+              <h3 className="text-lg font-semibold mb-4 text-[#1E3A8A]">
+                💡 Helpful Tax Tips
+              </h3>
               <ul className="space-y-2">
                 {result.tips.map((tip, index) => (
                   <li key={index} className="flex items-start">
