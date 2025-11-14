@@ -12,6 +12,10 @@ import type {
   VerifyEmailResponse,
   ResendVerificationRequest,
   ResendVerificationResponse,
+  ForgotPasswordRequest,
+  ForgotPasswordResponse,
+  ResetPasswordRequest,
+  ResetPasswordResponse,
 } from '@/types/auth';
 
 const AUTH_ENDPOINTS = {
@@ -19,6 +23,8 @@ const AUTH_ENDPOINTS = {
   LOGIN: '/auth/login',
   VERIFY_EMAIL: '/auth/verify-email',
   RESEND_VERIFICATION: '/auth/resend-verification',
+  FORGOT_PASSWORD: '/auth/forgot-password',
+  RESET_PASSWORD: '/auth/reset-password',
 } as const;
 
 export const authService = {
@@ -47,6 +53,20 @@ export const authService = {
   resendVerification: async (data: ResendVerificationRequest): Promise<ResendVerificationResponse> => {
     const response = await apiClient.post<ResendVerificationResponse>(
       AUTH_ENDPOINTS.RESEND_VERIFICATION,
+      data
+    );
+    return response.data;
+  },
+  forgotPassword: async (data: ForgotPasswordRequest): Promise<ForgotPasswordResponse> => {
+    const response = await apiClient.post<ForgotPasswordResponse>(
+      AUTH_ENDPOINTS.FORGOT_PASSWORD,
+      data
+    );
+    return response.data;
+  },
+  resetPassword: async (data: ResetPasswordRequest): Promise<ResetPasswordResponse> => {
+    const response = await apiClient.post<ResetPasswordResponse>(
+      AUTH_ENDPOINTS.RESET_PASSWORD,
       data
     );
     return response.data;

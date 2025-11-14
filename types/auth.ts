@@ -113,3 +113,30 @@ export interface ResendVerificationRequest {
 export interface ResendVerificationResponse {
   message: string;
 }
+
+// Forgot Password Request
+export interface ForgotPasswordRequest {
+  email: string;
+}
+
+// Forgot Password Response
+export interface ForgotPasswordResponse {
+  message: string;
+}
+
+// Reset Password Request
+export interface ResetPasswordRequest {
+  token: string;
+  password: string;
+}
+
+// Reset Password Response
+export interface ResetPasswordResponse {
+  message: string;
+}
+
+// Reset Password Form Data (includes confirmPassword for UI validation)
+export interface ResetPasswordFormData {
+  password: string;
+  confirmPassword: string;
+}
