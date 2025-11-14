@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { signUpSchema, type SignUpSchemaType } from '@/schemas/auth';
 import { authService } from '@/services/authService';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import type { SignUpRequest } from '@/types/auth';
 import { ApiError } from '@/lib/apiClient';
 
@@ -14,7 +14,6 @@ import { ApiError } from '@/lib/apiClient';
  */
 export function useSignUp() {
   const router = useRouter();
-  const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
 
   // Initialize React Hook Form with Zod validation
@@ -51,10 +50,8 @@ export function useSignUp() {
       const response = await authService.signUp(signUpData);
 
       // Show success message
-      toast({
-        title: 'Account created successfully!',
+      toast.success('Account created successfully!', {
         description: response.message || 'Please check your email for the verification OTP.',
-        variant: 'default',
       });
 
       // Store token if provided in response or headers
@@ -77,16 +74,12 @@ export function useSignUp() {
     } catch (error) {
       // Handle API errors
       if (error instanceof ApiError) {
-        toast({
-          title: 'Sign-up failed',
+        toast.error('Sign-up failed', {
           description: error.message || 'Failed to create account. Please try again.',
-          variant: 'destructive',
         });
       } else {
-        toast({
-          title: 'Error',
+        toast.error('Error', {
           description: 'An unexpected error occurred. Please try again.',
-          variant: 'destructive',
         });
       }
       console.error('Sign-up error:', error);

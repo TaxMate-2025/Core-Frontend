@@ -1,11 +1,10 @@
 "use client"
 
 import { useRouter } from "next/navigation"
-import { useToast } from "./use-toast"
+import { toast } from "sonner"
 
 export function useLogout() {
   const router = useRouter()
-  const { toast } = useToast()
 
   const logout = () => {
     try {
@@ -14,18 +13,15 @@ export function useLogout() {
       sessionStorage.removeItem("user")
 
       // Show success message
-      toast({
-        title: "Logged out successfully",
+      toast.success("Logged out successfully", {
         description: "You have been logged out of your account.",
       })
 
       // Redirect to root page
       router.push("/")
     } catch (error) {
-      toast({
-        title: "Logout failed",
+      toast.error("Logout failed", {
         description: "An error occurred while logging out. Please try again.",
-        variant: "destructive",
       })
     }
   }
