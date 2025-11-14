@@ -1,14 +1,16 @@
+"use client";
 
-'use client'
-
-import { useState } from 'react'
-import { Button } from '@/components/ui/button'
-import { Card } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { toast } from 'sonner'
-import { Loader2 } from 'lucide-react'
-import { useBusinessTaxCalculation, type BusinessTaxInput } from '@/hooks/useBusinessTaxCalculation'
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
+import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
+import {
+  useBusinessTaxCalculation,
+  type BusinessTaxInput,
+} from "@/hooks/useBusinessTaxCalculation";
 import {
   PieChart,
   Pie,
@@ -27,19 +29,24 @@ interface ChartData extends Record<string, any> {
 }
 
 export default function BusinessTaxCalculator() {
-  const { calculateTax, result, isLoading, reset } = useBusinessTaxCalculation();
+  const { calculateTax, result, isLoading, reset } =
+    useBusinessTaxCalculation();
   const [formData, setFormData] = useState<BusinessTaxInput>({
-    companyType: 'small',
+    companyType: "small",
     accountingPeriod: {
-      start: new Date(new Date().getFullYear(), 0, 1).toISOString().split('T')[0],
-      end: new Date(new Date().getFullYear(), 11, 31).toISOString().split('T')[0]
+      start: new Date(new Date().getFullYear(), 0, 1)
+        .toISOString()
+        .split("T")[0],
+      end: new Date(new Date().getFullYear(), 11, 31)
+        .toISOString()
+        .split("T")[0],
     },
     income: {
       revenue: 18500000,
       dividendsReceived: 1200000,
       exemptDividends: 350000,
       digitalAssets: 800000,
-      otherIncome: 450000
+      otherIncome: 450000,
     },
     deductions: {
       expenses: 9200000,
@@ -49,17 +56,17 @@ export default function BusinessTaxCalculator() {
       currentYearLosses: 300000,
       digitalAssetLosses: 150000,
       charitableDonations: 200000,
-      employeeCosts: 2100000
+      employeeCosts: 2100000,
     },
     employees: {
       total: 28,
-      lowIncomeCount: 6
+      lowIncomeCount: 6,
     },
     incentives: {
       tempRelief: true,
       agriHoliday: false,
-      exportExemption: false
-    }
+      exportExemption: false,
+    },
   });
 
   const formatNumber = (num: number | null): string => {
@@ -73,16 +80,19 @@ export default function BusinessTaxCalculator() {
     return isNaN(num) ? null : num;
   };
 
-  const handleInputChange = (path: string, value: string | number | boolean) => {
-    const keys = path.split('.');
-    setFormData(prev => {
+  const handleInputChange = (
+    path: string,
+    value: string | number | boolean
+  ) => {
+    const keys = path.split(".");
+    setFormData((prev) => {
       const newData = { ...prev };
       let current: any = newData;
-      
+
       for (let i = 0; i < keys.length - 1; i++) {
         current = current[keys[i]];
       }
-      
+
       current[keys[keys.length - 1]] = value;
       return newData;
     });
@@ -91,7 +101,7 @@ export default function BusinessTaxCalculator() {
   const handleCalculate = async () => {
     try {
       await calculateTax(formData);
-      toast.success('Tax calculation completed successfully');
+      toast.success("Tax calculation completed successfully");
     } catch (err) {
       // Error is handled in the hook
     }
@@ -100,17 +110,21 @@ export default function BusinessTaxCalculator() {
   const handleReset = () => {
     reset();
     setFormData({
-      companyType: 'small',
+      companyType: "small",
       accountingPeriod: {
-        start: new Date(new Date().getFullYear(), 0, 1).toISOString().split('T')[0],
-        end: new Date(new Date().getFullYear(), 11, 31).toISOString().split('T')[0]
+        start: new Date(new Date().getFullYear(), 0, 1)
+          .toISOString()
+          .split("T")[0],
+        end: new Date(new Date().getFullYear(), 11, 31)
+          .toISOString()
+          .split("T")[0],
       },
       income: {
         revenue: 0,
         dividendsReceived: 0,
         exemptDividends: 0,
         digitalAssets: 0,
-        otherIncome: 0
+        otherIncome: 0,
       },
       deductions: {
         expenses: 0,
@@ -120,37 +134,39 @@ export default function BusinessTaxCalculator() {
         currentYearLosses: 0,
         digitalAssetLosses: 0,
         charitableDonations: 0,
-        employeeCosts: 0
+        employeeCosts: 0,
       },
       employees: {
         total: 0,
-        lowIncomeCount: 0
+        lowIncomeCount: 0,
       },
       incentives: {
         tempRelief: false,
         agriHoliday: false,
-        exportExemption: false
-      }
+        exportExemption: false,
+      },
     });
   };
 
-  const chartData: ChartData[] = result ? [
-    {
-      name: "Gross Income",
-      value: result.grossIncome,
-      fill: CHART_COLORS[0],
-    },
-    {
-      name: "Tax Amount",
-      value: result.taxWithRelief,
-      fill: CHART_COLORS[1],
-    },
-    {
-      name: "Deductions",
-      value: result.deductions,
-      fill: CHART_COLORS[2],
-    }
-  ] : [];
+  const chartData: ChartData[] = result
+    ? [
+        {
+          name: "Gross Income",
+          value: result.grossIncome,
+          fill: CHART_COLORS[0],
+        },
+        {
+          name: "Tax Amount",
+          value: result.taxWithRelief,
+          fill: CHART_COLORS[1],
+        },
+        {
+          name: "Deductions",
+          value: result.deductions,
+          fill: CHART_COLORS[2],
+        },
+      ]
+    : [];
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat("en-NG", {
@@ -176,40 +192,48 @@ export default function BusinessTaxCalculator() {
       <Card className="p-8 space-y-6">
         {/* Company Type */}
         <div className="space-y-2">
-          <label className="text-sm font-medium text-foreground">Company Type</label>
+          <label className="text-sm font-medium text-foreground">
+            Company Type
+          </label>
           <Select
             value={formData.companyType}
-            onValueChange={(value) => handleInputChange('companyType', value as any)}
-          >
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select company type" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="small">Small Company</SelectItem>
-              <SelectItem value="large">Large Company</SelectItem>
-              <SelectItem value="agriculture">Agriculture</SelectItem>
-              <SelectItem value="export">Export</SelectItem>
-              <SelectItem value="priority">Priority</SelectItem>
-            </SelectContent>
-          </Select>
+            onChange={(value) => handleInputChange("companyType", value)}
+            items={[
+              { value: "small", label: "Small Company" },
+              { value: "large", label: "Large Company" },
+              { value: "agriculture", label: "Agriculture" },
+              { value: "export", label: "Export" },
+              { value: "priority", label: "Priority" },
+            ]}
+            placeholder="Select company type"
+            className="w-full"
+          />
         </div>
 
         {/* Accounting Period */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <label className="text-sm font-medium text-foreground">Start Date</label>
+            <label className="text-sm font-medium text-foreground">
+              Start Date
+            </label>
             <Input
               type="date"
               value={formData.accountingPeriod.start}
-              onChange={(e) => handleInputChange('accountingPeriod.start', e.target.value)}
+              onChange={(e) =>
+                handleInputChange("accountingPeriod.start", e.target.value)
+              }
             />
           </div>
           <div className="space-y-2">
-            <label className="text-sm font-medium text-foreground">End Date</label>
+            <label className="text-sm font-medium text-foreground">
+              End Date
+            </label>
             <Input
               type="date"
               value={formData.accountingPeriod.end}
-              onChange={(e) => handleInputChange('accountingPeriod.end', e.target.value)}
+              onChange={(e) =>
+                handleInputChange("accountingPeriod.end", e.target.value)
+              }
             />
           </div>
         </div>
@@ -221,14 +245,19 @@ export default function BusinessTaxCalculator() {
             {Object.entries(formData.income).map(([key, value]) => (
               <div key={key} className="space-y-2">
                 <label className="text-sm font-medium text-foreground">
-                  {key.split(/(?=[A-Z])/).join(' ')}
+                  {key.split(/(?=[A-Z])/).join(" ")}
                 </label>
                 <Input
                   type="text"
                   inputMode="decimal"
                   placeholder="0"
                   value={formatNumber(value as number)}
-                  onChange={(e) => handleInputChange(`income.${key}`, parseNumber(e.target.value) || 0)}
+                  onChange={(e) =>
+                    handleInputChange(
+                      `income.${key}`,
+                      parseNumber(e.target.value) || 0
+                    )
+                  }
                   className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                 />
               </div>
@@ -243,14 +272,19 @@ export default function BusinessTaxCalculator() {
             {Object.entries(formData.deductions).map(([key, value]) => (
               <div key={key} className="space-y-2">
                 <label className="text-sm font-medium text-foreground">
-                  {key.split(/(?=[A-Z])/).join(' ')}
+                  {key.split(/(?=[A-Z])/).join(" ")}
                 </label>
                 <Input
                   type="text"
                   inputMode="decimal"
                   placeholder="0"
                   value={formatNumber(value as number)}
-                  onChange={(e) => handleInputChange(`deductions.${key}`, parseNumber(e.target.value) || 0)}
+                  onChange={(e) =>
+                    handleInputChange(
+                      `deductions.${key}`,
+                      parseNumber(e.target.value) || 0
+                    )
+                  }
                   className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                 />
               </div>
@@ -262,18 +296,24 @@ export default function BusinessTaxCalculator() {
         <div className="space-y-4 pt-4">
           <h3 className="text-lg font-semibold text-foreground">Employees</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {formData.employees && Object.entries(formData.employees).map(([key, value]) => (
-              <div key={key} className="space-y-2">
-                <label className="text-sm font-medium text-foreground">
-                  {key.split(/(?=[A-Z])/).join(' ')}
-                </label>
-                <Input
-                  type="number"
-                  value={value as number}
-                  onChange={(e) => handleInputChange(`employees.${key}`, parseInt(e.target.value) || 0)}
-                />
-              </div>
-            ))}
+            {formData.employees &&
+              Object.entries(formData.employees).map(([key, value]) => (
+                <div key={key} className="space-y-2">
+                  <label className="text-sm font-medium text-foreground">
+                    {key.split(/(?=[A-Z])/).join(" ")}
+                  </label>
+                  <Input
+                    type="number"
+                    value={value as number}
+                    onChange={(e) =>
+                      handleInputChange(
+                        `employees.${key}`,
+                        parseInt(e.target.value) || 0
+                      )
+                    }
+                  />
+                </div>
+              ))}
           </div>
         </div>
 
@@ -281,20 +321,26 @@ export default function BusinessTaxCalculator() {
         <div className="space-y-4 pt-4">
           <h3 className="text-lg font-semibold text-foreground">Incentives</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {formData.incentives && Object.entries(formData.incentives).map(([key, value]) => (
-              <div key={key} className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  id={key}
-                  checked={value as boolean}
-                  onChange={(e) => handleInputChange(`incentives.${key}`, e.target.checked)}
-                  className="h-4 w-4 rounded border-gray-300 text-[#1E3A8A] focus:ring-[#1E3A8A]"
-                />
-                <label htmlFor={key} className="text-sm font-medium text-foreground">
-                  {key.split(/(?=[A-Z])/).join(' ')}
-                </label>
-              </div>
-            ))}
+            {formData.incentives &&
+              Object.entries(formData.incentives).map(([key, value]) => (
+                <div key={key} className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    id={key}
+                    checked={value as boolean}
+                    onChange={(e) =>
+                      handleInputChange(`incentives.${key}`, e.target.checked)
+                    }
+                    className="h-4 w-4 rounded border-gray-300 text-[#1E3A8A] focus:ring-[#1E3A8A]"
+                  />
+                  <label
+                    htmlFor={key}
+                    className="text-sm font-medium text-foreground"
+                  >
+                    {key.split(/(?=[A-Z])/).join(" ")}
+                  </label>
+                </div>
+              ))}
           </div>
         </div>
 
@@ -327,7 +373,9 @@ export default function BusinessTaxCalculator() {
       {result && (
         <div className="space-y-6 animate-fade-in">
           <div className="text-center space-y-2">
-            <h2 className="text-2xl font-bold text-foreground">Your Estimates</h2>
+            <h2 className="text-2xl font-bold text-foreground">
+              Your Estimates
+            </h2>
             <p className="text-muted-foreground">
               Results are shown for the selected accounting period.
             </p>
