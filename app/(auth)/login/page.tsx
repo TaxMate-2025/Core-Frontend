@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input"
 import { PasswordInput } from "@/components/ui/password-input"
 import { SocialLoginButton } from "@/components/ui/social-login-button"
 import { useLogin } from "@/hooks/use-login"
+import IllustrationPanel from "@/components/IllustrationPanel"
 
 export default function LoginPage() {
   const { form, isLoading, onSubmit } = useLogin()
@@ -156,38 +157,12 @@ export default function LoginPage() {
       </div>
 
       {/* Right side - Illustration */}
-      <div className="hidden lg:flex flex-1 bg-linear-to-b from-[#4C6EBF] to-[#1E3A8A] items-center justify-center p-12 relative overflow-hidden">
-        {/* Background Decorative Elements */}
-        <div className="absolute inset-0">
-          {/* Top rectangle */}
-          <div className="absolute top-12 left-1/2 -translate-x-1/2 w-[400px] h-[200px] bg-[#3B5BA5] opacity-40 rounded-[20px]"></div>
-          {/* Bottom left shape */}
-          <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-[#3B5BA5] opacity-40 rounded-tr-[100px]"></div>
-        </div>
-
-        {/* Content */}
-        <div className="relative z-10 max-w-md text-center">
-          <h2 className="text-white text-3xl font-bold mb-8 leading-tight">
-            The simplest way to manage
-            <br />
-            your Taxes
-          </h2>
-
-          {/* Illustration - Person with phone */}
-          <div className="relative flex justify-center">
-            {/* Purple circle background */}
-            <div className="w-64 h-64 bg-[#B8A3D8] rounded-full opacity-70"></div>
-
-            {/* Placeholder for illustration */}
-            <div className="absolute inset-0 flex items-end justify-center">
-              {/* You can replace this with an actual illustration image */}
-              <div className="text-white text-sm opacity-75">
-                [Person Illustration]
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <IllustrationPanel
+        imageSrc="/illustration_one.svg"
+        imageAlt="Login illustration"
+        title="The simplest way to manage"
+        subtitle="your Taxes"
+      />
     </div>
   )
 }

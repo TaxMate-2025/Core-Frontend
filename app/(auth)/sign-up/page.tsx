@@ -9,6 +9,7 @@ import { PasswordInput } from "@/components/ui/password-input"
 import { SocialLoginButton } from "@/components/ui/social-login-button"
 import { useSignUp } from "@/hooks/use-sign-up"
 import { UserType } from "@/types/auth"
+import IllustrationPanel from "@/components/IllustrationPanel"
 
 export default function SignUpPage() {
   const { form, isLoading, onSubmit } = useSignUp()
@@ -240,38 +241,12 @@ export default function SignUpPage() {
       </div>
 
       {/* Right side - Illustration */}
-      <div className="hidden lg:flex flex-1 bg-linear-to-b from-[#4C6EBF] to-[#1E3A8A] items-center justify-center p-12 relative overflow-hidden">
-        {/* Background Decorative Elements */}
-        <div className="absolute inset-0">
-          {/* Top rectangle */}
-          <div className="absolute top-12 left-1/2 -translate-x-1/2 w-[400px] h-[200px] bg-[#3B5BA5] opacity-40 rounded-[20px]"></div>
-          {/* Bottom left shape */}
-          <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-[#3B5BA5] opacity-40 rounded-tr-[100px]"></div>
-        </div>
-
-        {/* Content */}
-        <div className="relative z-10 max-w-md text-center">
-          <h2 className="text-white text-3xl font-bold mb-12 leading-tight px-8">
-            Get Ready for Nigeria's 2026
-            <br />
-            Tax Reforms
-          </h2>
-
-          {/* Illustration - Person with phone */}
-          <div className="relative flex justify-center items-end h-[400px]">
-            {/* Purple circle background */}
-            <div className="absolute bottom-0 w-72 h-72 bg-[#B8A3D8] rounded-full opacity-70"></div>
-
-            {/* Placeholder for illustration */}
-            <div className="relative z-10 flex items-end justify-center h-full">
-              {/* You can replace this with an actual illustration image */}
-              <div className="text-white text-sm md:text-base opacity-75 mb-8">
-                [Person with Phone Illustration]
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <IllustrationPanel
+        imageSrc="/illustration_two.svg"
+        imageAlt="SignUp illustration"
+        title="Get Ready for Nigeria's 2026"
+        subtitle="Tax Reforms"
+      />
     </div>
   )
 }

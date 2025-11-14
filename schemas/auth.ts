@@ -58,8 +58,28 @@ export const verifyEmailSchema = z.object({
   otp: z.string().length(6, 'OTP must be 6 digits').regex(/^\d+$/, 'OTP must contain only numbers'),
 });
 
+// Forgot Password schema - email only
+export const forgotPasswordSchema = z.object({
+  email: z
+    .string()
+    .min(1, 'Email is required')
+    .email('Please enter a valid email address')
+    .toLowerCase()
+    .trim(),
+});
+
+// Reset Password schema - password + confirmPassword
+export const resetPasswordSchema = z.object({
+  password: passwordValidation,
+  confirmPassword: z.string().min(1, 'Please confirm your password'),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: 'Passwords do not match',
+  path: ['confirmPassword'],
+});
 
 // Type inference from schemas
 export type SignUpSchemaType = z.infer<typeof signUpSchema>;
 export type LoginSchemaType = z.infer<typeof loginSchema>;
 export type VerifyEmailFormInputs = z.infer<typeof verifyEmailSchema>;
+export type ForgotPasswordSchemaType = z.infer<typeof forgotPasswordSchema>;
+export type ResetPasswordSchemaType = z.infer<typeof resetPasswordSchema>;

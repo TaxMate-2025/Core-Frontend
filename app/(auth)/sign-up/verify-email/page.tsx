@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useEmailVerification } from '@/hooks/useEmailVerification';
 import { Logo } from '@/components/Logo';
+import IllustrationPanel from '@/components/IllustrationPanel';
 
 function VerifyEmailContent() {
     const router = useRouter();
@@ -197,34 +198,12 @@ function VerifyEmailContent() {
             </div>
 
             {/* Right side - Illustration */}
-            <div className="hidden lg:flex flex-1 bg-linear-to-b from-[#4C6EBF] to-[#1E3A8A] items-center justify-center p-12 relative overflow-hidden">
-                {/* Background Decorative Elements */}
-                <div className="absolute inset-0">
-                    {/* Top rectangle */}
-                    <div className="absolute top-12 left-1/2 -translate-x-1/2 w-[400px] h-[200px] bg-[#3B5BA5] opacity-40 rounded-[20px]"></div>
-                    {/* Bottom left shape */}
-                    <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-[#3B5BA5] opacity-40 rounded-tr-[100px]"></div>
-                </div>
-
-                <div className="relative z-10 max-w-md text-center">
-                    <h2 className="text-white text-3xl font-bold mb-12 leading-tight px-8">
-                        Secure Your Account
-                        <br />
-                        with Email Verification
-                    </h2>
-
-                    <div className="relative flex justify-center items-center h-[400px]">
-                        {/* Purple circle background */}
-                        <div className="absolute w-72 h-72 bg-[#B8A3D8] rounded-full opacity-70"></div>
-
-                        <div className="relative z-10 flex items-center justify-center">
-                            <div className="text-white text-6xl">
-                                =�
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <IllustrationPanel
+                imageSrc="/illustration_two.svg"
+                imageAlt="SignUp illustration"
+                title="Get Ready for Nigeria's 2026"
+                subtitle="Tax Reforms"
+            />
         </div>
     );
 }

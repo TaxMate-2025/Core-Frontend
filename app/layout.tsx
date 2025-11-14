@@ -6,7 +6,7 @@ import { Toaster } from "@/components/ui/toaster";
 const montserrat = Montserrat({
   variable: "--font-montserrat",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
+  weight: ["600",],
 });
 
 export const metadata: Metadata = {

@@ -11,6 +11,7 @@ import { Montserrat } from "next/font/google";
 import Image from "next/image";
 import layout_grid from '../public/layout_grid.svg'
 import { AnimatedSection } from "@/components/ui/animated-section";
+import Link from "next/link";
 
 const montserrat = Montserrat({
   weight: "400",
@@ -62,10 +63,11 @@ export default function Home() {
             {/* CTA Buttons */}
             <AnimatedSection type="fade" direction="up" delay={0.2} className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
               <Button
-                onClick={openWaitlist}
                 className="bg-[#1e3a8a] hover:bg-[#162e5c] text-white px-6 sm:px-8 py-4 sm:py-5 text-sm sm:text-base flex items-center gap-2 cursor-pointer"
               >
-                Get Started Free
+                <Link href="/login">
+                  Get Started Free
+                </Link>
                 <ArrowUpRight className="w-4 h-4" />
               </Button>
               <Button
@@ -162,10 +164,11 @@ export default function Home() {
             </p>
 
             <Button
-              onClick={openWaitlist}
               className="bg-white hover:bg-gray-100 text-[#1e3a8a] font-semibold px-6 sm:px-8 py-4 sm:py-5 text-sm sm:text-base transition-colors duration-200 cursor-pointer"
             >
-              Join the Waitlist Now
+              <Link href={'/login'}>
+                Start knowing your taxes today
+              </Link>
             </Button>
           </div>
         </section>
