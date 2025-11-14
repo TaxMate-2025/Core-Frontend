@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button"
 import { Inter } from "next/font/google"
 import { Logo } from "./Logo"
 import Link from "next/link";
+import { CircleUserRound } from "lucide-react";
 
 interface NavbarProps {
   onJoinWaitlist: (e: React.MouseEvent) => void;
@@ -32,7 +33,7 @@ const Navbar = ({ onJoinWaitlist }: NavbarProps) => {
         </div>
 
         {/* Join Waitlist & Log in Button */}
-        <div className="space-x-5">
+        <div className="flex space-x-5">
           <Button
             onClick={onJoinWaitlist}
             className="bg-[#1e3a8a] hover:bg-[#162e5c] cursor-pointer text-white"
@@ -43,7 +44,8 @@ const Navbar = ({ onJoinWaitlist }: NavbarProps) => {
 
             className="bg-[#1e3a8a] hover:bg-[#162e5c] cursor-pointer text-white"
           >
-            <Link href="/login">
+            <Link href="/login" className="flex items-center gap-1">
+              <CircleUserRound />
               Sign In
             </Link>
           </Button>
