@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
-import { useTaxCalculation } from "@/hooks/useTaxCalculation";
+import { useTaxCalculation } from "@/hooks/useSimpleTaxCalculator";
 import {
   PieChart,
   Pie,
