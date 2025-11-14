@@ -8,22 +8,22 @@ interface AccountingPeriod {
 }
 
 interface Income {
-  revenue: number;
-  dividendsReceived: number;
-  exemptDividends: number;
-  digitalAssets: number;
-  otherIncome: number;
+  revenue: number | null;
+  dividendsReceived: number | null;
+  exemptDividends: number | null;
+  digitalAssets: number | null;
+  otherIncome: number | null;
 }
 
 interface Deductions {
-  expenses: number;
-  capitalExpenditure: number;
-  capitalAllowance: number;
-  previousYearLosses: number;
-  currentYearLosses: number;
-  digitalAssetLosses: number;
-  charitableDonations: number;
-  employeeCosts: number;
+  expenses: number | null;
+  capitalExpenditure: number | null;
+  capitalAllowance: number | null;
+  previousYearLosses: number | null;
+  currentYearLosses: number | null;
+  digitalAssetLosses: number | null;
+  charitableDonations: number | null;
+  employeeCosts: number | null;
 }
 
 interface Employees {
