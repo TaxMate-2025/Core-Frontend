@@ -20,7 +20,7 @@ export function CalculatorCard({
     <div
       onClick={onClick}
       className={cn(
-        "bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-all cursor-pointer group",
+        "bg-white rounded-xl p-6 h-80 shadow-sm hover:shadow-md transition-all cursor-pointer group",
         "border border-gray-100 hover:border-[#1E3A8A]/20",
         className
       )}
@@ -38,7 +38,7 @@ export function CalculatorCard({
       </h3>
 
       {/* Description */}
-      <p className="text-sm text-muted-foreground text-center leading-relaxed">
+      <p className="text-sm text-black text-center leading-relaxed">
         {description}
       </p>
     </div>
