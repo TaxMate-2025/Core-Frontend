@@ -28,14 +28,13 @@ export default function HomePage() {
                 </div>
 
                 {/* Content Container */}
-                <div className="relative z-10 max-w-6xl mx-auto px-6 py-16">
-                    {/* Welcome Section */}
-                    <div className="text-center mb-12">
-                        <h1 className="text-4xl md:text-5xl font-bold text-[#1E3A8A] mb-4 flex items-center justify-center gap-3">
+                <div className="relative z-10 max-w-6xl mx-auto py-20">
+                    <div className="text-center mb-15">
+                        <h1 className="text-4xl md:text-5xl font-semibold text-[#1E3A8A] mb-4 flex items-center justify-center gap-3">
                             Welcome back, {user?.firstName}
                             <span className="text-4xl">👋</span>
                         </h1>
-                        <p className="text-foreground text-base md:text-lg max-w-2xl mx-auto">
+                        <p className="text-black text-base md:text-lg max-w-2xl mx-auto mt-2">
                             Select a calculator mode below to begin computing your tax under the
                             <br className="hidden md:block" />
                             2026 Nigerian tax reforms.

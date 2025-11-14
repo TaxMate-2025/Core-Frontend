@@ -59,8 +59,8 @@ export function MainNavbar() {
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
   const navItems = [
-    { href: "/home", label: "Dashboard" },
-    { href: "/calculator", label: "Calculator" },
+    { href: "/home", label: "Calculator" },
+    { href: "/dashboard", label: "Dashboard" },
     { href: "/payment", label: "Payment" },
     { href: "/feedback", label: "Feedback" },
   ];
