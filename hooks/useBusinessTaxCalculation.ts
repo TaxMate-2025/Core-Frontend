@@ -1,7 +1,6 @@
-
-import { useState } from 'react';
-import { toast } from 'sonner';
-
+import { useState, useCallback } from "react";
+import { toast } from "sonner";
+import { useAuthUser } from "./use-auth-user";
 interface AccountingPeriod {
   start: string;
   end: string;
@@ -38,7 +37,7 @@ interface Incentives {
 }
 
 export interface BusinessTaxInput {
-  companyType: 'small' | 'large' | 'agriculture' | 'export' | 'priority';
+  companyType: "small" | "large" | "agriculture" | "export" | "priority";
   accountingPeriod: AccountingPeriod;
   income: Income;
   deductions: Deductions;
@@ -55,45 +54,62 @@ interface BusinessTaxResult {
 }
 
 export function useBusinessTaxCalculation() {
+  const { getToken } = useAuthUser();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const [result, setResult] = useState<BusinessTaxResult | null>(null);
 
-  const calculateTax = async (input: BusinessTaxInput) => {
-    setIsLoading(true);
-    setError(null);
-    
-    try {
-      const response = await fetch('https://core-backend-kdkn.onrender.com/tax-calculator/business', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(input),
-      });
+  const calculateTax = useCallback(
+    async (input: BusinessTaxInput) => {
+      setIsLoading(true);
+      setError(null);
 
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || 'Failed to calculate business tax');
+      try {
+        const token = getToken();
+
+        if (!token) {
+          throw new Error("Authentication required. Please log in.");
+        }
+
+        const response = await fetch(
+          "https://core-backend-kdkn.onrender.com/tax-calculator/business",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(input),
+          }
+        );
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(
+            errorData.message || "Failed to calculate business tax"
+          );
+        }
+
+        const data = await response.json();
+        setResult(data);
+        return data;
+      } catch (err) {
+        const error =
+          err instanceof Error ? err : new Error("An unknown error occurred");
+        setError(error);
+        toast.error(error.message);
+        throw error;
+      } finally {
+        setIsLoading(false);
       }
+    },
+    [getToken]
+  ); 
 
-      const data = await response.json();
-      setResult(data);
-      return data;
-    } catch (err) {
-      const error = err instanceof Error ? err : new Error('An unknown error occurred');
-      setError(error);
-      toast.error(error.message);
-      throw error;
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const reset = () => {
+  const reset = useCallback(() => {
     setResult(null);
     setError(null);
-  };
+  }, []);
 
   return {
     calculateTax,

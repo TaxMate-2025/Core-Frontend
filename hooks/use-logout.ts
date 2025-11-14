@@ -2,12 +2,15 @@
 
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
+import { useAuthUser } from "./use-auth-user"
 
 export function useLogout() {
   const router = useRouter()
+  const { clearAuth } = useAuthUser()
 
   const logout = () => {
     try {
+      clearAuth()
       // Clear auth data from sessionStorage
       sessionStorage.removeItem("authToken")
       sessionStorage.removeItem("user")

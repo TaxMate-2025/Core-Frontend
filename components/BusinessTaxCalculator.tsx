@@ -34,12 +34,8 @@ export default function BusinessTaxCalculator() {
   const [formData, setFormData] = useState<BusinessTaxInput>({
     companyType: "small",
     accountingPeriod: {
-      start: new Date(new Date().getFullYear(), 0, 1)
-        .toISOString()
-        .split("T")[0],
-      end: new Date(new Date().getFullYear(), 11, 31)
-        .toISOString()
-        .split("T")[0],
+      start: "",
+      end: "",
     },
     income: {
       revenue: null,
@@ -112,12 +108,8 @@ export default function BusinessTaxCalculator() {
     setFormData({
       companyType: "small",
       accountingPeriod: {
-        start: new Date(new Date().getFullYear(), 0, 1)
-          .toISOString()
-          .split("T")[0],
-        end: new Date(new Date().getFullYear(), 11, 31)
-          .toISOString()
-          .split("T")[0],
+        start: "",
+        end: "",
       },
       income: {
         revenue: null,
