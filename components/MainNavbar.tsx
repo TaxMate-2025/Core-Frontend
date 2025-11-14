@@ -2,11 +2,11 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { Menu, X, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import LOGO from "../public/main_logo.svg";
 import { Logo } from "./Logo";
+import { useLogout } from "@/hooks/use-logout";
+import { useAuthUser } from "@/hooks/use-auth-user";
 
 interface NavLinkProps {
   href: string;
@@ -25,9 +25,8 @@ const NavLink = ({
   <Link
     href={href}
     onClick={onClick}
-    className={`${
-      isActive ? "text-[#1E3A8A]" : "text-foreground"
-    } font-medium text-sm md:text-base hover:text-[#1E3A8A]/80 transition-colors ${className}`}
+    className={`${isActive ? "text-[#1E3A8A]" : "text-foreground"
+      } font-medium text-sm md:text-base hover:text-[#1E3A8A]/80 transition-colors ${className}`}
   >
     {children}
   </Link>
@@ -37,10 +36,11 @@ export function MainNavbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [activePath, setActivePath] = useState("");
+  const { logout } = useLogout();
+  const { user } = useAuthUser();
 
   // Set initial active path on component mount
   useEffect(() => {
-    // Using setTimeout to defer state update to avoid layout thrashing
     const timer = setTimeout(() => {
       setActivePath(window.location.pathname);
     }, 0);
@@ -59,21 +59,19 @@ export function MainNavbar() {
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
   const navItems = [
-    { href: "/home", label: "Dashboard" },
-    { href: "/calculator", label: "Calculator" },
+    { href: "/home", label: "Calculator" },
+    { href: "/dashboard", label: "Dashboard" },
     { href: "/payment", label: "Payment" },
     { href: "/feedback", label: "Feedback" },
   ];
 
   return (
     <header
-      className={`sticky top-0 z-50 transition-all duration-300 ${
-        isScrolled ? "bg-white/95 shadow-sm" : "bg-white"
-      }`}
+      className={`sticky top-0 z-50 transition-all duration-300 ${isScrolled ? "bg-white/95 shadow-sm" : "bg-white"
+        }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          {/* Logo */}
           <Logo />
 
           {/* Desktop Navigation */}
@@ -93,7 +91,8 @@ export function MainNavbar() {
           <div className="hidden md:flex items-center space-x-4">
             <Button
               variant="outline"
-              className="text-[#1E3A8A] border-[#1E3A8A] hover:bg-[#1E3A8A]/10 h-9 px-6"
+              onClick={logout}
+              className="bg-[#1e3a8a] hover:bg-[#162e5c] hover:text-white cursor-pointer text-white"
             >
               Log Out
             </Button>
@@ -133,10 +132,15 @@ export function MainNavbar() {
                 {item.label}
               </NavLink>
             ))}
-            <div className="pt-4 pb-2 border-t border-gray-200 mt-2">
+            <div className="pt-4 pb-2 border-t border-gray-200 mt-2 space-y-2">
+              {user && (
+                <div className="px-3 py-2 text-sm font-medium text-foreground">
+                  Welcome Back, {user.firstName}
+                </div>
+              )}
               <Button
-                variant="outline"
-                className="w-full justify-center text-[#1E3A8A] border-[#1E3A8A] hover:bg-[#1E3A8A]/10 h-11 mb-3"
+                onClick={logout}
+                className="w-full bg-[#1e3a8a] hover:bg-[#162e5c] cursor-pointer text-white"
               >
                 Log Out
               </Button>
