@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
-import { useToast } from "@/hooks/use-toast"
 import { Button } from "./ui/button"
 import { X } from "lucide-react"
 import { Inter } from "next/font/google"
@@ -149,7 +148,7 @@ export function WaitlistModal({ isOpen, onClose }: WaitlistModalProps) {
                     Be among the first to experience Nigeria&apos;s smartest tax calculator when we launch in 2026.
                     Get updates, insights, and early access.
                   </p>
-                  <Button 
+                  <Button
                     onClick={handleJoinWaitlist}
                     className="px-8 py-6 text-lg bg-[#1e3a8a] hover:bg-[#162e6c]"
                     size="lg"
