@@ -145,7 +145,7 @@ export default function HomePage() {
               Smart Tax <span className="text-blue-600">Calculations</span>
               <br />
               <span className="text-xl md:text-2xl font-normal text-gray-600 mt-2 block">
-                Nice to Have you {user?.firstName || "You"} 👋
+                How is it going today {user?.firstName || "You"} 👋
               </span>
             </h1>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
