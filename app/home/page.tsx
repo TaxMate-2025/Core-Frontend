@@ -65,6 +65,7 @@ export default function HomePage() {
         setIsMounted(true);
     }, []);
 
+    // Check if user is on BASIC tier (uppercase)
     const isBasicTier = user?.Tier === "BASIC";
 
     const handleCalculatorClick = (calculatorType: "simple" | "advanced" | "business") => {

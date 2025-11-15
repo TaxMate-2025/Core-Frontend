@@ -277,10 +277,10 @@ export default function AdvancedTaxCalculator() {
         <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
             <div className="text-center space-y-2">
                 <h1 className="text-3xl md:text-4xl lg:text-5xl xl:text-[48px] font-semibold leading-tight text-center tracking-normal text-[#1E3A8A]">
-                    Advanced Tax Calculator
+                    Income Tax Calculator for Nigerians
                 </h1>
                 <p className="text-muted-foreground max-w-2xl mx-auto">
-                    For freelancers, contractors, or mixed-income earners with multiple sources of income.
+                    Advanced calculator for freelancers, contractors, or mixed-income earners with multiple sources of income. Understand reliefs, deductions, and stay fully compliant.
                 </p>
             </div>
 
