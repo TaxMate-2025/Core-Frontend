@@ -28,6 +28,7 @@ export interface User {
   resetToken: string | null;
   resetTokenExpiry: string | null;
   googleRefreshToken: string | null;
+  Tier: 'BASIC' | 'PREMIUM';
 }
 
 /**
