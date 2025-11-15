@@ -1,141 +1,253 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Calculator, TrendingUp, Building2 } from "lucide-react"
-import { CalculatorCard } from "@/components/CalculatorCard"
-import { MainNavbar } from "@/components/MainNavbar"
-import Footer from "@/components/Footer"
-import { UpgradeModal } from "@/components/UpgradeModal"
-import Link from "next/link"
-import Image from "next/image"
-import { useRouter } from "next/navigation"
-import layout_grid from '../../public/layout_grid.svg'
-import { useAuthUser } from "@/hooks/use-auth-user"
+import { useState, useEffect } from "react";
+import {
+  Calculator,
+  TrendingUp,
+  Building2,
+  ArrowRight,
+  Zap,
+  CheckCircle,
+} from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { CalculatorCard } from "@/components/CalculatorCard";
+import { MainNavbar } from "@/components/MainNavbar";
+import Footer from "@/components/Footer";
+import { UpgradeModal } from "@/components/UpgradeModal";
+import Link from "next/link";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import layout_grid from "../../public/layout_grid.svg";
+import { useAuthUser } from "@/hooks/use-auth-user";
+import { cn } from "@/lib/utils";
+
+// Animation variants
+const container = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
+
+const item = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.5 } },
+};
+
+const FeatureBadge = ({ children }: { children: React.ReactNode }) => (
+  <motion.span
+    className="inline-flex items-center gap-1.5 bg-blue-50 text-blue-700 text-xs font-medium px-2.5 py-1 rounded-full"
+    initial={{ scale: 0.9, opacity: 0 }}
+    animate={{ scale: 1, opacity: 1 }}
+    transition={{ delay: 0.3 }}
+  >
+    <Zap className="w-3 h-3" />
+    {children}
+  </motion.span>
+);
+
+const PremiumBadge = () => (
+  <motion.div
+    className="absolute top-4 right-4 bg-gradient-to-r from-blue-600 to-blue-800 text-white text-xs px-3 py-1 rounded-full font-medium flex items-center gap-1 shadow-lg shadow-blue-500/20"
+    initial={{ scale: 0.9, opacity: 0 }}
+    animate={{ scale: 1, opacity: 1 }}
+    transition={{ delay: 0.2 }}
+  >
+    Premium
+  </motion.div>
+);
 
 export default function HomePage() {
-    const { user } = useAuthUser();
-    const router = useRouter();
-    const [showUpgradeModal, setShowUpgradeModal] = useState(false);
-    const [selectedCalculator, setSelectedCalculator] = useState<"advanced" | "business" | null>(null);
+  const { user } = useAuthUser();
+  const router = useRouter();
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const [selectedCalculator, setSelectedCalculator] = useState<
+    "advanced" | "business" | null
+  >(null);
+  const [isMounted, setIsMounted] = useState(false);
 
-    // Helper function to get token from storage
-    const getFromStorage = (key: string): string | null => {
-        if (typeof window === 'undefined') return null;
-        return localStorage.getItem(key) || sessionStorage.getItem(key);
-    };
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
-    // Check if user is on BASIC tier (uppercase)
-    // For OAuth users, Tier should be included in the user object from the backend
-    // If Tier is missing, default to BASIC (shouldn't happen, but safety check)
-    const isBasicTier = !user || !user.Tier || user.Tier === "BASIC";
+  // Check if user is on BASIC tier (uppercase)
+  const isBasicTier = user?.Tier === "BASIC";
 
-    const handleCalculatorClick = (calculatorType: "simple" | "advanced" | "business") => {
-        // Allow simple calculator for all users
-        if (calculatorType === "simple") {
-            router.push("/simple-tax-calculator");
-            return;
-        }
+  const handleCalculatorClick = (
+    calculatorType: "simple" | "advanced" | "business"
+  ) => {
+    if (calculatorType === "simple") {
+      router.push("/simple-tax-calculator");
+      return;
+    }
 
-        // Check if user is BASIC tier trying to access advanced/business
-        if (isBasicTier && (calculatorType === "advanced" || calculatorType === "business")) {
-            setSelectedCalculator(calculatorType);
-            setShowUpgradeModal(true);
-            return;
-        }
+    if (isBasicTier) {
+      setSelectedCalculator(calculatorType);
+      setShowUpgradeModal(true);
+      return;
+    }
 
-        // Allow access for PREMIUM users
-        if (calculatorType === "advanced") {
-            router.push("/advanced-tax-calculator");
-        } else if (calculatorType === "business") {
-            router.push("/business-tax-calculator");
-        }
-    };
+    router.push(`/${calculatorType}-tax-calculator`);
+  };
 
-    return (
-        <div>
-            <MainNavbar />
+  if (!isMounted) return null;
 
-            <main className="hero_gradient h-screen">
-                <div className="absolute inset-0">
-                    <Image
-                        src={layout_grid}
-                        alt="background_layout_grid"
-                        fill
-                        className="object-cover opacity-30"
-                        priority
-                    />
-                </div>
+  return (
+    <div className="min-h-screen flex flex-col">
+      <MainNavbar />
 
-                {/* Content Container */}
-                <div className="relative z-10 max-w-6xl mx-auto py-20">
-                    <div className="text-center mb-15">
-                        <h1 className="text-4xl md:text-5xl font-semibold text-[#1E3A8A] mb-4 flex items-center justify-center gap-3">
-                            Welcome back, {user?.firstName}
-                            <span className="text-4xl">👋</span>
-                        </h1>
-                        <p className="text-black text-base md:text-lg max-w-2xl mx-auto mt-2">
-                            Select a calculator mode below to begin computing your tax under the
-                            <br className="hidden md:block" />
-                            2026 Nigerian tax reforms.
-                        </p>
-                    </div>
+      <AnimatePresence>
+        {showUpgradeModal && (
+          <UpgradeModal
+            isOpen={showUpgradeModal}
+            onClose={() => setShowUpgradeModal(false)}
+            calculatorType={selectedCalculator}
+            getToken={
+              user
+                ? () =>
+                    localStorage.getItem("authToken") ||
+                    sessionStorage.getItem("authToken")
+                : () => null
+            }
+          />
+        )}
+      </AnimatePresence>
 
-                    {/* Calculator Cards Grid */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
-                        {/* Simple Calculator */}
-                        <div className="col-span-1">
-                            <CalculatorCard
-                                icon={Calculator}
-                                title="Simple Calculator"
-                                description="Ideal for individuals and salaried employees. Enter your monthly or annual income to compute PAYE."
-                                onClick={() => handleCalculatorClick("simple")}
-                            />
-                        </div>
-
-                        {/* Advanced Calculator */}
-                        <div className="col-span-1 relative">
-                            <CalculatorCard
-                                icon={TrendingUp}
-                                title="Advanced Calculator"
-                                description="For multiple income sources, deductions, and allowances. Get a precise tax estimate for complex profiles."
-                                onClick={() => handleCalculatorClick("advanced")}
-                                className={isBasicTier ? "opacity-75" : ""}
-                            />
-                            {isBasicTier && (
-                                <div className="absolute top-4 right-4 bg-[#1E3A8A] text-white text-xs px-2 py-1 rounded-full font-medium">
-                                    Premium
-                                </div>
-                            )}
-                        </div>
-
-                        {/* Business Calculator */}
-                        <div className="col-span-1 relative">
-                            <CalculatorCard
-                                icon={Building2}
-                                title="Business Calculator"
-                                description="Tailored for SMEs and registered companies. Input revenue, expenses, and reliefs for accurate CIT results."
-                                onClick={() => handleCalculatorClick("business")}
-                                className={isBasicTier ? "opacity-75" : ""}
-                            />
-                            {isBasicTier && (
-                                <div className="absolute top-4 right-4 bg-[#1E3A8A] text-white text-xs px-2 py-1 rounded-full font-medium">
-                                    Premium
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                </div>
-            </main>
-
-            <Footer />
-
-            {/* Upgrade Modal */}
-            <UpgradeModal
-                isOpen={showUpgradeModal}
-                onClose={() => setShowUpgradeModal(false)}
-                calculatorType={selectedCalculator}
-                getToken={user ? () => getFromStorage('authToken') : () => null}
-            />
+      <main className="relative flex-1">
+        {/* Animated background */}
+        <div className="absolute inset-0 overflow-hidden -z-10">
+          <motion.div
+            className="absolute inset-0 bg-gradient-to-br from-blue-50 via-white to-blue-50"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+          />
+          <Image
+            src={layout_grid}
+            alt="background_layout_grid"
+            fill
+            className="object-cover opacity-[0.03]"
+            priority
+          />
         </div>
-    )
+
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 md:py-24">
+          <motion.div
+            className="text-center max-w-4xl mx-auto mb-16"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight">
+              Smart Tax <span className="text-blue-600">Calculations</span>
+              <br />
+              <span className="text-xl md:text-2xl font-normal text-gray-600 mt-2 block">
+                How is it going today {user?.firstName || "You"} 👋
+              </span>
+            </h1>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Choose the right calculator for your needs and get accurate tax
+              estimates in seconds.
+            </p>
+          </motion.div>
+
+          {/* Calculator Cards */}
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto"
+            variants={container}
+            initial="hidden"
+            animate="show"
+          >
+            {/* Simple Calculator */}
+            <motion.div variants={item}>
+              <CalculatorCard
+                icon={Calculator}
+                title="Simple Calculator"
+                description="Ideal for individuals and salaried employees. Get quick PAYE estimates with minimal inputs."
+                onClick={() => handleCalculatorClick("simple")}
+                className="h-full hover:border-blue-200 hover:shadow-lg transition-all duration-300"
+                iconClassName="bg-blue-50 text-blue-600"
+                buttonVariant="default"
+              />
+            </motion.div>
+
+            {/* Advanced Calculator */}
+            <motion.div variants={item}>
+              <div className="relative h-full">
+                <CalculatorCard
+                  icon={TrendingUp}
+                  title="Advanced Calculator"
+                  description="For multiple income sources, deductions, and allowances. Get precise tax estimates."
+                  onClick={() => handleCalculatorClick("advanced")}
+                  className={cn(
+                    "h-full border-2 border-transparent hover:border-blue-100 hover:shadow-lg transition-all duration-300",
+                    isBasicTier && "opacity-100"
+                  )}
+                  iconClassName="bg-purple-50 text-purple-600"
+                  buttonVariant={isBasicTier ? "outline" : "default"}
+                  buttonText={isBasicTier ? "Upgrade to Unlock" : "Get Started"}
+                />
+                {isBasicTier && <PremiumBadge />}
+              </div>
+            </motion.div>
+
+            {/* Business Calculator */}
+            <motion.div variants={item} className="md:col-span-2 lg:col-span-1">
+              <div className="relative h-full">
+                <CalculatorCard
+                  icon={Building2}
+                  title="Business Calculator"
+                  description="Tailored for SMEs and companies. Calculate CIT with revenue, expenses, and reliefs."
+                  onClick={() => handleCalculatorClick("business")}
+                  className={cn(
+                    "h-full border-2 border-transparent hover:border-blue-100 hover:shadow-lg transition-all duration-300",
+                    isBasicTier && "opacity-100"
+                  )}
+                  iconClassName="bg-amber-50 text-amber-600"
+                  buttonVariant={isBasicTier ? "outline" : "default"}
+                  buttonText={isBasicTier ? "Upgrade to Unlock" : "Get Started"}
+                />
+                {isBasicTier && <PremiumBadge />}
+              </div>
+            </motion.div>
+          </motion.div>
+
+          {/* CTA Section */}
+          <motion.div
+            className="mt-20 text-center"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+          >
+            <div className="inline-flex flex-col sm:flex-row items-center gap-4 bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+              <div className="text-left">
+                <h3 className="font-semibold text-gray-900">
+                  Need help with complex tax scenarios?
+                </h3>
+                <p className="text-sm text-gray-600">
+                  Our tax experts are here to help you optimize your tax
+                  strategy.
+                </p>
+              </div>
+              <a
+                href="mailto:info@taxmate.com.ng?subject=TaxMate%20Support%20Request&body=Hello%20TaxMate%20Team,%0D%0A%0D%0AI%20need%20assistance%20with:%0D%0A%0D%0A%0D%0ABest%20regards,"
+                className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium text-sm whitespace-nowrap transition-colors"
+                onClick={(e) => {
+                  // Optional: Add analytics tracking here
+                  // trackEvent('contact_support_clicked');
+                }}
+              >
+                Contact Support
+              </a>
+            </div>
+          </motion.div>
+        </div>
+      </main>
+
+      <Footer />
+    </div>
+  );
 }

@@ -19,30 +19,30 @@ export default function LoginPage() {
   } = form
 
   return (
-    <div className="min-h-screen flex">
-      {/* Left side */}
-      <div className="flex-1 flex items-center justify-center p-8 bg-white">
-        <div className="w-full max-w-[400px] space-y-8">
+    <div className="min-h-screen flex flex-col sm:flex-row">
+      {/* Left side - Form */}
+      <div className="flex-1 flex items-center justify-center p-4 sm:p-6 lg:p-8 bg-white overflow-y-auto">
+        <div className="w-full max-w-[400px] space-y-6 sm:space-y-8">
           {/* Logo */}
-          <div className="flex justify-start mb-10">
+          <div className="flex justify-center sm:justify-start mb-6 sm:mb-10">
             <Logo />
           </div>
 
-          <div className="space-y-2 text-center">
-            <h1 className="text-[32px] font-bold text-[#041E21] leading-tight">
+          <div className="space-y-2 text-center sm:text-left">
+            <h1 className="text-2xl sm:text-3xl md:text-[32px] font-bold text-[#041E21] leading-tight">
               Welcome Back
             </h1>
-            <p className="text-sm md:text-base text-muted-foreground">
+            <p className="text-sm text-muted-foreground">
               Enter your email and password to access your account
             </p>
           </div>
 
           {/* Login Form */}
-          <form onSubmit={onSubmit} className="space-y-5">
-            <div className="space-y-2">
+          <form onSubmit={onSubmit} className="space-y-4 sm:space-y-5">
+            <div className="space-y-1.5">
               <label
                 htmlFor="email"
-                className="text-sm md:text-base font-medium text-foreground"
+                className="text-sm font-medium text-foreground"
               >
                 Email
               </label>
@@ -51,20 +51,20 @@ export default function LoginPage() {
                 type="email"
                 placeholder="Enter your email"
                 {...register("email")}
-                className="h-11"
-                aria-invalid={errors.email ? "true" : "false"}
+                className="h-10 text-sm"
+                aria-invalid={!!errors.email}
               />
               {errors.email && (
-                <p className="text-sm md:text-base text-destructive">
+                <p className="text-xs text-destructive">
                   {errors.email.message}
                 </p>
               )}
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <label
                 htmlFor="password"
-                className="text-sm md:text-base font-medium text-foreground"
+                className="text-sm font-medium text-foreground"
               >
                 Password
               </label>
@@ -72,16 +72,17 @@ export default function LoginPage() {
                 id="password"
                 placeholder="Input your password"
                 {...register("password")}
-                aria-invalid={errors.password ? "true" : "false"}
+                className="h-10 text-sm"
+                aria-invalid={!!errors.password}
               />
               {errors.password && (
-                <p className="text-sm md:text-base text-destructive">
+                <p className="text-xs text-destructive">
                   {errors.password.message}
                 </p>
               )}
             </div>
 
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-0 pt-1">
               <div className="flex items-center gap-2">
                 <input
                   type="checkbox"
@@ -91,14 +92,14 @@ export default function LoginPage() {
                 />
                 <label
                   htmlFor="remember"
-                  className="text-sm md:text-base text-muted-foreground cursor-pointer select-none"
+                  className="text-xs sm:text-sm text-muted-foreground cursor-pointer select-none"
                 >
                   Remember Me
                 </label>
               </div>
               <Link
                 href="/forgot-password"
-                className="text-sm md:text-base text-[#1E3A8A] hover:underline font-medium"
+                className="text-xs sm:text-sm text-[#1E3A8A] hover:underline font-medium"
               >
                 Forgot Your Password?
               </Link>
@@ -107,51 +108,55 @@ export default function LoginPage() {
             {/* Login Button */}
             <Button
               type="submit"
-              className="w-full h-11 bg-[#1E3A8A] hover:bg-[#1E3A8A]/90 text-white font-medium cursor-pointer"
+              className="w-full h-10 bg-[#1E3A8A] hover:bg-[#1E3A8A]/90 text-white text-sm font-medium cursor-pointer"
               disabled={isLoading}
             >
               {isLoading ? "Logging in..." : "Log in"}
             </Button>
 
             {/* Divider */}
-            <div className="relative">
+            <div className="relative my-4">
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-input"></div>
               </div>
-              <div className="relative flex justify-center text-xs">
-                <span className="bg-white px-2 text-muted-foreground">
+              <div className="relative flex justify-center">
+                <span className="bg-white px-2 text-xs text-muted-foreground">
                   Or Sign in with
                 </span>
               </div>
             </div>
 
             {/* Social Login Buttons */}
-            <div className="grid grid-cols-2 gap-3">
+            <div className="flex flex-1 items-center justify-center">
               <SocialLoginButton
                 provider="google"
                 icon={<Image src="/google.svg" alt="" width={18} height={18} />}
                 onClick={initiateGoogleOAuth}
+                className="text-sm"
               >
-                Google
+                Continue with Google
               </SocialLoginButton>
-              <SocialLoginButton
+              {/* <SocialLoginButton
                 provider="apple"
                 icon={<Image src="/apple.svg" alt="" width={18} height={18} />}
                 onClick={initiateAppleOAuth}
+                className="text-sm"
               >
-                Apple
-              </SocialLoginButton>
-            </div>
+                Continue with Apple
+              </SocialLoginButton> */}
+              
+                
+              </div>
           </form>
 
           {/* Sign Up Link */}
-          <div className="text-center">
-            <span className="text-sm md:text-base text-muted-foreground">
+          <div className="text-center pt-2">
+            <span className="text-sm text-muted-foreground">
               Don't have an account?{" "}
             </span>
             <Link
               href="/sign-up"
-              className="text-sm md:text-base text-[#1E3A8A] hover:underline font-medium"
+              className="text-sm text-[#1E3A8A] hover:underline font-medium"
             >
               Sign up
             </Link>

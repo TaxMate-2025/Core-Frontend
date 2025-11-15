@@ -66,8 +66,8 @@ export function MainNavbar() {
 
   const navItems = [
     { href: "/home", label: "Calculator" },
-    { href: "/dashboard", label: "Dashboard" },
-    { href: "/payment", label: "Payment" },
+    //{ href: "/dashboard", label: "Dashboard" },
+    //{ href: "/payment", label: "Payment" },
     { href: "/feedback", label: "Feedback" },
   ];
 
@@ -102,9 +102,9 @@ export function MainNavbar() {
             >
               Log Out
             </Button>
-            <button className="w-9 h-9 rounded-full bg-[#1E3A8A] flex items-center justify-center text-white hover:bg-[#1E3A8A]/90 transition-colors">
+            {/*<button className="w-9 h-9 rounded-full bg-[#1E3A8A] flex items-center justify-center text-white hover:bg-[#1E3A8A]/90 transition-colors">
               <User className="w-4 h-4" />
-            </button>
+            </button>*/}
           </div>
 
           {/* Mobile menu button */}
@@ -150,10 +150,10 @@ export function MainNavbar() {
               >
                 Log Out
               </Button>
-              <button className="w-full h-11 rounded-md bg-[#1E3A8A] flex items-center justify-center text-white hover:bg-[#1E3A8A]/90 transition-colors">
+              {/*<button className="w-full h-11 rounded-md bg-[#1E3A8A] flex items-center justify-center text-white hover:bg-[#1E3A8A]/90 transition-colors">
                 <User className="w-4 h-4 mr-2" />
                 My Profile
-              </button>
+              </button>*/}
             </div>
           </div>
         </div>
