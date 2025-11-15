@@ -7,6 +7,12 @@ import { Button } from "@/components/ui/button";
 import { Logo } from "./Logo";
 import { useLogout } from "@/hooks/use-logout";
 import { useAuthUser } from "@/hooks/use-auth-user";
+import { Inter } from "next/font/google";
+
+const inter = Inter({
+  weight: "500",
+  subsets: ['latin']
+})
 
 interface NavLinkProps {
   href: string;
@@ -67,7 +73,7 @@ export function MainNavbar() {
 
   return (
     <header
-      className={`sticky top-0 z-50 transition-all duration-300 ${isScrolled ? "bg-white/95 shadow-sm" : "bg-white"
+      className={`${inter.className} sticky top-0 z-50 transition-all duration-300 ${isScrolled ? "bg-white/95 shadow-sm" : "bg-white"
         }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
