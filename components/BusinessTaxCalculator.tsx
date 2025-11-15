@@ -7,14 +7,11 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
-import {
-  useBusinessTaxCalculation,
-  type BusinessTaxInput,
-  type Deductions,
-  type Employees,
-  type Incentives,
-  type Income,
-} from "@/hooks/useBusinessTaxCalculation";
+import { useBusinessTaxCalculation } from "@/hooks/useBusinessTaxCalculation";
+import type {
+  BusinessTaxInput,
+  CompanyType
+} from "@/types/businessTax";
 import {
   PieChart,
   Pie,
@@ -41,15 +38,37 @@ interface BusinessTaxFormData {
     start: string;
     end: string;
   };
-  income: Income;
-  deductions: Deductions;
-  employees: Employees;
-  incentives: Incentives;
+  income: {
+    revenue: number;
+    dividendsReceived: number;
+    exemptDividends: number;
+    digitalAssets: number;
+    otherIncome: number;
+  };
+  deductions: {
+    expenses: number;
+    capitalExpenditure: number;
+    capitalAllowance: number;
+    previousYearLosses: number;
+    currentYearLosses: number;
+    digitalAssetLosses: number;
+    charitableDonations: number;
+    employeeCosts: number;
+  };
+  employees: {
+    total: number;
+    lowIncomeCount: number;
+  };
+  incentives: {
+    tempRelief: boolean;
+    agriHoliday: boolean;
+    exportExemption: boolean;
+  };
 }
 
 export default function BusinessTaxCalculator() {
-  const { calculateTax, result, isLoading, reset } =
-    useBusinessTaxCalculation();
+  const { calculateTax, result, isLoading, reset } = useBusinessTaxCalculation();
+
   const [formData, setFormData] = useState<BusinessTaxFormData>({
     companyType: "small",
     frequency: "annual",
@@ -85,20 +104,8 @@ export default function BusinessTaxCalculator() {
     },
   });
 
-  const formatDateForInput = (
-    dateString: string | undefined | null
-  ): string => {
-    if (!dateString) return "";
-    // Convert from YYYYMMDD to YYYY-MM-DD
-    const str = String(dateString); // Ensure it's a string
-    if (str.includes("-")) return str; // Already in YYYY-MM-DD format
-    return str.replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3");
-  };
-
   const handleDateChange = (path: string, value: string) => {
-    // Convert from YYYY-MM-DD to YYYYMMDD for storage
-    const formattedValue = value.replace(/-/g, "");
-    handleInputChange(path, formattedValue);
+    handleInputChange(path, value);
   };
 
   const formatNumber = (num: number | null): string => {
@@ -130,8 +137,10 @@ export default function BusinessTaxCalculator() {
 
       const lastKey = keys[keys.length - 1];
 
-      if (path === "frequency") {
-        current[lastKey] = value as Frequency;
+      if (path === "frequency" || path === "companyType") {
+        current[lastKey] = value;
+      } else if (path.startsWith("accountingPeriod")) {
+        current[lastKey] = value;
       } else if (typeof value === "string") {
         const numValue = parseNumber(value);
         current[lastKey] = isNaN(numValue) ? 0 : numValue;
@@ -144,34 +153,56 @@ export default function BusinessTaxCalculator() {
   };
 
   const handleCalculate = async () => {
-  try {
-    const incomeMultiplier = formData.frequency === "monthly" ? 12 : 1;
-    
-    const dataToSend: BusinessTaxInput = {
-      companyType: formData.companyType,
-      accountingPeriod: {
-        start: formData.accountingPeriod.start,
-        end: formData.accountingPeriod.end,
-      },
-      income: {
-        revenue: formData.income.revenue * incomeMultiplier,
-        dividendsReceived: formData.income.dividendsReceived * incomeMultiplier,
-        exemptDividends: formData.income.exemptDividends * incomeMultiplier,
-        digitalAssets: formData.income.digitalAssets * incomeMultiplier,
-        otherIncome: formData.income.otherIncome * incomeMultiplier,
-      },
-      deductions: { ...formData.deductions },
-      employees: { ...formData.employees },
-      incentives: { ...formData.incentives }
-    };
+    try {
+      const incomeMultiplier = formData.frequency === "monthly" ? 12 : 1;
 
-    await calculateTax(dataToSend);
-    toast.success("Tax calculation completed successfully");
-  } catch (err) {
-    console.error("Error calculating tax:", err);
-    toast.error("Failed to calculate tax. Please try again.");
-  }
-};
+      const startDate = formData.accountingPeriod.start
+        ? new Date(formData.accountingPeriod.start).toISOString()
+        : "";
+      const endDate = formData.accountingPeriod.end
+        ? new Date(formData.accountingPeriod.end).toISOString()
+        : "";
+
+      const dataToSend: BusinessTaxInput = {
+        companyType: formData.companyType as CompanyType,
+        accountingPeriod: {
+          start: startDate,
+          end: endDate,
+        },
+        income: {
+          revenue: formData.income.revenue * incomeMultiplier,
+          dividendsReceived: formData.income.dividendsReceived * incomeMultiplier,
+          exemptDividends: formData.income.exemptDividends * incomeMultiplier,
+          digitalAssets: formData.income.digitalAssets * incomeMultiplier,
+          otherIncome: formData.income.otherIncome * incomeMultiplier,
+        },
+        deductions: {
+          expenses: formData.deductions.expenses,
+          capitalExpenditure: formData.deductions.capitalExpenditure,
+          capitalAllowance: formData.deductions.capitalAllowance,
+          previousYearLosses: formData.deductions.previousYearLosses,
+          currentYearLosses: formData.deductions.currentYearLosses,
+          digitalAssetLosses: formData.deductions.digitalAssetLosses,
+          charitableDonations: formData.deductions.charitableDonations,
+          employeeCosts: formData.deductions.employeeCosts,
+        },
+        employees: {
+          total: formData.employees.total,
+          lowIncomeCount: formData.employees.lowIncomeCount,
+        },
+        incentives: {
+          tempRelief: formData.incentives.tempRelief,
+          agriHoliday: formData.incentives.agriHoliday,
+          exportExemption: formData.incentives.exportExemption,
+        },
+      };
+
+      await calculateTax(dataToSend);
+    } catch (err) {
+      console.error("Error calculating tax:", err);
+      // Error is already handled by the hook with toast
+    }
+  };
 
   const handleReset = () => {
     reset();
@@ -213,25 +244,28 @@ export default function BusinessTaxCalculator() {
 
   const chartData: ChartData[] = result
     ? [
-        {
-          name: "Gross Income",
-          value: result.grossIncome,
-          fill: CHART_COLORS[0],
-        },
-        {
-          name: "Tax Amount",
-          value: result.taxWithRelief,
-          fill: CHART_COLORS[1],
-        },
-        {
-          name: "Deductions",
-          value: result.deductions,
-          fill: CHART_COLORS[2],
-        },
-      ]
+      {
+        name: "Gross Income",
+        value: result.incomeBreakdown?.totalGrossIncome || 0,
+        fill: CHART_COLORS[0],
+      },
+      {
+        name: "Tax Payable",
+        value: result.totals?.taxPayable || 0,
+        fill: CHART_COLORS[1],
+      },
+      {
+        name: "Total Deductions",
+        value: result.deductionsBreakdown?.totalDeductions || 0,
+        fill: CHART_COLORS[2],
+      },
+    ]
     : [];
 
-  const formatCurrency = (value: number) => {
+  const formatCurrency = (value: number | undefined) => {
+    if (value === undefined || value === null || isNaN(value)) {
+      return "₦0.00";
+    }
     return new Intl.NumberFormat("en-NG", {
       style: "currency",
       currency: "NGN",
@@ -260,30 +294,28 @@ export default function BusinessTaxCalculator() {
           <div className="flex bg-gray-100 rounded-lg p-1 gap-2">
             <button
               type="button"
-              className={`px-4 py-2 text-sm font-medium rounded-md transition-colors cursor-pointer ${
-                formData.frequency === "monthly"
-                  ? "bg-white shadow-md"
-                  : "text-gray-600 hover:bg-gray-200"
-              }`}
+              className={`px-4 py-2 text-sm font-medium rounded-md transition-colors cursor-pointer ${formData.frequency === "monthly"
+                ? "bg-white shadow-md"
+                : "text-gray-600 hover:bg-gray-200"
+                }`}
               onClick={() => handleInputChange("frequency", "monthly")}
             >
               Monthly
             </button>
             <button
               type="button"
-              className={`px-4 py-2 text-sm font-medium rounded-md transition-colors cursor-pointer ${
-                formData.frequency === "annual"
-                  ? "bg-white shadow-md"
-                  : "text-gray-600 hover:bg-gray-200"
-              }`}
+              className={`px-4 py-2 text-sm font-medium rounded-md transition-colors cursor-pointer ${formData.frequency === "annual"
+                ? "bg-white shadow-md"
+                : "text-gray-600 hover:bg-gray-200"
+                }`}
               onClick={() => handleInputChange("frequency", "annual")}
             >
               Annual
             </button>
           </div>
         </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Company Type */}
           <div className="space-y-2">
             <label className="text-sm font-medium text-foreground">
               Company Type
@@ -304,7 +336,6 @@ export default function BusinessTaxCalculator() {
           </div>
         </div>
 
-        {/* Accounting Period */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
             <label className="text-sm font-medium text-foreground">
@@ -312,11 +343,7 @@ export default function BusinessTaxCalculator() {
             </label>
             <Input
               type="date"
-              value={
-                formData.accountingPeriod.start
-                  ? formatDateForInput(formData.accountingPeriod.start)
-                  : ""
-              }
+              value={formData.accountingPeriod.start || ""}
               onChange={(e) =>
                 handleDateChange("accountingPeriod.start", e.target.value)
               }
@@ -328,11 +355,7 @@ export default function BusinessTaxCalculator() {
             </label>
             <Input
               type="date"
-              value={
-                formData.accountingPeriod.end
-                  ? formatDateForInput(formData.accountingPeriod.end)
-                  : ""
-              }
+              value={formData.accountingPeriod.end || ""}
               onChange={(e) =>
                 handleDateChange("accountingPeriod.end", e.target.value)
               }
@@ -340,7 +363,6 @@ export default function BusinessTaxCalculator() {
           </div>
         </div>
 
-        {/* Income Section */}
         <div className="space-y-4 pt-4">
           <h3 className="text-lg font-semibold text-foreground">Income</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -371,7 +393,6 @@ export default function BusinessTaxCalculator() {
           </div>
         </div>
 
-        {/* Deductions Section */}
         <div className="space-y-4 pt-4">
           <h3 className="text-lg font-semibold text-foreground">Deductions</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -402,7 +423,6 @@ export default function BusinessTaxCalculator() {
           </div>
         </div>
 
-        {/* Employees Section */}
         <div className="space-y-4 pt-4">
           <h3 className="text-lg font-semibold text-foreground">Employees</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -427,7 +447,6 @@ export default function BusinessTaxCalculator() {
           </div>
         </div>
 
-        {/* Incentives Section */}
         <div className="space-y-4 pt-4">
           <h3 className="text-lg font-semibold text-foreground">Incentives</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -457,7 +476,7 @@ export default function BusinessTaxCalculator() {
         <div className="flex flex-col sm:flex-row gap-3 pt-4">
           <Button
             onClick={handleCalculate}
-            className="bg-[#1E3A8A] hover:bg-[#1E3A8A]/90 transition-colors"
+            className="bg-[#1E3A8A] hover:bg-[#1E3A8A]/90 transition-colors cursor-pointer"
             disabled={isLoading}
           >
             {isLoading ? (
@@ -472,7 +491,7 @@ export default function BusinessTaxCalculator() {
           <Button
             onClick={handleReset}
             variant="outline"
-            className="text-[#1E3A8A] border-[#1E3A8A] hover:bg-[#1E3A8A]/10"
+            className="text-[#1E3A8A] border-[#1E3A8A] hover:bg-[#1E3A8A]/10 cursor-pointer"
             disabled={isLoading}
           >
             Reset
@@ -491,35 +510,36 @@ export default function BusinessTaxCalculator() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <Card className="p-6 space-y-2 border border-gray-200 hover:border-[#1E3A8A]/50 transition-colors">
-              <p className="text-sm text-muted-foreground">Gross Income</p>
+              <p className="text-sm text-muted-foreground">Taxable Profit</p>
               <p className="text-2xl font-bold text-[#1E3A8A]">
-                {formatCurrency(result.grossIncome)}
+                {formatCurrency(result.totals?.taxableProfit)}
               </p>
             </Card>
 
             <Card className="p-6 space-y-2 border border-gray-200 hover:border-[#1E3A8A]/50 transition-colors">
-              <p className="text-sm text-muted-foreground">Estimated Tax</p>
+              <p className="text-sm text-muted-foreground">Tax Rate</p>
               <p className="text-2xl font-bold text-[#1E3A8A]">
-                {formatCurrency(result.taxWithRelief)}
+                {result.totals?.taxRate?.toFixed(1) || 0}%
               </p>
-              {result.taxWithRelief < result.tax && (
-                <p className="text-xs text-muted-foreground line-through">
-                  {formatCurrency(result.tax)}
-                </p>
-              )}
             </Card>
 
             <Card className="p-6 space-y-2 border border-gray-200 hover:border-[#1E3A8A]/50 transition-colors">
-              <p className="text-sm text-muted-foreground">Total Deductions</p>
+              <p className="text-sm text-muted-foreground">Tax Payable</p>
               <p className="text-2xl font-bold text-[#1E3A8A]">
-                {formatCurrency(result.deductions)}
+                {formatCurrency(result.totals?.taxPayable)}
+              </p>
+            </Card>
+
+            <Card className="p-6 space-y-2 border border-gray-200 hover:border-[#1E3A8A]/50 transition-colors">
+              <p className="text-sm text-muted-foreground">Effective Tax Rate</p>
+              <p className="text-2xl font-bold text-[#1E3A8A]">
+                {result.totals?.effectiveTaxRate?.toFixed(1) || 0}%
               </p>
             </Card>
           </div>
 
-          {/* Tax Breakdown Chart */}
           <Card className="p-6">
             <h3 className="text-lg font-semibold mb-4">Tax Breakdown</h3>
             <div className="h-[300px]">
@@ -555,10 +575,26 @@ export default function BusinessTaxCalculator() {
             </div>
           </Card>
 
+          {result.appliedIncentives && result.appliedIncentives.length > 0 && (
+            <Card className="p-6">
+              <h3 className="text-lg font-semibold mb-4 text-[#1E3A8A]">
+                ✅ Applied Incentives
+              </h3>
+              <ul className="space-y-2">
+                {result.appliedIncentives.map((incentive, index) => (
+                  <li key={index} className="flex items-start">
+                    <span className="text-[#1E3A8A] mr-2">•</span>
+                    <span className="text-sm text-muted-foreground">{incentive}</span>
+                  </li>
+                ))}
+              </ul>
+            </Card>
+          )}
+
           {result.tips && result.tips.length > 0 && (
             <Card className="p-6">
               <h3 className="text-lg font-semibold mb-4 text-[#1E3A8A]">
-                💡 Helpful Tax Tips
+                💡 Tax Tips & Recommendations
               </h3>
               <ul className="space-y-2">
                 {result.tips.map((tip, index) => (

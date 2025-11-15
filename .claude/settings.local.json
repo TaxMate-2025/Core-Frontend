@@ -3,7 +3,8 @@
     "allow": [
       "Bash(cat:*)",
       "Bash(find:*)",
-      "Bash(wc:*)"
+      "Bash(wc:*)",
+      "Bash(npx tsc --noEmit --skipLibCheck)"
     ],
     "deny": [],
     "ask": []
