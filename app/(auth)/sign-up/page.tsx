@@ -45,7 +45,7 @@ const fadeIn = {
       ease: "easeInOut",
     },
   },
-};
+} as const;
 
 export default function SignUpPage() {
   const { form, isLoading, onSubmit } = useSignUp();
