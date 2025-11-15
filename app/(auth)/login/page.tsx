@@ -9,6 +9,7 @@ import { PasswordInput } from "@/components/ui/password-input"
 import { SocialLoginButton } from "@/components/ui/social-login-button"
 import { useLogin } from "@/hooks/use-login"
 import IllustrationPanel from "@/components/IllustrationPanel"
+import { initiateGoogleOAuth, initiateAppleOAuth } from "@/utils/oauth"
 
 export default function LoginPage() {
   const { form, isLoading, onSubmit } = useLogin()
@@ -129,12 +130,14 @@ export default function LoginPage() {
               <SocialLoginButton
                 provider="google"
                 icon={<Image src="/google.svg" alt="" width={18} height={18} />}
+                onClick={initiateGoogleOAuth}
               >
                 Google
               </SocialLoginButton>
               <SocialLoginButton
                 provider="apple"
                 icon={<Image src="/apple.svg" alt="" width={18} height={18} />}
+                onClick={initiateAppleOAuth}
               >
                 Apple
               </SocialLoginButton>

@@ -1,90 +1,83 @@
-// 'use client'
+'use client'
 
-// import { useEffect, useState } from 'react'
-// import { useRouter } from 'next/navigation'
-// import { toast } from 'sonner'
-// import { LoaderCircle } from 'lucide-react'
+import { useEffect, useState, Suspense } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { toast } from 'sonner'
+import { Loader2 } from 'lucide-react'
 
-// export default function GoogleCallbackPage() {
-//     const router = useRouter()
-//     // const { handleGoogleAuthSuccess, state } = useAuth()
-//     const [isProcessing, setIsProcessing] = useState(true)
+function GoogleCallbackContent() {
+    const router = useRouter()
+    const searchParams = useSearchParams()
+    const [isProcessing, setIsProcessing] = useState(true)
 
-//     useEffect(() => {
-//         const processGoogleAuth = async () => {
-//             try {
-//                 const urlParams = new URLSearchParams(window.location.search)
-//                 const token = urlParams.get('token')
-//                 const userParam = urlParams.get('user')
-//                 const error = urlParams.get('error')
+    useEffect(() => {
+        const processGoogleAuth = async () => {
+            try {
+                const token = searchParams.get('token')
+                const userParam = searchParams.get('user')
+                const error = searchParams.get('error')
 
-//                 if (error) {
-//                     throw new Error(error)
-//                 }
+                if (error) {
+                    throw new Error(error)
+                }
 
-//                 if (!token || !userParam) {
-//                     throw new Error('Missing authentication data in callback URL')
-//                 }
+                if (!token || !userParam) {
+                    throw new Error('Missing authentication data in callback URL')
+                }
 
-//                 const user = JSON.parse(decodeURIComponent(userParam))
+                const user = JSON.parse(decodeURIComponent(userParam))
 
-//                 console.log('Google auth callback received:', { token, user })
+                // Store token in sessionStorage
+                sessionStorage.setItem('authToken', token)
 
-//                 await handleGoogleAuthSuccess({
-//                     user,
-//                     token
-//                 })
+                toast.success('Google sign in successful', {
+                    description: `Welcome, ${user.firstName || user.email}!`
+                })
 
-//                 console.log('Google authentication processed successfully')
+                // Redirect to home after successful authentication
+                setTimeout(() => {
+                    router.push('/home')
+                }, 1000)
 
-//             } catch (error: any) {
-//                 console.error('Google authentication error:', error)
-//                 toast.error('Authentication failed', {
-//                     description: error.message || 'Google authentication was unsuccessful'
-//                 })
+            } catch (error: any) {
+                console.error('Google authentication error:', error)
+                toast.error('Authentication failed', {
+                    description: error.message || 'Google authentication was unsuccessful'
+                })
 
-//                 setTimeout(() => {
-//                     router.push('/sign-up')
-//                 }, 2000)
-//             } finally {
-//                 setIsProcessing(false)
-//             }
-//         }
+                setTimeout(() => {
+                    router.push('/login')
+                }, 2000)
+            } finally {
+                setIsProcessing(false)
+            }
+        }
 
-//         processGoogleAuth()
-//     }, [handleGoogleAuthSuccess, router])
+        processGoogleAuth()
+    }, [searchParams, router])
 
-//     // Handle successful authentication
-//     useEffect(() => {
-//         if (state.success && state.user && !isProcessing) {
-//             toast.success('Google sign in successful', {
-//                 description: `Welcome, ${state.user.name}!`
-//             })
+    return (
+        <div className="min-h-screen flex items-center justify-center bg-gray-50">
+            <div className="text-center">
+                <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-blue-600" />
+                <p className="text-gray-600">
+                    {isProcessing ? 'Processing Google authentication...' : 'Redirecting...'}
+                </p>
+            </div>
+        </div>
+    )
+}
 
-//             setTimeout(() => {
-//                 router.push('/home')
-//             }, 1000)
-//         }
-
-//         if (state.error && !isProcessing) {
-//             toast.error('Authentication failed', {
-//                 description: state.error
-//             })
-
-//             setTimeout(() => {
-//                 router.push('/sign-up')
-//             }, 2000)
-//         }
-//     }, [state.success, state.user, state.error, isProcessing, router])
-
-//     return (
-//         <div className="min-h-screen flex items-center justify-center bg-gray-50">
-//             <div className="text-center">
-//                 <LoaderCircle className="w-8 h-8 animate-spin mx-auto mb-4" />
-//                 <p className="text-gray-600">
-//                     {isProcessing ? 'Processing Google authentication...' : 'Redirecting...'}
-//                 </p>
-//             </div>
-//         </div>
-//     )
-// }
+export default function GoogleCallbackPage() {
+    return (
+        <Suspense
+            fallback={
+                <div className="min-h-screen flex items-center justify-center bg-gray-50">
+                    <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+                </div>
+            }
+        >
+            <GoogleCallbackContent />
+        </Suspense>
+    )
+}
