@@ -4,6 +4,7 @@ import { useEffect, useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { toast } from 'sonner'
 import { Loader2 } from 'lucide-react'
+import type { User } from '@/types/auth'
 
 function GoogleCallbackContent() {
     const router = useRouter()
@@ -25,10 +26,22 @@ function GoogleCallbackContent() {
                     throw new Error('Missing authentication data in callback URL')
                 }
 
-                const user = JSON.parse(decodeURIComponent(userParam))
+                const user = JSON.parse(decodeURIComponent(userParam)) as User
 
-                // Store token in sessionStorage
+                // Validate that user has required fields including Tier
+                if (!user.id || !user.email) {
+                    throw new Error('Invalid user data received from authentication')
+                }
+
+                // Ensure Tier is set (default to BASIC if missing, though backend should always provide it)
+                if (!user.Tier) {
+                    console.warn('User Tier not provided, defaulting to BASIC')
+                    user.Tier = 'BASIC'
+                }
+
+                // Store token and user data in sessionStorage
                 sessionStorage.setItem('authToken', token)
+                sessionStorage.setItem('user', JSON.stringify(user))
 
                 toast.success('Google sign in successful', {
                     description: `Welcome, ${user.firstName || user.email}!`

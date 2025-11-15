@@ -160,11 +160,10 @@ export function SimpleTaxCalculator() {
     <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       <div className="text-center space-y-2">
         <h1 className="text-3xl md:text-4xl lg:text-5xl xl:text-[48px] font-semibold leading-tight text-center tracking-normal text-[#1E3A8A]">
-          Simple Tax Calculator
+          Income Tax Calculator for Nigerians
         </h1>
         <p className="text-muted-foreground max-w-2xl mx-auto">
-          Estimate your PAYE tax quickly. Enter your income and a few common
-          deductions — results will appear after you click Calculate.
+          Instantly calculate your income tax in Nigeria. Understand reliefs, deductions, and stay fully compliant with TaxMate.
         </p>
       </div>
 
@@ -280,6 +279,83 @@ export function SimpleTaxCalculator() {
           </Button>
         </div>
       </Card>
+
+      {/* SEO-friendly informational sections */}
+      <div className="space-y-8 mt-12">
+        <Card className="p-6">
+          <h2 className="text-2xl font-bold text-[#1E3A8A] mb-4">
+            How to Calculate Your Income Tax
+          </h2>
+          <p className="text-muted-foreground leading-relaxed">
+            Our income tax calculator uses Nigeria's current tax brackets and rates to provide accurate estimates. 
+            Simply enter your monthly or annual income, along with any applicable deductions such as pension contributions, 
+            rent payments, NHF contributions, life insurance, and dependent allowances. The calculator will automatically 
+            compute your tax liability based on the progressive tax rates applicable in Nigeria.
+          </p>
+        </Card>
+
+        <Card className="p-6">
+          <h2 className="text-2xl font-bold text-[#1E3A8A] mb-4">
+            Income Tax Reliefs and Allowances
+          </h2>
+          <p className="text-muted-foreground leading-relaxed mb-4">
+            Nigerian taxpayers are entitled to various reliefs and allowances that can reduce their tax liability:
+          </p>
+          <ul className="space-y-2 text-muted-foreground">
+            <li className="flex items-start">
+              <span className="text-[#059669] mr-2">•</span>
+              <span><strong>Pension Contributions:</strong> Contributions to approved pension schemes are tax-deductible</span>
+            </li>
+            <li className="flex items-start">
+              <span className="text-[#059669] mr-2">•</span>
+              <span><strong>Rent Allowance:</strong> A portion of rent paid may be eligible for tax relief</span>
+            </li>
+            <li className="flex items-start">
+              <span className="text-[#059669] mr-2">•</span>
+              <span><strong>NHF Contributions:</strong> National Housing Fund contributions qualify for tax deductions</span>
+            </li>
+            <li className="flex items-start">
+              <span className="text-[#059669] mr-2">•</span>
+              <span><strong>Life Insurance:</strong> Premiums paid on life insurance policies are tax-deductible</span>
+            </li>
+            <li className="flex items-start">
+              <span className="text-[#059669] mr-2">•</span>
+              <span><strong>Dependent Allowances:</strong> Additional relief for each dependent you support</span>
+            </li>
+          </ul>
+        </Card>
+
+        <Card className="p-6">
+          <h2 className="text-2xl font-bold text-[#1E3A8A] mb-4">
+            Stay Compliant with TaxMate
+          </h2>
+          <p className="text-muted-foreground leading-relaxed mb-4">
+            TaxMate helps you stay compliant with Nigerian tax regulations by providing accurate calculations and 
+            up-to-date information about tax rates and reliefs. Our platform is designed to make tax compliance easy, 
+            transparent, and accessible for all Nigerians.
+          </p>
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-[#1E3A8A]">
+              Common Questions About Income Tax
+            </h3>
+            <div className="space-y-3 text-muted-foreground">
+              <p><strong>Q: What is the tax-free threshold in Nigeria?</strong></p>
+              <p>A: The first ₦300,000 of annual income is tax-free. Income above this threshold is taxed at progressive rates.</p>
+              <p><strong>Q: When should I file my tax returns?</strong></p>
+              <p>A: Tax returns should be filed annually, typically by March 31st of the following year.</p>
+              <p><strong>Q: Can I claim multiple deductions?</strong></p>
+              <p>A: Yes, you can claim all applicable deductions such as pension, rent, NHF, life insurance, and dependent allowances.</p>
+            </div>
+            <h3 className="text-lg font-semibold text-[#1E3A8A] mt-6">
+              Login to Access Your Tax Records
+            </h3>
+            <p className="text-muted-foreground">
+              Create an account or log in to TaxMate to save your calculations, access your tax history, and get personalized 
+              tax planning recommendations. Stay organized and compliant with our comprehensive tax management tools.
+            </p>
+          </div>
+        </Card>
+      </div>
 
       {result && (
         <div className="space-y-6 animate-fade-in">
