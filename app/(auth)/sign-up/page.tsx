@@ -13,7 +13,9 @@ import { UserType } from "@/types/auth";
 import { initiateGoogleOAuth } from "@/utils/oauth";
 
 // Animation variants
-const container = {
+import { Variants } from "framer-motion";
+
+const container: Variants = {
   hidden: { opacity: 0 },
   show: {
     opacity: 1,
@@ -24,28 +26,28 @@ const container = {
   },
 };
 
-const item = {
+const item: Variants = {
   hidden: { opacity: 0, y: 20 },
   show: {
     opacity: 1,
     y: 0,
     transition: {
       duration: 0.5,
-      ease: "easeOut",
+      ease: [0.16, 1, 0.3, 1], // cubic-bezier for easeOut
     },
   },
 };
 
-const fadeIn = {
+const fadeIn: Variants = {
   hidden: { opacity: 0 },
   show: {
     opacity: 1,
     transition: {
       duration: 0.6,
-      ease: "easeInOut",
+      ease: [0.65, 0, 0.35, 1], // cubic-bezier for easeInOut
     },
   },
-} as const;
+};
 
 export default function SignUpPage() {
   const { form, isLoading, onSubmit } = useSignUp();
@@ -72,7 +74,7 @@ export default function SignUpPage() {
             className="flex justify-center sm:justify-start mb-6"
             variants={item}
           >
-            <Logo className="h-10" />
+            <Logo/>
           </motion.div>
 
           {/* Header */}
