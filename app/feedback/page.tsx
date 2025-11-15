@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import { User, Mail, Phone, MessageSquare, Paperclip, ChevronDown, ChevronUp } from 'lucide-react'
 import { toast } from 'sonner'
-import { main } from 'framer-motion/client'
 import Footer from '@/components/Footer'
 import { MainNavbar } from '@/components/MainNavbar'
 
