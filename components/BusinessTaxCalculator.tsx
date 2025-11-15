@@ -68,6 +68,7 @@ interface BusinessTaxFormData {
 
 export default function BusinessTaxCalculator() {
   const { calculateTax, result, isLoading, reset } = useBusinessTaxCalculation();
+  const [activeTab, setActiveTab] = useState<'income' | 'deductions' | 'allowances'>('income');
 
   const [formData, setFormData] = useState<BusinessTaxFormData>({
     companyType: "small",
@@ -500,83 +501,228 @@ export default function BusinessTaxCalculator() {
       </Card>
 
       {result && (
-        <div className="space-y-6 animate-fade-in">
-          <div className="text-center space-y-2">
-            <h2 className="text-2xl font-bold text-foreground">
-              Your Estimates
-            </h2>
-            <p className="text-muted-foreground">
-              Results are shown for the selected accounting period.
-            </p>
-          </div>
-
+        <div className="space-y-4 animate-fade-in">
+          {/* Top Stats Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <Card className="p-6 space-y-2 border border-gray-200 hover:border-[#1E3A8A]/50 transition-colors">
-              <p className="text-sm text-muted-foreground">Taxable Profit</p>
-              <p className="text-2xl font-bold text-[#1E3A8A]">
-                {formatCurrency(result.totals?.taxableProfit)}
+            <Card className="p-6 space-y-2 bg-white border border-gray-100 rounded-xl shadow-sm">
+              <p className="text-sm text-gray-600 font-medium">Tax Payable</p>
+              <p className="text-2xl lg:text-[32px] font-bold text-[#1E3A8A]">
+                ₦{formatNumber(result.totals?.taxPayable || 0)}
               </p>
             </Card>
 
-            <Card className="p-6 space-y-2 border border-gray-200 hover:border-[#1E3A8A]/50 transition-colors">
-              <p className="text-sm text-muted-foreground">Tax Rate</p>
-              <p className="text-2xl font-bold text-[#1E3A8A]">
-                {result.totals?.taxRate?.toFixed(1) || 0}%
+            <Card className="p-6 space-y-2 bg-white border border-gray-100 rounded-xl shadow-sm">
+              <p className="text-sm text-gray-600 font-medium">Tax With Relief</p>
+              <p className="text-2xl lg:text-[32px] font-bold text-[#1E3A8A]">
+                ₦{formatNumber(result.totals?.taxPayable || 0)}
               </p>
             </Card>
 
-            <Card className="p-6 space-y-2 border border-gray-200 hover:border-[#1E3A8A]/50 transition-colors">
-              <p className="text-sm text-muted-foreground">Tax Payable</p>
-              <p className="text-2xl font-bold text-[#1E3A8A]">
-                {formatCurrency(result.totals?.taxPayable)}
+            <Card className="p-6 space-y-2 bg-white border border-gray-100 rounded-xl shadow-sm">
+              <p className="text-sm text-gray-600 font-medium">Total Relief & Savings</p>
+              <p className="text-2xl lg:text-[32px] font-bold text-[#1E3A8A]">
+                ₦0
               </p>
             </Card>
 
-            <Card className="p-6 space-y-2 border border-gray-200 hover:border-[#1E3A8A]/50 transition-colors">
-              <p className="text-sm text-muted-foreground">Effective Tax Rate</p>
-              <p className="text-2xl font-bold text-[#1E3A8A]">
-                {result.totals?.effectiveTaxRate?.toFixed(1) || 0}%
+            <Card className="p-6 space-y-2 bg-white border border-gray-100 rounded-xl shadow-sm">
+              <p className="text-sm text-gray-600 font-medium">Effective Tax Rate</p>
+              <p className="text-2xl lg:text-[32px] font-bold text-[#1E3A8A]">
+                {result.totals?.effectiveTaxRate?.toFixed(2) || 0}%
               </p>
             </Card>
           </div>
 
-          <Card className="p-6">
-            <h3 className="text-lg font-semibold mb-4">Tax Breakdown</h3>
-            <div className="h-[300px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={chartData}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={60}
-                    outerRadius={100}
-                    paddingAngle={2}
-                    dataKey="value"
-                    label={({ name = "", percent = 0 }) =>
-                      `${name}: ${(percent * 100).toFixed(0)}%`
-                    }
-                  >
-                    {chartData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.fill} />
-                    ))}
-                  </Pie>
-                  <Tooltip
-                    formatter={(value) => formatCurrency(Number(value))}
-                    contentStyle={{
-                      backgroundColor: "hsl(var(--background))",
-                      border: "1px solid hsl(var(--border))",
-                      borderRadius: "8px",
-                    }}
-                  />
-                  <Legend />
-                </PieChart>
-              </ResponsiveContainer>
+          {/* Gross Income Chart and Breakdown */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            {/* Gross Income Chart */}
+            <Card className="p-6 bg-white border border-gray-100 rounded-xl shadow-sm">
+              <div className="space-y-4">
+                <div className="flex items-baseline justify-between">
+                  <div>
+                    <h3 className="text-base font-semibold text-gray-900 mb-1">Gross Income</h3>
+                    <p className="text-xs text-gray-500">(Last 6 months)</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-xs text-gray-500 mb-1">Amount (₦)</p>
+                    <p className="text-lg font-bold text-gray-900">30000</p>
+                    <p className="text-xs text-gray-400">March</p>
+                  </div>
+                </div>
+
+                {/* Chart */}
+                <div className="h-48 relative">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+                      <defs>
+                        <linearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="#E0E7FF" stopOpacity="0.8" />
+                          <stop offset="100%" stopColor="#E0E7FF" stopOpacity="0.1" />
+                        </linearGradient>
+                      </defs>
+                      {/* Area fill */}
+                      <path
+                        d="M 0 80 Q 15 60, 20 50 Q 30 35, 40 30 Q 50 25, 60 40 Q 70 55, 80 45 Q 90 35, 100 50 L 100 100 L 0 100 Z"
+                        fill="url(#areaGradient)"
+                      />
+                      {/* Line */}
+                      <path
+                        d="M 0 80 Q 15 60, 20 50 Q 30 35, 40 30 Q 50 25, 60 40 Q 70 55, 80 45 Q 90 35, 100 50"
+                        fill="none"
+                        stroke="#4F46E5"
+                        strokeWidth="0.5"
+                      />
+                      {/* Dot at March */}
+                      <circle cx="40" cy="30" r="1.5" fill="#1E3A8A" />
+                    </svg>
+                  </ResponsiveContainer>
+
+                  {/* Month labels */}
+                  <div className="absolute bottom-0 left-0 right-0 flex justify-between px-2 text-[10px] text-gray-400">
+                    <span>Jan</span>
+                    <span>Feb</span>
+                    <span>Mar</span>
+                    <span>Apr</span>
+                    <span>May</span>
+                    <span>Jun</span>
+                  </div>
+                </div>
+              </div>
+            </Card>
+
+            {/* Breakdown Donut Chart */}
+            <Card className="p-6 bg-white border border-gray-100 rounded-xl shadow-sm">
+              <h3 className="text-base font-semibold text-gray-900 mb-6">Breakdown</h3>
+              <div className="flex items-center justify-center">
+                <div className="relative w-48 h-48">
+                  <svg className="w-full h-full -rotate-90" viewBox="0 0 100 100">
+                    {/* Annual Income (blue) - 60% */}
+                    <circle
+                      cx="50"
+                      cy="50"
+                      r="35"
+                      fill="none"
+                      stroke="#1E3A8A"
+                      strokeWidth="15"
+                      strokeDasharray="131.95 219.91"
+                      strokeDashoffset="0"
+                    />
+                    {/* Total Deductions (green) - 20% */}
+                    <circle
+                      cx="50"
+                      cy="50"
+                      r="35"
+                      fill="none"
+                      stroke="#10B981"
+                      strokeWidth="15"
+                      strokeDasharray="43.98 219.91"
+                      strokeDashoffset="-131.95"
+                    />
+                    {/* Annual Taxes (gray) - 20% */}
+                    <circle
+                      cx="50"
+                      cy="50"
+                      r="35"
+                      fill="none"
+                      stroke="#E5E7EB"
+                      strokeWidth="15"
+                      strokeDasharray="43.98 219.91"
+                      strokeDashoffset="-175.93"
+                    />
+                  </svg>
+
+                  {/* Center values */}
+                  <div className="absolute inset-0 flex items-center justify-center flex-col">
+                    <p className="text-xs text-gray-500">Total</p>
+                    <p className="text-lg font-bold text-gray-900">₦1950K</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Legend */}
+              <div className="mt-6 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-full bg-[#1E3A8A]"></div>
+                    <span className="text-sm text-gray-600">Annual Income</span>
+                  </div>
+                  <span className="text-sm font-semibold text-gray-900">₦1800</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-full bg-[#10B981]"></div>
+                    <span className="text-sm text-gray-600">Total Deductions</span>
+                  </div>
+                  <span className="text-sm font-semibold text-gray-900">₦150,000</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-full bg-[#E5E7EB]"></div>
+                    <span className="text-sm text-gray-600">Annual Taxes</span>
+                  </div>
+                  <span className="text-sm font-semibold text-gray-900">₦0</span>
+                </div>
+              </div>
+            </Card>
+          </div>
+
+          {/* Detailed Breakdown */}
+          <Card className="p-6 bg-white border border-gray-100 rounded-xl shadow-sm">
+            <h3 className="text-lg font-semibold text-gray-900 mb-6">Detailed Breakdown</h3>
+
+            {/* Tabs */}
+            <div className="flex gap-8 border-b border-gray-200 mb-6">
+              <button className="pb-3 text-sm font-medium text-[#1E3A8A] border-b-2 border-[#1E3A8A]">
+                Income
+              </button>
+              <button className="pb-3 text-sm font-medium text-gray-500 hover:text-gray-700">
+                Deductions & Reliefs
+              </button>
+              <button className="pb-3 text-sm font-medium text-gray-500 hover:text-gray-700">
+                Allowances
+              </button>
+            </div>
+
+            {/* Table */}
+            <div className="space-y-0 divide-y divide-gray-100">
+              <div className="flex justify-between py-4">
+                <span className="text-sm text-gray-600">Capital Allowance</span>
+                <span className="text-sm font-semibold text-gray-900">₦300,000</span>
+              </div>
+              <div className="flex justify-between py-4">
+                <span className="text-sm text-gray-600">Previous Year Losses</span>
+                <span className="text-sm font-semibold text-gray-900">₦120,000</span>
+              </div>
+              <div className="flex justify-between py-4">
+                <span className="text-sm text-gray-600">Digital Asset Losses</span>
+                <span className="text-sm font-semibold text-gray-900">₦50,000</span>
+              </div>
+              <div className="flex justify-between py-4">
+                <span className="text-sm text-gray-600">Charitable Donations</span>
+                <span className="text-sm font-semibold text-gray-900">₦80,000</span>
+              </div>
+              <div className="flex justify-between py-4">
+                <span className="text-sm text-gray-600">Educational Expenses</span>
+                <span className="text-sm font-semibold text-gray-900">₦100,000</span>
+              </div>
+              <div className="flex justify-between py-4">
+                <span className="text-sm text-gray-600">Business Losses</span>
+                <span className="text-sm font-semibold text-gray-900">₦90,000</span>
+              </div>
+              <div className="flex justify-between py-4">
+                <span className="text-sm text-gray-600">Freelancing Expenses</span>
+                <span className="text-sm font-semibold text-gray-900">₦40,000</span>
+              </div>
+              <div className="flex justify-between py-4 bg-gray-50">
+                <span className="text-sm font-semibold text-gray-900">Total Deductions</span>
+                <span className="text-sm font-bold text-[#1E3A8A]">₦1,180,000</span>
+              </div>
             </div>
           </Card>
 
+          {/* Applied Incentives */}
           {result.appliedIncentives && result.appliedIncentives.length > 0 && (
-            <Card className="p-6">
+            <Card className="p-6 bg-white border border-gray-100 rounded-xl shadow-sm">
               <h3 className="text-lg font-semibold mb-4 text-[#1E3A8A]">
                 ✅ Applied Incentives
               </h3>
@@ -591,8 +737,9 @@ export default function BusinessTaxCalculator() {
             </Card>
           )}
 
+          {/* Tax Tips */}
           {result.tips && result.tips.length > 0 && (
-            <Card className="p-6">
+            <Card className="p-6 bg-white border border-gray-100 rounded-xl shadow-sm">
               <h3 className="text-lg font-semibold mb-4 text-[#1E3A8A]">
                 💡 Tax Tips & Recommendations
               </h3>

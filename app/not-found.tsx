@@ -89,7 +89,7 @@ const NotFoundPage = () => {
                     <p className="text-gray-500">
                         Need help? Contact our support team at{' '}
                         <a
-                            href="mailto:info@taxmate.com"
+                            href="mailto:info@taxmate.com.ng"
                             className="text-[#1E3A8A] hover:underline font-medium"
                         >
                             support@taxmate.com
