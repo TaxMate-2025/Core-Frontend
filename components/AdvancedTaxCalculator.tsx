@@ -988,13 +988,6 @@ export default function AdvancedTaxCalculator() {
             </div>
           </Card>
 
-          {/* Hidden PDF Content */}
-          {result && (
-            <div style={{ display: 'none' }}>
-              <PdfContent ref={pdfRef} result={result} />
-            </div>
-          )}
-
           {/* Tax Tips */}
           {result.tips && result.tips.length > 0 && (
             <motion.div
