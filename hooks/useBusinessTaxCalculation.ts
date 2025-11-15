@@ -1,36 +1,32 @@
 import { useState, useCallback } from "react";
 import { toast } from "sonner";
 import { useAuthUser } from "./use-auth-user";
-interface AccountingPeriod {
-  start: string;
-  end: string;
+
+export interface Income {
+  revenue: number;
+  dividendsReceived: number;
+  exemptDividends: number;
+  digitalAssets: number;
+  otherIncome: number;
 }
 
-interface Income {
-  revenue: number | null;
-  dividendsReceived: number | null;
-  exemptDividends: number | null;
-  digitalAssets: number | null;
-  otherIncome: number | null;
+export interface Deductions {
+  expenses: number;
+  capitalExpenditure: number;
+  capitalAllowance: number;
+  previousYearLosses: number;
+  currentYearLosses: number;
+  digitalAssetLosses: number;
+  charitableDonations: number;
+  employeeCosts: number;
 }
 
-interface Deductions {
-  expenses: number | null;
-  capitalExpenditure: number | null;
-  capitalAllowance: number | null;
-  previousYearLosses: number | null;
-  currentYearLosses: number | null;
-  digitalAssetLosses: number | null;
-  charitableDonations: number | null;
-  employeeCosts: number | null;
-}
-
-interface Employees {
+export interface Employees {
   total: number;
   lowIncomeCount: number;
 }
 
-interface Incentives {
+export interface Incentives {
   tempRelief: boolean;
   agriHoliday: boolean;
   exportExemption: boolean;
@@ -38,11 +34,14 @@ interface Incentives {
 
 export interface BusinessTaxInput {
   companyType: "small" | "large" | "agriculture" | "export" | "priority";
-  accountingPeriod: AccountingPeriod;
+  accountingPeriod: {
+    start: string;
+    end: string;
+  };
   income: Income;
   deductions: Deductions;
-  employees?: Employees;
-  incentives?: Incentives;
+  employees: Employees;
+  incentives: Incentives;
 }
 
 interface BusinessTaxResult {

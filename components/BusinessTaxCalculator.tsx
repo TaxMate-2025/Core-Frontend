@@ -10,6 +10,10 @@ import { Loader2 } from "lucide-react";
 import {
   useBusinessTaxCalculation,
   type BusinessTaxInput,
+  type Deductions,
+  type Employees,
+  type Incentives,
+  type Income,
 } from "@/hooks/useBusinessTaxCalculation";
 import {
   PieChart,
@@ -20,6 +24,8 @@ import {
   Legend,
 } from "recharts";
 
+type Frequency = "monthly" | "annual";
+
 const CHART_COLORS = ["#1E3A8A", "#3B82F6", "#60A5FA"];
 
 interface ChartData extends Record<string, any> {
@@ -28,11 +34,25 @@ interface ChartData extends Record<string, any> {
   fill: string;
 }
 
+interface BusinessTaxFormData {
+  companyType: "small" | "large" | "agriculture" | "export" | "priority";
+  frequency: "monthly" | "annual";
+  accountingPeriod: {
+    start: string;
+    end: string;
+  };
+  income: Income;
+  deductions: Deductions;
+  employees: Employees;
+  incentives: Incentives;
+}
+
 export default function BusinessTaxCalculator() {
   const { calculateTax, result, isLoading, reset } =
     useBusinessTaxCalculation();
-  const [formData, setFormData] = useState<BusinessTaxInput>({
+  const [formData, setFormData] = useState<BusinessTaxFormData>({
     companyType: "small",
+    frequency: "annual",
     accountingPeriod: {
       start: "",
       end: "",
@@ -59,7 +79,7 @@ export default function BusinessTaxCalculator() {
       lowIncomeCount: 0,
     },
     incentives: {
-      tempRelief: true,
+      tempRelief: false,
       agriHoliday: false,
       exportExemption: false,
     },
@@ -102,40 +122,65 @@ export default function BusinessTaxCalculator() {
       let current: any = newData;
 
       for (let i = 0; i < keys.length - 1; i++) {
+        if (current[keys[i]] === undefined) {
+          current[keys[i]] = {};
+        }
         current = current[keys[i]];
       }
 
       const lastKey = keys[keys.length - 1];
-      current[lastKey] = typeof value === "string" ? parseNumber(value) : value;
+
+      if (path === "frequency") {
+        current[lastKey] = value as Frequency;
+      } else if (typeof value === "string") {
+        const numValue = parseNumber(value);
+        current[lastKey] = isNaN(numValue) ? 0 : numValue;
+      } else {
+        current[lastKey] = value;
+      }
 
       return newData;
     });
   };
 
   const handleCalculate = async () => {
-    try {
-      const dataToSend = {
-        ...formData,
-        accountingPeriod: {
-          start: formData.accountingPeriod.start,
-          end: formData.accountingPeriod.end,
-        },
-      };
+  try {
+    const incomeMultiplier = formData.frequency === "monthly" ? 12 : 1;
+    
+    const dataToSend: BusinessTaxInput = {
+      companyType: formData.companyType,
+      accountingPeriod: {
+        start: formData.accountingPeriod.start,
+        end: formData.accountingPeriod.end,
+      },
+      income: {
+        revenue: formData.income.revenue * incomeMultiplier,
+        dividendsReceived: formData.income.dividendsReceived * incomeMultiplier,
+        exemptDividends: formData.income.exemptDividends * incomeMultiplier,
+        digitalAssets: formData.income.digitalAssets * incomeMultiplier,
+        otherIncome: formData.income.otherIncome * incomeMultiplier,
+      },
+      deductions: { ...formData.deductions },
+      employees: { ...formData.employees },
+      incentives: { ...formData.incentives }
+    };
 
-      await calculateTax(dataToSend);
-      toast.success("Tax calculation completed successfully");
-    } catch (err) {
-      // Error handling
-    }
-  };
+    await calculateTax(dataToSend);
+    toast.success("Tax calculation completed successfully");
+  } catch (err) {
+    console.error("Error calculating tax:", err);
+    toast.error("Failed to calculate tax. Please try again.");
+  }
+};
 
   const handleReset = () => {
     reset();
     setFormData({
       companyType: "small",
+      frequency: "annual",
       accountingPeriod: {
-        start: formatDateForInput(""),
-        end: formatDateForInput(""),
+        start: "",
+        end: "",
       },
       income: {
         revenue: 0,
@@ -208,24 +253,55 @@ export default function BusinessTaxCalculator() {
       </div>
 
       <Card className="p-8 space-y-6">
-        {/* Company Type */}
-        <div className="space-y-2">
-          <label className="text-sm font-medium text-foreground">
-            Company Type
-          </label>
-          <Select
-            value={formData.companyType}
-            onChange={(value) => handleInputChange("companyType", value)}
-            items={[
-              { value: "small", label: "Small Company" },
-              { value: "large", label: "Large Company" },
-              { value: "agriculture", label: "Agriculture" },
-              { value: "export", label: "Export" },
-              { value: "priority", label: "Priority" },
-            ]}
-            placeholder="Select company type"
-            className="w-full"
-          />
+        <div className="flex items-center justify-between space-x-2 mb-6">
+          <span className="text-xl md:text-2xl lg:text-[28px] font-semibold leading-tight tracking-normal text-[#1E3A8A]">
+            Income Frequency:
+          </span>
+          <div className="flex bg-gray-100 rounded-lg p-1 gap-2">
+            <button
+              type="button"
+              className={`px-4 py-2 text-sm font-medium rounded-md transition-colors cursor-pointer ${
+                formData.frequency === "monthly"
+                  ? "bg-white shadow-md"
+                  : "text-gray-600 hover:bg-gray-200"
+              }`}
+              onClick={() => handleInputChange("frequency", "monthly")}
+            >
+              Monthly
+            </button>
+            <button
+              type="button"
+              className={`px-4 py-2 text-sm font-medium rounded-md transition-colors cursor-pointer ${
+                formData.frequency === "annual"
+                  ? "bg-white shadow-md"
+                  : "text-gray-600 hover:bg-gray-200"
+              }`}
+              onClick={() => handleInputChange("frequency", "annual")}
+            >
+              Annual
+            </button>
+          </div>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Company Type */}
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-foreground">
+              Company Type
+            </label>
+            <Select
+              value={formData.companyType}
+              onChange={(value) => handleInputChange("companyType", value)}
+              items={[
+                { value: "small", label: "Small Company" },
+                { value: "large", label: "Large Company" },
+                { value: "agriculture", label: "Agriculture" },
+                { value: "export", label: "Export" },
+                { value: "priority", label: "Priority" },
+              ]}
+              placeholder="Select company type"
+              className="w-full"
+            />
+          </div>
         </div>
 
         {/* Accounting Period */}
@@ -277,7 +353,11 @@ export default function BusinessTaxCalculator() {
                   type="text"
                   inputMode="decimal"
                   placeholder="0"
-                  value={formatNumber(value as number)}
+                  value={
+                    value === null || isNaN(value as number)
+                      ? ""
+                      : formatNumber(value as number)
+                  }
                   onChange={(e) =>
                     handleInputChange(
                       `income.${key}`,
@@ -304,7 +384,11 @@ export default function BusinessTaxCalculator() {
                   type="text"
                   inputMode="decimal"
                   placeholder="0"
-                  value={formatNumber(value as number)}
+                  value={
+                    value === null || isNaN(value as number)
+                      ? ""
+                      : formatNumber(value as number)
+                  }
                   onChange={(e) =>
                     handleInputChange(
                       `deductions.${key}`,
