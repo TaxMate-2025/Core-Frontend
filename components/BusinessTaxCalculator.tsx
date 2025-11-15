@@ -321,15 +321,15 @@ export default function BusinessTaxCalculator() {
     <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       <div className="text-center space-y-2">
         <h1 className="text-3xl md:text-4xl lg:text-5xl xl:text-[48px] font-semibold leading-tight text-center tracking-normal text-[#1E3A8A]">
-          Business Tax Planning & New Tax Regime
+          Business Tax Calculator
         </h1>
         <p className="text-muted-foreground max-w-2xl mx-auto">
           Plan and analyze your business taxes under Nigeria's new tax regime. TaxMate helps businesses stay compliant and save time.
         </p>
       </div>
 
-      <Card className="p-8 space-y-6">
-        <div className="flex items-center justify-between space-x-2 mb-6">
+       <Card className="p-8 space-y-6">
+       {/* <div className="flex items-center justify-between space-x-2 mb-6">
           <span className="text-xl md:text-2xl lg:text-[28px] font-semibold leading-tight tracking-normal text-[#1E3A8A]">
             Income Frequency:
           </span>
@@ -355,7 +355,7 @@ export default function BusinessTaxCalculator() {
               Annual
             </button>
           </div>
-        </div>
+        </div> */}
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
@@ -914,9 +914,6 @@ export default function BusinessTaxCalculator() {
           {result.appliedIncentives && result.appliedIncentives.length > 0 && (
             <Card className="p-6 bg-card border border-border rounded-xl shadow-sm">
               <div className="flex items-center gap-2 mb-4">
-                <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
-                  <span className="text-[#1E3A8A] text-lg">✅</span>
-                </div>
                 <h3 className="text-lg font-semibold text-[#1E3A8A]">
                   Applied Incentives
                 </h3>
