@@ -85,24 +85,12 @@ const staggerContainer = {
   },
 };
 
-const slideUp = {
-  hidden: { opacity: 0, y: 20 },
-  show: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.5,
-        ease: [0.16, 1, 0.3, 1] as Easing[],
-    },
-  },
-};
 
 export default function AdvancedTaxCalculator() {
   const { calculateTax, result, isLoading, reset } =
     useAdvancedTaxCalculation();
   const [activeTab, setActiveTab] = useState<TabType>("income");
   const [expandedTips, setExpandedTips] = useState<Record<number, boolean>>({});
-  const pdfRef = useRef<HTMLDivElement>(null);
 
 
   const [formData, setFormData] = useState<AdvancedTaxFormData>({
@@ -1044,7 +1032,7 @@ export default function AdvancedTaxCalculator() {
                   return (
                     <motion.li
                       key={index}
-                      variants={slideUp}
+                      variants={fadeIn}
                       className="bg-muted/30 rounded-lg border border-border hover:border-[#1E3A8A]/20 transition-colors overflow-hidden"
                     >
                       <div className="p-4">
