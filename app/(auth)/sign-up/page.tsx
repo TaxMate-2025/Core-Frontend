@@ -13,7 +13,9 @@ import { UserType } from "@/types/auth";
 import { initiateGoogleOAuth } from "@/utils/oauth";
 
 // Animation variants
-const container = {
+import { Variants } from "framer-motion";
+
+const container: Variants = {
   hidden: { opacity: 0 },
   show: {
     opacity: 1,
@@ -24,25 +26,25 @@ const container = {
   },
 };
 
-const item = {
+const item: Variants = {
   hidden: { opacity: 0, y: 20 },
   show: {
     opacity: 1,
     y: 0,
     transition: {
       duration: 0.5,
-      ease: "easeOut",
+      ease: [0.16, 1, 0.3, 1], // cubic-bezier for easeOut
     },
   },
 };
 
-const fadeIn = {
+const fadeIn: Variants = {
   hidden: { opacity: 0 },
   show: {
     opacity: 1,
     transition: {
       duration: 0.6,
-      ease: "easeInOut",
+      ease: [0.65, 0, 0.35, 1], // cubic-bezier for easeInOut
     },
   },
 };
@@ -72,7 +74,7 @@ export default function SignUpPage() {
             className="flex justify-center sm:justify-start mb-6"
             variants={item}
           >
-            <Logo className="h-10" />
+            <Logo />
           </motion.div>
 
           {/* Header */}
@@ -282,13 +284,15 @@ export default function SignUpPage() {
             </motion.div>
 
             {/* Sign Up Button */}
-            <motion.div variants={item}>
+            <motion.div
+              variants={item}
+              whileHover={{ scale: 1.01 }}
+              whileTap={{ scale: 0.99 }}
+            >
               <Button
                 type="submit"
                 className="w-full h-10 bg-[#1E3A8A] hover:bg-[#1E3A8A]/90 text-sm font-medium"
                 disabled={isLoading}
-                whileHover={{ scale: 1.01 }}
-                whileTap={{ scale: 0.99 }}
               >
                 {isLoading ? "Creating account..." : "Sign up"}
               </Button>
@@ -307,20 +311,19 @@ export default function SignUpPage() {
             </motion.div>
 
             {/* Google Sign In */}
-            <motion.div variants={item}>
+            
               <Button
+              as={motion.button}
                 type="button"
                 variant="outline"
                 className="w-full h-10 text-sm flex items-center justify-center gap-2"
                 onClick={initiateGoogleOAuth}
                 disabled={isLoading}
-                whileHover={{ scale: 1.01 }}
-                whileTap={{ scale: 0.99 }}
               >
                 <Image src="/google.svg" alt="" width={16} height={16} />
                 <span>Continue with Google</span>
               </Button>
-            </motion.div>
+          
           </motion.form>
 
           {/* Login Link */}

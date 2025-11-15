@@ -68,6 +68,7 @@ export default function HomePage() {
     "advanced" | "business" | null
   >(null);
   const [isMounted, setIsMounted] = useState(false);
+  
 
   useEffect(() => {
     setIsMounted(true);
