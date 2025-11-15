@@ -25,21 +25,21 @@ export default function AdvancedTaxCalculator() {
                         <h2 className="text-base font-semibold text-[#1E3A8A]">
                             Income Frequency
                         </h2>
-                        <div className="flex gap-2">
+                        <div className="flex bg-gray-100 rounded-lg p-2 gap-2">
                             <button
                                 onClick={() => setFrequency("monthly")}
-                                className={`px-6 py-2 rounded-md text-sm font-semibold trans[#414545]lors ${frequency === "monthly"
-                                    ? "bg-[#1E3A8A] text-white"
-                                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                                className={`px-6 py-2 rounded-md text-sm font-semibold cursor-pointer trans[#414545]lors ${frequency === "monthly"
+                                    ? "bg-white shadow-md"
+                                    : "text-gray-600 hover:bg-gray-200"
                                     }`}
                             >
                                 Monthly
                             </button>
                             <button
                                 onClick={() => setFrequency("annually")}
-                                className={`px-6 py-2 rounded-md text-sm font-semibold trans[#414545]lors ${frequency === "annually"
-                                    ? "bg-[#1E3A8A] text-white"
-                                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                                className={`px-6 py-2 rounded-md text-sm font-semibold cursor-pointer trans[#414545]lors ${frequency === "annually"
+                                    ? "bg-white shadow-md"
+                                    : "text-gray-600 hover:bg-gray-200"
                                     }`}
                             >
                                 Annually
