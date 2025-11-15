@@ -280,7 +280,7 @@ export function SimpleTaxCalculator() {
         </div>
       </Card>
 
-      {/* SEO-friendly informational sections */}
+      {/* SEO-friendly informational sections 
       <div className="space-y-8 mt-12">
         <Card className="p-6">
           <h2 className="text-2xl font-bold text-[#1E3A8A] mb-4">
@@ -356,6 +356,7 @@ export function SimpleTaxCalculator() {
           </div>
         </Card>
       </div>
+      */}
 
       {result && (
         <div className="space-y-6 animate-fade-in">
