@@ -1,56 +1,9 @@
 import { useState, useCallback } from "react";
 import { toast } from "sonner";
 import { useAuthUser } from "./use-auth-user";
-
-export interface Income {
-  revenue: number;
-  dividendsReceived: number;
-  exemptDividends: number;
-  digitalAssets: number;
-  otherIncome: number;
-}
-
-export interface Deductions {
-  expenses: number;
-  capitalExpenditure: number;
-  capitalAllowance: number;
-  previousYearLosses: number;
-  currentYearLosses: number;
-  digitalAssetLosses: number;
-  charitableDonations: number;
-  employeeCosts: number;
-}
-
-export interface Employees {
-  total: number;
-  lowIncomeCount: number;
-}
-
-export interface Incentives {
-  tempRelief: boolean;
-  agriHoliday: boolean;
-  exportExemption: boolean;
-}
-
-export interface BusinessTaxInput {
-  companyType: "small" | "large" | "agriculture" | "export" | "priority";
-  accountingPeriod: {
-    start: string;
-    end: string;
-  };
-  income: Income;
-  deductions: Deductions;
-  employees: Employees;
-  incentives: Incentives;
-}
-
-interface BusinessTaxResult {
-  grossIncome: number;
-  tax: number;
-  taxWithRelief: number;
-  deductions: number;
-  tips: string[];
-}
+import { BusinessTaxInput, BusinessTaxResult } from "@/types/businessTax";
+import { businessTaxSchema } from "@/schemas/businessTax";
+import { ZodError } from "zod";
 
 export function useBusinessTaxCalculation() {
   const { getToken } = useAuthUser();
@@ -64,6 +17,9 @@ export function useBusinessTaxCalculation() {
       setError(null);
 
       try {
+        // Validate input using Zod schema
+        const validatedInput = businessTaxSchema.parse(input);
+
         const token = getToken();
 
         if (!token) {
@@ -78,7 +34,7 @@ export function useBusinessTaxCalculation() {
               "Content-Type": "application/json",
               Authorization: `Bearer ${token}`,
             },
-            body: JSON.stringify(input),
+            body: JSON.stringify(validatedInput),
           }
         );
 
@@ -89,10 +45,20 @@ export function useBusinessTaxCalculation() {
           );
         }
 
-        const data = await response.json();
+        const data: BusinessTaxResult = await response.json();
         setResult(data);
+        toast.success("Tax calculation completed successfully");
         return data;
       } catch (err) {
+        if (err instanceof ZodError) {
+          // Handle validation errors
+          const firstError = err.issues[0];
+          const error = new Error(firstError.message || "Invalid input data");
+          setError(error);
+          toast.error(error.message);
+          throw error;
+        }
+
         const error =
           err instanceof Error ? err : new Error("An unknown error occurred");
         setError(error);
