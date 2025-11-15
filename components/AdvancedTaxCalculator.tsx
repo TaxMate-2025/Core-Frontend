@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Loader2 } from "lucide-react";
 import { useAdvancedTaxCalculation } from "@/hooks/useAdvancedTaxCalculation";
 import type { AdvancedTaxInput } from "@/types/advancedTax";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, type Easing } from "framer-motion";
 
 import {
   PieChart,
@@ -68,7 +68,10 @@ const fadeIn = {
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.5 },
+    transition: {
+      duration: 0.5,
+      ease: [0.16, 1, 0.3, 1] as const,
+    },
   },
 };
 
@@ -89,7 +92,7 @@ const slideUp = {
     y: 0,
     transition: {
       duration: 0.5,
-      ease: "easeOut",
+        ease: [0.16, 1, 0.3, 1] as Easing[],
     },
   },
 };
