@@ -69,7 +69,7 @@ export function useBusinessTaxCalculation() {
       }
     },
     [getToken]
-  ); 
+  );
 
   const reset = useCallback(() => {
     setResult(null);
