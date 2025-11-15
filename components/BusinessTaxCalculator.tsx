@@ -38,21 +38,21 @@ export default function BusinessTaxCalculator() {
       end: "",
     },
     income: {
-      revenue: null,
-      dividendsReceived: null,
-      exemptDividends: null,
-      digitalAssets: null,
-      otherIncome: null,
+      revenue: 0,
+      dividendsReceived: 0,
+      exemptDividends: 0,
+      digitalAssets: 0,
+      otherIncome: 0,
     },
     deductions: {
-      expenses: null,
-      capitalExpenditure: null,
-      capitalAllowance: null,
-      previousYearLosses: null,
-      currentYearLosses: null,
-      digitalAssetLosses: null,
-      charitableDonations: null,
-      employeeCosts: null,
+      expenses: 0,
+      capitalExpenditure: 0,
+      capitalAllowance: 0,
+      previousYearLosses: 0,
+      currentYearLosses: 0,
+      digitalAssetLosses: 0,
+      charitableDonations: 0,
+      employeeCosts: 0,
     },
     employees: {
       total: 0,
@@ -65,41 +65,67 @@ export default function BusinessTaxCalculator() {
     },
   });
 
+  const formatDateForInput = (
+    dateString: string | undefined | null
+  ): string => {
+    if (!dateString) return "";
+    // Convert from YYYYMMDD to YYYY-MM-DD
+    const str = String(dateString); // Ensure it's a string
+    if (str.includes("-")) return str; // Already in YYYY-MM-DD format
+    return str.replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3");
+  };
+
+  const handleDateChange = (path: string, value: string) => {
+    // Convert from YYYY-MM-DD to YYYYMMDD for storage
+    const formattedValue = value.replace(/-/g, "");
+    handleInputChange(path, formattedValue);
+  };
+
   const formatNumber = (num: number | null): string => {
-    if (num === null || isNaN(num)) return "";
+    if (num === null || isNaN(num)) return "0";
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   };
 
-  const parseNumber = (str: string): number | null => {
-    if (!str) return null;
+  const parseNumber = (str: string): number => {
+    if (!str) return 0;
     const num = Number(str.replace(/[^0-9.]/g, ""));
-    return isNaN(num) ? null : num;
+    return isNaN(num) ? 0 : num;
   };
 
   const handleInputChange = (
     path: string,
     value: string | number | boolean
   ) => {
-    const keys = path.split(".");
     setFormData((prev) => {
       const newData = { ...prev };
+      const keys = path.split(".");
       let current: any = newData;
 
       for (let i = 0; i < keys.length - 1; i++) {
         current = current[keys[i]];
       }
 
-      current[keys[keys.length - 1]] = value;
+      const lastKey = keys[keys.length - 1];
+      current[lastKey] = typeof value === "string" ? parseNumber(value) : value;
+
       return newData;
     });
   };
 
   const handleCalculate = async () => {
     try {
-      await calculateTax(formData);
+      const dataToSend = {
+        ...formData,
+        accountingPeriod: {
+          start: formData.accountingPeriod.start,
+          end: formData.accountingPeriod.end,
+        },
+      };
+
+      await calculateTax(dataToSend);
       toast.success("Tax calculation completed successfully");
     } catch (err) {
-      // Error is handled in the hook
+      // Error handling
     }
   };
 
@@ -108,25 +134,25 @@ export default function BusinessTaxCalculator() {
     setFormData({
       companyType: "small",
       accountingPeriod: {
-        start: "",
-        end: "",
+        start: formatDateForInput(""),
+        end: formatDateForInput(""),
       },
       income: {
-        revenue: null,
-        dividendsReceived: null,
-        exemptDividends: null,
-        digitalAssets: null,
-        otherIncome: null,
+        revenue: 0,
+        dividendsReceived: 0,
+        exemptDividends: 0,
+        digitalAssets: 0,
+        otherIncome: 0,
       },
       deductions: {
-        expenses: null,
-        capitalExpenditure: null,
-        capitalAllowance: null,
-        previousYearLosses: null,
-        currentYearLosses: null,
-        digitalAssetLosses: null,
-        charitableDonations: null,
-        employeeCosts: null,
+        expenses: 0,
+        capitalExpenditure: 0,
+        capitalAllowance: 0,
+        previousYearLosses: 0,
+        currentYearLosses: 0,
+        digitalAssetLosses: 0,
+        charitableDonations: 0,
+        employeeCosts: 0,
       },
       employees: {
         total: 0,
@@ -210,9 +236,13 @@ export default function BusinessTaxCalculator() {
             </label>
             <Input
               type="date"
-              value={formData.accountingPeriod.start}
+              value={
+                formData.accountingPeriod.start
+                  ? formatDateForInput(formData.accountingPeriod.start)
+                  : ""
+              }
               onChange={(e) =>
-                handleInputChange("accountingPeriod.start", e.target.value)
+                handleDateChange("accountingPeriod.start", e.target.value)
               }
             />
           </div>
@@ -222,9 +252,13 @@ export default function BusinessTaxCalculator() {
             </label>
             <Input
               type="date"
-              value={formData.accountingPeriod.end}
+              value={
+                formData.accountingPeriod.end
+                  ? formatDateForInput(formData.accountingPeriod.end)
+                  : ""
+              }
               onChange={(e) =>
-                handleInputChange("accountingPeriod.end", e.target.value)
+                handleDateChange("accountingPeriod.end", e.target.value)
               }
             />
           </div>
