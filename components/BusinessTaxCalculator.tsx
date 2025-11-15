@@ -19,11 +19,19 @@ import {
   ResponsiveContainer,
   Tooltip,
   Legend,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
 } from "recharts";
 
 type Frequency = "monthly" | "annual";
+type TabType = "income" | "deductions" | "allowances";
 
-const CHART_COLORS = ["#1E3A8A", "#3B82F6", "#60A5FA"];
+const CHART_COLORS = ["#1E3A8A", "#3B82F6", "#60A5FA", "#10B981", "#F59E0B", "#EF4444"];
+const INCOME_COLORS = ["#1E3A8A", "#3B82F6", "#60A5FA", "#93C5FD", "#DBEAFE"];
+const DEDUCTION_COLORS = ["#10B981", "#34D399", "#6EE7B7", "#A7F3D0"];
 
 interface ChartData extends Record<string, any> {
   name: string;
@@ -68,7 +76,7 @@ interface BusinessTaxFormData {
 
 export default function BusinessTaxCalculator() {
   const { calculateTax, result, isLoading, reset } = useBusinessTaxCalculation();
-  const [activeTab, setActiveTab] = useState<'income' | 'deductions' | 'allowances'>('income');
+  const [activeTab, setActiveTab] = useState<TabType>("income");
 
   const [formData, setFormData] = useState<BusinessTaxFormData>({
     companyType: "small",
@@ -243,25 +251,59 @@ export default function BusinessTaxCalculator() {
     });
   };
 
-  const chartData: ChartData[] = result
+  // Income breakdown chart data
+  const incomeChartData = result
+    ? [
+      {
+        name: "Revenue",
+        value: result.incomeBreakdown?.revenue || 0,
+        fill: INCOME_COLORS[0],
+      },
+      {
+        name: "Dividends",
+        value: result.incomeBreakdown?.dividendsReceived || 0,
+        fill: INCOME_COLORS[1],
+      },
+      {
+        name: "Digital Assets",
+        value: result.incomeBreakdown?.digitalAssets || 0,
+        fill: INCOME_COLORS[2],
+      },
+      {
+        name: "Other Income",
+        value: result.incomeBreakdown?.otherIncome || 0,
+        fill: INCOME_COLORS[3],
+      },
+    ].filter((item) => item.value > 0)
+    : [];
+
+  // Donut chart data for breakdown
+  const donutChartData = result
     ? [
       {
         name: "Gross Income",
         value: result.incomeBreakdown?.totalGrossIncome || 0,
-        fill: CHART_COLORS[0],
-      },
-      {
-        name: "Tax Payable",
-        value: result.totals?.taxPayable || 0,
-        fill: CHART_COLORS[1],
+        fill: "#1E3A8A",
       },
       {
         name: "Total Deductions",
         value: result.deductionsBreakdown?.totalDeductions || 0,
-        fill: CHART_COLORS[2],
+        fill: "#10B981",
       },
-    ]
+      {
+        name: "Tax Payable",
+        value: result.totals?.taxPayable || 0,
+        fill: "#EF4444",
+      },
+    ].filter((item) => item.value > 0)
     : [];
+
+  // Calculate donut chart percentages
+  const totalForDonut = donutChartData.reduce((sum, item) => sum + item.value, 0);
+  const donutPercentages = donutChartData.map((item) => ({
+    ...item,
+    percentage: totalForDonut > 0 ? (item.value / totalForDonut) * 100 : 0,
+  }));
 
   const formatCurrency = (value: number | undefined) => {
     if (value === undefined || value === null || isNaN(value)) {
@@ -276,7 +318,7 @@ export default function BusinessTaxCalculator() {
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       <div className="text-center space-y-2">
         <h1 className="text-3xl md:text-4xl lg:text-5xl xl:text-[48px] font-semibold leading-tight text-center tracking-normal text-[#1E3A8A]">
           Business Tax Calculator
@@ -504,233 +546,390 @@ export default function BusinessTaxCalculator() {
         <div className="space-y-4 animate-fade-in">
           {/* Top Stats Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <Card className="p-6 space-y-2 bg-white border border-gray-100 rounded-xl shadow-sm">
-              <p className="text-sm text-gray-600 font-medium">Tax Payable</p>
-              <p className="text-2xl lg:text-[32px] font-bold text-[#1E3A8A]">
-                ₦{formatNumber(result.totals?.taxPayable || 0)}
+            <Card className="p-6 space-y-2 bg-card border border-border rounded-xl shadow-sm hover:shadow-md transition-shadow">
+              <p className="text-sm text-muted-foreground font-medium">Tax Payable</p>
+              <p className="text-xl lg:text-2xl font-bold text-[#1E3A8A] break-all">
+                {formatCurrency(result.totals?.taxPayable || 0)}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                Tax Rate: {(result.totals?.taxRate || 0) * 100}%
               </p>
             </Card>
 
-            <Card className="p-6 space-y-2 bg-white border border-gray-100 rounded-xl shadow-sm">
-              <p className="text-sm text-gray-600 font-medium">Tax With Relief</p>
-              <p className="text-2xl lg:text-[32px] font-bold text-[#1E3A8A]">
-                ₦{formatNumber(result.totals?.taxPayable || 0)}
+            <Card className="p-6 space-y-2 bg-card border border-border rounded-xl shadow-sm hover:shadow-md transition-shadow">
+              <p className="text-sm text-muted-foreground font-medium">Taxable Profit</p>
+              <p className="text-xl lg:text-2xl font-bold text-[#1E3A8A] break-all">
+                {formatCurrency(result.totals?.taxableProfit || 0)}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                After deductions
               </p>
             </Card>
 
-            <Card className="p-6 space-y-2 bg-white border border-gray-100 rounded-xl shadow-sm">
-              <p className="text-sm text-gray-600 font-medium">Total Relief & Savings</p>
-              <p className="text-2xl lg:text-[32px] font-bold text-[#1E3A8A]">
-                ₦0
+            <Card className="p-6 space-y-2 bg-card border border-border rounded-xl shadow-sm hover:shadow-md transition-shadow">
+              <p className="text-sm text-muted-foreground font-medium">Total Deductions</p>
+              <p className="text-xl lg:text-2xl font-bold text-[#1E3A8A] break-all">
+                {formatCurrency(result.deductionsBreakdown?.totalDeductions || 0)}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                All reliefs applied
               </p>
             </Card>
 
-            <Card className="p-6 space-y-2 bg-white border border-gray-100 rounded-xl shadow-sm">
-              <p className="text-sm text-gray-600 font-medium">Effective Tax Rate</p>
-              <p className="text-2xl lg:text-[32px] font-bold text-[#1E3A8A]">
+            <Card className="p-6 space-y-2 bg-card border border-border rounded-xl shadow-sm hover:shadow-md transition-shadow">
+              <p className="text-sm text-muted-foreground font-medium">Effective Tax Rate</p>
+              <p className="text-xl lg:text-2xl font-bold text-[#1E3A8A] break-all">
                 {result.totals?.effectiveTaxRate?.toFixed(2) || 0}%
+              </p>
+              <p className="text-xs text-muted-foreground">
+                After all incentives
               </p>
             </Card>
           </div>
 
-          {/* Gross Income Chart and Breakdown */}
+          {/* Income Breakdown Chart and Donut Chart */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {/* Gross Income Chart */}
-            <Card className="p-6 bg-white border border-gray-100 rounded-xl shadow-sm">
+            {/* Income Breakdown Bar Chart */}
+            <Card className="p-6 bg-card border border-border rounded-xl shadow-sm">
               <div className="space-y-4">
                 <div className="flex items-baseline justify-between">
                   <div>
-                    <h3 className="text-base font-semibold text-gray-900 mb-1">Gross Income</h3>
-                    <p className="text-xs text-gray-500">(Last 6 months)</p>
+                    <h3 className="text-base font-semibold text-foreground mb-1">Income Breakdown</h3>
+                    <p className="text-xs text-muted-foreground">By income source</p>
                   </div>
                   <div className="text-right">
-                    <p className="text-xs text-gray-500 mb-1">Amount (₦)</p>
-                    <p className="text-lg font-bold text-gray-900">30000</p>
-                    <p className="text-xs text-gray-400">March</p>
+                    <p className="text-xs text-muted-foreground mb-1">Total Gross Income</p>
+                    <p className="text-lg font-bold text-[#1E3A8A] break-all">
+                      {formatCurrency(result.incomeBreakdown?.totalGrossIncome)}
+                    </p>
                   </div>
                 </div>
 
                 {/* Chart */}
-                <div className="h-48 relative">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
-                      <defs>
-                        <linearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="0%" stopColor="#E0E7FF" stopOpacity="0.8" />
-                          <stop offset="100%" stopColor="#E0E7FF" stopOpacity="0.1" />
-                        </linearGradient>
-                      </defs>
-                      {/* Area fill */}
-                      <path
-                        d="M 0 80 Q 15 60, 20 50 Q 30 35, 40 30 Q 50 25, 60 40 Q 70 55, 80 45 Q 90 35, 100 50 L 100 100 L 0 100 Z"
-                        fill="url(#areaGradient)"
-                      />
-                      {/* Line */}
-                      <path
-                        d="M 0 80 Q 15 60, 20 50 Q 30 35, 40 30 Q 50 25, 60 40 Q 70 55, 80 45 Q 90 35, 100 50"
-                        fill="none"
-                        stroke="#4F46E5"
-                        strokeWidth="0.5"
-                      />
-                      {/* Dot at March */}
-                      <circle cx="40" cy="30" r="1.5" fill="#1E3A8A" />
-                    </svg>
-                  </ResponsiveContainer>
-
-                  {/* Month labels */}
-                  <div className="absolute bottom-0 left-0 right-0 flex justify-between px-2 text-[10px] text-gray-400">
-                    <span>Jan</span>
-                    <span>Feb</span>
-                    <span>Mar</span>
-                    <span>Apr</span>
-                    <span>May</span>
-                    <span>Jun</span>
-                  </div>
+                <div className="h-64">
+                  {incomeChartData.length > 0 ? (
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart data={incomeChartData}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+                        <XAxis
+                          dataKey="name"
+                          tick={{ fontSize: 12, fill: "#6B7280" }}
+                          stroke="#D1D5DB"
+                        />
+                        <YAxis
+                          tick={{ fontSize: 12, fill: "#6B7280" }}
+                          stroke="#D1D5DB"
+                          tickFormatter={(value) => {
+                            if (value >= 1000000) return `₦${(value / 1000000).toFixed(1)}M`;
+                            if (value >= 1000) return `₦${(value / 1000).toFixed(0)}K`;
+                            return `₦${value}`;
+                          }}
+                        />
+                        <Tooltip
+                          formatter={(value: number) => formatCurrency(value)}
+                          contentStyle={{
+                            backgroundColor: "#fff",
+                            border: "1px solid #E5E7EB",
+                            borderRadius: "8px",
+                            padding: "8px 12px",
+                          }}
+                        />
+                        <Bar dataKey="value" radius={[8, 8, 0, 0]}>
+                          {incomeChartData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={entry.fill} />
+                          ))}
+                        </Bar>
+                      </BarChart>
+                    </ResponsiveContainer>
+                  ) : (
+                    <div className="h-full flex items-center justify-center text-gray-400">
+                      <p className="text-sm">No income data available</p>
+                    </div>
+                  )}
                 </div>
               </div>
             </Card>
 
             {/* Breakdown Donut Chart */}
-            <Card className="p-6 bg-white border border-gray-100 rounded-xl shadow-sm">
-              <h3 className="text-base font-semibold text-gray-900 mb-6">Breakdown</h3>
+            <Card className="p-6 bg-card border border-border rounded-xl shadow-sm">
+              <h3 className="text-base font-semibold text-foreground mb-6">Financial Overview</h3>
               <div className="flex items-center justify-center">
-                <div className="relative w-48 h-48">
-                  <svg className="w-full h-full -rotate-90" viewBox="0 0 100 100">
-                    {/* Annual Income (blue) - 60% */}
-                    <circle
-                      cx="50"
-                      cy="50"
-                      r="35"
-                      fill="none"
-                      stroke="#1E3A8A"
-                      strokeWidth="15"
-                      strokeDasharray="131.95 219.91"
-                      strokeDashoffset="0"
-                    />
-                    {/* Total Deductions (green) - 20% */}
-                    <circle
-                      cx="50"
-                      cy="50"
-                      r="35"
-                      fill="none"
-                      stroke="#10B981"
-                      strokeWidth="15"
-                      strokeDasharray="43.98 219.91"
-                      strokeDashoffset="-131.95"
-                    />
-                    {/* Annual Taxes (gray) - 20% */}
-                    <circle
-                      cx="50"
-                      cy="50"
-                      r="35"
-                      fill="none"
-                      stroke="#E5E7EB"
-                      strokeWidth="15"
-                      strokeDasharray="43.98 219.91"
-                      strokeDashoffset="-175.93"
-                    />
-                  </svg>
+                {donutChartData.length > 0 ? (
+                  <div className="relative w-48 h-48">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie
+                          data={donutChartData}
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={60}
+                          outerRadius={80}
+                          paddingAngle={2}
+                          dataKey="value"
+                        >
+                          {donutChartData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={entry.fill} />
+                          ))}
+                        </Pie>
+                        <Tooltip
+                          formatter={(value: number) => formatCurrency(value)}
+                          contentStyle={{
+                            backgroundColor: "#fff",
+                            border: "1px solid #E5E7EB",
+                            borderRadius: "8px",
+                            padding: "8px 12px",
+                          }}
+                        />
+                      </PieChart>
+                    </ResponsiveContainer>
 
-                  {/* Center values */}
-                  <div className="absolute inset-0 flex items-center justify-center flex-col">
-                    <p className="text-xs text-gray-500">Total</p>
-                    <p className="text-lg font-bold text-gray-900">₦1950K</p>
+                    {/* Center values */}
+                    <div className="absolute inset-0 flex items-center justify-center flex-col pointer-events-none">
+                      <p className="text-xs text-gray-500">Total</p>
+                      <p className="text-lg font-bold text-gray-900">
+                        {formatCurrency(totalForDonut)}
+                      </p>
+                    </div>
                   </div>
-                </div>
+                ) : (
+                  <div className="w-48 h-48 flex items-center justify-center text-gray-400">
+                    <p className="text-sm">No data available</p>
+                  </div>
+                )}
               </div>
 
               {/* Legend */}
               <div className="mt-6 space-y-3">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-[#1E3A8A]"></div>
-                    <span className="text-sm text-gray-600">Annual Income</span>
+                {donutChartData.map((item, index) => (
+                  <div key={index} className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div
+                        className="w-3 h-3 rounded-full"
+                        style={{ backgroundColor: item.fill }}
+                      ></div>
+                      <span className="text-sm text-muted-foreground">{item.name}</span>
+                    </div>
+                    <span className="text-sm font-semibold text-foreground break-all">
+                      {formatCurrency(item.value)}
+                    </span>
                   </div>
-                  <span className="text-sm font-semibold text-gray-900">₦1800</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-[#10B981]"></div>
-                    <span className="text-sm text-gray-600">Total Deductions</span>
-                  </div>
-                  <span className="text-sm font-semibold text-gray-900">₦150,000</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-[#E5E7EB]"></div>
-                    <span className="text-sm text-gray-600">Annual Taxes</span>
-                  </div>
-                  <span className="text-sm font-semibold text-gray-900">₦0</span>
-                </div>
+                ))}
               </div>
             </Card>
           </div>
 
           {/* Detailed Breakdown */}
-          <Card className="p-6 bg-white border border-gray-100 rounded-xl shadow-sm">
-            <h3 className="text-lg font-semibold text-gray-900 mb-6">Detailed Breakdown</h3>
+          <Card className="p-6 bg-card border border-border rounded-xl shadow-sm">
+            <h3 className="text-lg font-semibold text-foreground mb-6">Detailed Breakdown</h3>
 
             {/* Tabs */}
-            <div className="flex gap-8 border-b border-gray-200 mb-6">
-              <button className="pb-3 text-sm font-medium text-[#1E3A8A] border-b-2 border-[#1E3A8A]">
+            <div className="flex gap-8 border-b border-border mb-6">
+              <button
+                onClick={() => setActiveTab("income")}
+                className={`pb-3 text-sm font-medium transition-colors ${activeTab === "income"
+                  ? "text-[#1E3A8A] border-b-2 border-[#1E3A8A]"
+                  : "text-muted-foreground hover:text-foreground"
+                  }`}
+              >
                 Income
               </button>
-              <button className="pb-3 text-sm font-medium text-gray-500 hover:text-gray-700">
+              <button
+                onClick={() => setActiveTab("deductions")}
+                className={`pb-3 text-sm font-medium transition-colors ${activeTab === "deductions"
+                  ? "text-[#1E3A8A] border-b-2 border-[#1E3A8A]"
+                  : "text-muted-foreground hover:text-foreground"
+                  }`}
+              >
                 Deductions & Reliefs
               </button>
-              <button className="pb-3 text-sm font-medium text-gray-500 hover:text-gray-700">
+              <button
+                onClick={() => setActiveTab("allowances")}
+                className={`pb-3 text-sm font-medium transition-colors ${activeTab === "allowances"
+                  ? "text-[#1E3A8A] border-b-2 border-[#1E3A8A]"
+                  : "text-muted-foreground hover:text-foreground"
+                  }`}
+              >
                 Allowances
               </button>
             </div>
 
-            {/* Table */}
-            <div className="space-y-0 divide-y divide-gray-100">
-              <div className="flex justify-between py-4">
-                <span className="text-sm text-gray-600">Capital Allowance</span>
-                <span className="text-sm font-semibold text-gray-900">₦300,000</span>
-              </div>
-              <div className="flex justify-between py-4">
-                <span className="text-sm text-gray-600">Previous Year Losses</span>
-                <span className="text-sm font-semibold text-gray-900">₦120,000</span>
-              </div>
-              <div className="flex justify-between py-4">
-                <span className="text-sm text-gray-600">Digital Asset Losses</span>
-                <span className="text-sm font-semibold text-gray-900">₦50,000</span>
-              </div>
-              <div className="flex justify-between py-4">
-                <span className="text-sm text-gray-600">Charitable Donations</span>
-                <span className="text-sm font-semibold text-gray-900">₦80,000</span>
-              </div>
-              <div className="flex justify-between py-4">
-                <span className="text-sm text-gray-600">Educational Expenses</span>
-                <span className="text-sm font-semibold text-gray-900">₦100,000</span>
-              </div>
-              <div className="flex justify-between py-4">
-                <span className="text-sm text-gray-600">Business Losses</span>
-                <span className="text-sm font-semibold text-gray-900">₦90,000</span>
-              </div>
-              <div className="flex justify-between py-4">
-                <span className="text-sm text-gray-600">Freelancing Expenses</span>
-                <span className="text-sm font-semibold text-gray-900">₦40,000</span>
-              </div>
-              <div className="flex justify-between py-4 bg-gray-50">
-                <span className="text-sm font-semibold text-gray-900">Total Deductions</span>
-                <span className="text-sm font-bold text-[#1E3A8A]">₦1,180,000</span>
-              </div>
+            {/* Table Content */}
+            <div className="space-y-0 divide-y divide-border">
+              {activeTab === "income" && result.incomeBreakdown && (
+                <>
+                  <div className="flex justify-between py-4 hover:bg-muted/50 transition-colors">
+                    <span className="text-sm text-muted-foreground">Revenue</span>
+                    <span className="text-sm font-semibold text-foreground break-all text-right ml-4">
+                      {formatCurrency(result.incomeBreakdown.revenue)}
+                    </span>
+                  </div>
+                  {result.incomeBreakdown.dividendsReceived > 0 && (
+                    <div className="flex justify-between py-4 hover:bg-muted/50 transition-colors">
+                      <span className="text-sm text-muted-foreground">Dividends Received</span>
+                      <span className="text-sm font-semibold text-foreground break-all text-right ml-4">
+                        {formatCurrency(result.incomeBreakdown.dividendsReceived)}
+                      </span>
+                    </div>
+                  )}
+                  {result.incomeBreakdown.exemptDividends > 0 && (
+                    <div className="flex justify-between py-4 hover:bg-muted/50 transition-colors">
+                      <span className="text-sm text-muted-foreground">Exempt Dividends</span>
+                      <span className="text-sm font-semibold text-foreground break-all text-right ml-4">
+                        {formatCurrency(result.incomeBreakdown.exemptDividends)}
+                      </span>
+                    </div>
+                  )}
+                  {result.incomeBreakdown.digitalAssets > 0 && (
+                    <div className="flex justify-between py-4 hover:bg-muted/50 transition-colors">
+                      <span className="text-sm text-muted-foreground">Digital Assets</span>
+                      <span className="text-sm font-semibold text-foreground break-all text-right ml-4">
+                        {formatCurrency(result.incomeBreakdown.digitalAssets)}
+                      </span>
+                    </div>
+                  )}
+                  {result.incomeBreakdown.otherIncome > 0 && (
+                    <div className="flex justify-between py-4 hover:bg-muted/50 transition-colors">
+                      <span className="text-sm text-muted-foreground">Other Income</span>
+                      <span className="text-sm font-semibold text-foreground break-all text-right ml-4">
+                        {formatCurrency(result.incomeBreakdown.otherIncome)}
+                      </span>
+                    </div>
+                  )}
+                  <div className="flex justify-between py-4 bg-muted/30 border-t-2 border-[#1E3A8A]">
+                    <span className="text-sm font-semibold text-foreground">Total Gross Income</span>
+                    <span className="text-sm font-bold text-[#1E3A8A] break-all text-right ml-4">
+                      {formatCurrency(result.incomeBreakdown.totalGrossIncome)}
+                    </span>
+                  </div>
+                </>
+              )}
+
+              {activeTab === "deductions" && result.deductionsBreakdown && (
+                <>
+                  {result.deductionsBreakdown.expenses > 0 && (
+                    <div className="flex justify-between py-4 hover:bg-muted/50 transition-colors">
+                      <span className="text-sm text-muted-foreground">Expenses</span>
+                      <span className="text-sm font-semibold text-foreground break-all text-right ml-4">
+                        {formatCurrency(result.deductionsBreakdown.expenses)}
+                      </span>
+                    </div>
+                  )}
+                  {result.deductionsBreakdown.capitalExpenditure > 0 && (
+                    <div className="flex justify-between py-4 hover:bg-muted/50 transition-colors">
+                      <span className="text-sm text-muted-foreground">Capital Expenditure</span>
+                      <span className="text-sm font-semibold text-foreground break-all text-right ml-4">
+                        {formatCurrency(result.deductionsBreakdown.capitalExpenditure)}
+                      </span>
+                    </div>
+                  )}
+                  {result.deductionsBreakdown.previousYearLosses > 0 && (
+                    <div className="flex justify-between py-4 hover:bg-muted/50 transition-colors">
+                      <span className="text-sm text-muted-foreground">Previous Year Losses</span>
+                      <span className="text-sm font-semibold text-foreground break-all text-right ml-4">
+                        {formatCurrency(result.deductionsBreakdown.previousYearLosses)}
+                      </span>
+                    </div>
+                  )}
+                  {result.deductionsBreakdown.currentYearLosses > 0 && (
+                    <div className="flex justify-between py-4 hover:bg-muted/50 transition-colors">
+                      <span className="text-sm text-muted-foreground">Current Year Losses</span>
+                      <span className="text-sm font-semibold text-foreground break-all text-right ml-4">
+                        {formatCurrency(result.deductionsBreakdown.currentYearLosses)}
+                      </span>
+                    </div>
+                  )}
+                  {result.deductionsBreakdown.digitalAssetLosses > 0 && (
+                    <div className="flex justify-between py-4 hover:bg-muted/50 transition-colors">
+                      <span className="text-sm text-muted-foreground">Digital Asset Losses</span>
+                      <span className="text-sm font-semibold text-foreground break-all text-right ml-4">
+                        {formatCurrency(result.deductionsBreakdown.digitalAssetLosses)}
+                      </span>
+                    </div>
+                  )}
+                  {result.deductionsBreakdown.charitableDonations > 0 && (
+                    <div className="flex justify-between py-4 hover:bg-muted/50 transition-colors">
+                      <span className="text-sm text-muted-foreground">Charitable Donations</span>
+                      <span className="text-sm font-semibold text-foreground break-all text-right ml-4">
+                        {formatCurrency(result.deductionsBreakdown.charitableDonations)}
+                      </span>
+                    </div>
+                  )}
+                  {result.deductionsBreakdown.employeeCosts > 0 && (
+                    <div className="flex justify-between py-4 hover:bg-muted/50 transition-colors">
+                      <span className="text-sm text-muted-foreground">Employee Costs</span>
+                      <span className="text-sm font-semibold text-foreground break-all text-right ml-4">
+                        {formatCurrency(result.deductionsBreakdown.employeeCosts)}
+                      </span>
+                    </div>
+                  )}
+                  <div className="flex justify-between py-4 bg-muted/30 border-t-2 border-[#1E3A8A]">
+                    <span className="text-sm font-semibold text-foreground">Total Deductions</span>
+                    <span className="text-sm font-bold text-[#1E3A8A] break-all text-right ml-4">
+                      {formatCurrency(result.deductionsBreakdown.totalDeductions)}
+                    </span>
+                  </div>
+                </>
+              )}
+
+              {activeTab === "allowances" && result.deductionsBreakdown && (
+                <>
+                  {result.deductionsBreakdown.capitalAllowance > 0 && (
+                    <div className="flex justify-between py-4 hover:bg-muted/50 transition-colors">
+                      <span className="text-sm text-muted-foreground">Capital Allowance</span>
+                      <span className="text-sm font-semibold text-foreground break-all text-right ml-4">
+                        {formatCurrency(result.deductionsBreakdown.capitalAllowance)}
+                      </span>
+                    </div>
+                  )}
+                  {result.deductionsBreakdown.capitalAllowanceUsed > 0 && (
+                    <div className="flex justify-between py-4 hover:bg-muted/50 transition-colors">
+                      <span className="text-sm text-muted-foreground">Capital Allowance Used</span>
+                      <span className="text-sm font-semibold text-foreground break-all text-right ml-4">
+                        {formatCurrency(result.deductionsBreakdown.capitalAllowanceUsed)}
+                      </span>
+                    </div>
+                  )}
+                  {result.totals.carryForwardLosses > 0 && (
+                    <div className="flex justify-between py-4 hover:bg-muted/50 transition-colors">
+                      <span className="text-sm text-muted-foreground">Carry Forward Losses</span>
+                      <span className="text-sm font-semibold text-foreground break-all text-right ml-4">
+                        {formatCurrency(result.totals.carryForwardLosses)}
+                      </span>
+                    </div>
+                  )}
+                  <div className="flex justify-between py-4 bg-muted/30 border-t-2 border-[#1E3A8A]">
+                    <span className="text-sm font-semibold text-foreground">Total Allowances</span>
+                    <span className="text-sm font-bold text-[#1E3A8A] break-all text-right ml-4">
+                      {formatCurrency(
+                        (result.deductionsBreakdown.capitalAllowanceUsed || 0) +
+                        (result.totals.carryForwardLosses || 0)
+                      )}
+                    </span>
+                  </div>
+                </>
+              )}
             </div>
           </Card>
 
           {/* Applied Incentives */}
           {result.appliedIncentives && result.appliedIncentives.length > 0 && (
-            <Card className="p-6 bg-white border border-gray-100 rounded-xl shadow-sm">
-              <h3 className="text-lg font-semibold mb-4 text-[#1E3A8A]">
-                ✅ Applied Incentives
-              </h3>
-              <ul className="space-y-2">
+            <Card className="p-6 bg-card border border-border rounded-xl shadow-sm">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
+                  <span className="text-[#1E3A8A] text-lg">✅</span>
+                </div>
+                <h3 className="text-lg font-semibold text-[#1E3A8A]">
+                  Applied Incentives
+                </h3>
+              </div>
+              <ul className="space-y-3">
                 {result.appliedIncentives.map((incentive, index) => (
-                  <li key={index} className="flex items-start">
-                    <span className="text-[#1E3A8A] mr-2">•</span>
-                    <span className="text-sm text-muted-foreground">{incentive}</span>
+                  <li
+                    key={index}
+                    className="flex items-start gap-3 p-3 bg-muted/30 rounded-lg border border-border hover:border-[#1E3A8A]/20 transition-colors"
+                  >
+                    <span className="text-[#1E3A8A] mt-0.5 font-bold">•</span>
+                    <span className="text-sm text-foreground leading-relaxed">{incentive}</span>
                   </li>
                 ))}
               </ul>
@@ -739,15 +938,23 @@ export default function BusinessTaxCalculator() {
 
           {/* Tax Tips */}
           {result.tips && result.tips.length > 0 && (
-            <Card className="p-6 bg-white border border-gray-100 rounded-xl shadow-sm">
-              <h3 className="text-lg font-semibold mb-4 text-[#1E3A8A]">
-                💡 Tax Tips & Recommendations
-              </h3>
-              <ul className="space-y-2">
+            <Card className="p-6 bg-card border border-border rounded-xl shadow-sm">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
+                  <span className="text-[#1E3A8A] text-lg">💡</span>
+                </div>
+                <h3 className="text-lg font-semibold text-[#1E3A8A]">
+                  Tax Tips & Recommendations
+                </h3>
+              </div>
+              <ul className="space-y-3">
                 {result.tips.map((tip, index) => (
-                  <li key={index} className="flex items-start">
-                    <span className="text-[#1E3A8A] mr-2">•</span>
-                    <span className="text-sm text-muted-foreground">{tip}</span>
+                  <li
+                    key={index}
+                    className="flex items-start gap-3 p-3 bg-muted/30 rounded-lg border border-border hover:border-[#1E3A8A]/20 transition-colors"
+                  >
+                    <span className="text-[#1E3A8A] mt-0.5 font-bold">•</span>
+                    <span className="text-sm text-foreground leading-relaxed">{tip}</span>
                   </li>
                 ))}
               </ul>
