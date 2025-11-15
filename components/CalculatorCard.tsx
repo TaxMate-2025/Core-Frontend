@@ -7,6 +7,9 @@ interface CalculatorCardProps {
   description: string
   onClick?: () => void
   className?: string
+  iconClassName?: string
+  buttonVariant?: string
+  buttonText?: string
 }
 
 export function CalculatorCard({
@@ -15,6 +18,9 @@ export function CalculatorCard({
   description,
   onClick,
   className,
+  iconClassName,
+  buttonVariant,
+  buttonText,
 }: CalculatorCardProps) {
   return (
     <div
@@ -28,7 +34,7 @@ export function CalculatorCard({
       {/* Icon Container */}
       <div className="flex justify-center mb-5">
         <div className="w-16 h-16 rounded-full bg-[#E8EAF6] flex items-center justify-center group-hover:bg-[#1E3A8A]/10 transition-colors">
-          <Icon className="w-7 h-7 text-[#1E3A8A]" />
+          <Icon className={cn("w-7 h-7 text-[#1E3A8A]", iconClassName)} />
         </div>
       </div>
 

@@ -74,7 +74,7 @@ export default function SignUpPage() {
             className="flex justify-center sm:justify-start mb-6"
             variants={item}
           >
-            <Logo/>
+            <Logo />
           </motion.div>
 
           {/* Header */}
@@ -284,13 +284,15 @@ export default function SignUpPage() {
             </motion.div>
 
             {/* Sign Up Button */}
-            <motion.div variants={item}>
+            <motion.div
+              variants={item}
+              whileHover={{ scale: 1.01 }}
+              whileTap={{ scale: 0.99 }}
+            >
               <Button
                 type="submit"
                 className="w-full h-10 bg-[#1E3A8A] hover:bg-[#1E3A8A]/90 text-sm font-medium"
                 disabled={isLoading}
-                whileHover={{ scale: 1.01 }}
-                whileTap={{ scale: 0.99 }}
               >
                 {isLoading ? "Creating account..." : "Sign up"}
               </Button>
@@ -309,20 +311,19 @@ export default function SignUpPage() {
             </motion.div>
 
             {/* Google Sign In */}
-            <motion.div variants={item}>
+            
               <Button
+              as={motion.button}
                 type="button"
                 variant="outline"
                 className="w-full h-10 text-sm flex items-center justify-center gap-2"
                 onClick={initiateGoogleOAuth}
                 disabled={isLoading}
-                whileHover={{ scale: 1.01 }}
-                whileTap={{ scale: 0.99 }}
               >
                 <Image src="/google.svg" alt="" width={16} height={16} />
                 <span>Continue with Google</span>
               </Button>
-            </motion.div>
+          
           </motion.form>
 
           {/* Login Link */}
