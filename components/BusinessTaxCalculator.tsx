@@ -412,6 +412,11 @@ export default function BusinessTaxCalculator() {
               <div key={key} className="space-y-2">
                 <label className="text-sm font-medium text-foreground">
                   {key.split(/(?=[A-Z])/).join(" ")}
+                  {key !== "revenue" && (
+                    <span className="text-muted-foreground ml-1">
+                      (Optional)
+                    </span>
+                  )}
                 </label>
                 <Input
                   type="text"
@@ -442,6 +447,7 @@ export default function BusinessTaxCalculator() {
               <div key={key} className="space-y-2">
                 <label className="text-sm font-medium text-foreground">
                   {key.split(/(?=[A-Z])/).join(" ")}
+                   <span className="text-muted-foreground ml-1">(Optional)</span>
                 </label>
                 <Input
                   type="text"
@@ -473,6 +479,7 @@ export default function BusinessTaxCalculator() {
                 <div key={key} className="space-y-2">
                   <label className="text-sm font-medium text-foreground">
                     {key.split(/(?=[A-Z])/).join(" ")}
+                    <span className="text-muted-foreground ml-1">(Optional)</span>
                   </label>
                   <Input
                     type="number"
@@ -509,6 +516,7 @@ export default function BusinessTaxCalculator() {
                     className="text-sm font-medium text-foreground"
                   >
                     {key.split(/(?=[A-Z])/).join(" ")}
+                    <span className="text-muted-foreground ml-1">(Optional)</span>
                   </label>
                 </div>
               ))}
