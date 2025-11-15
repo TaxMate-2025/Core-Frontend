@@ -321,11 +321,10 @@ export default function BusinessTaxCalculator() {
     <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       <div className="text-center space-y-2">
         <h1 className="text-3xl md:text-4xl lg:text-5xl xl:text-[48px] font-semibold leading-tight text-center tracking-normal text-[#1E3A8A]">
-          Business Tax Calculator
+          Business Tax Planning & New Tax Regime
         </h1>
         <p className="text-muted-foreground max-w-2xl mx-auto">
-          Estimate your business tax liability. Enter your financial details and
-          deductions — results will appear after you click Calculate.
+          Plan and analyze your business taxes under Nigeria's new tax regime. TaxMate helps businesses stay compliant and save time.
         </p>
       </div>
 

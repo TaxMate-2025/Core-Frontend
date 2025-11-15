@@ -1,10 +1,8 @@
 "use client";
 
-import { useState } from "react";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import ProcessCard from "@/components/ProcessCard";
-import { WaitlistModal } from "@/components/WaitlistModal";
 import { Button } from "@/components/ui/button";
 import { ArrowUpRight } from "lucide-react";
 import { Montserrat } from "next/font/google";
@@ -19,21 +17,10 @@ const montserrat = Montserrat({
 });
 
 export default function Home() {
-  const [isWaitlistOpen, setIsWaitlistOpen] = useState(false);
-
-  const openWaitlist = (e: React.MouseEvent) => {
-    e.preventDefault();
-    setIsWaitlistOpen(true);
-  };
-
   return (
     <main>
-      <Navbar onJoinWaitlist={openWaitlist} />
+      <Navbar />
       <div className={`${montserrat.className}`}>
-        <WaitlistModal
-          isOpen={isWaitlistOpen}
-          onClose={() => setIsWaitlistOpen(false)}
-        />
         {/* Hero Section */}
         <AnimatedSection type="fade" direction="up" delay={0.2} className="relative px-4 sm:px-6 lg:px-8 py-16 sm:py-20 md:py-28 hero_gradient">
           <div className="absolute inset-0">
@@ -71,11 +58,12 @@ export default function Home() {
                 <ArrowUpRight className="w-4 h-4" />
               </Button>
               <Button
-                onClick={openWaitlist}
                 variant="outline"
                 className="bg-white shadow-[0_4px_12px_rgba(0,0,0,0.12)] px-6 sm:px-8 py-4 sm:py-5 text-sm sm:text-base cursor-pointer"
               >
-                Learn more
+                <Link href="/about">
+                  Learn more
+                </Link>
                 <ArrowUpRight className="w-4 h-4 ml-2" />
               </Button>
             </AnimatedSection>

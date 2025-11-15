@@ -25,7 +25,9 @@ export default function HomePage() {
     };
 
     // Check if user is on BASIC tier (uppercase)
-    const isBasicTier = user?.Tier === "BASIC";
+    // For OAuth users, Tier should be included in the user object from the backend
+    // If Tier is missing, default to BASIC (shouldn't happen, but safety check)
+    const isBasicTier = !user || !user.Tier || user.Tier === "BASIC";
 
     const handleCalculatorClick = (calculatorType: "simple" | "advanced" | "business") => {
         // Allow simple calculator for all users

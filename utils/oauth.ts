@@ -1,7 +1,5 @@
-// OAuth utility functions for social authentication
-
 // Get backend API URL from environment
-const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'https://core-backend-kdkn.onrender.com';
+const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL
 
 // Initiate Google OAuth flow by redirecting to backend
 export const initiateGoogleOAuth = () => {
