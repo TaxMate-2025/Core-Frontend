@@ -15,7 +15,7 @@ const NotFoundPage = () => {
             <div className="max-w-2xl w-full text-center">
                 {/* Animated 404 Text */}
                 <div className="relative mb-8">
-                    <h1 className="text-8xl sm:text-9xl lg:text-[12rem] font-bold text-transparent bg-gradient-to-r from-[#1E3A8A] to-[#10B981] bg-clip-text animate-pulse">
+                    <h1 className="text-8xl sm:text-9xl lg:text-[12rem] font-bold text-transparent bg-[#1E3A8A] from-[#1E3A8A] to-[#10B981] bg-clip-text animate-pulse">
                         404
                     </h1>
                     <div className="absolute inset-0 text-8xl sm:text-9xl lg:text-[12rem] font-bold text-[#E8EAF6] -z-10 transform translate-x-2 translate-y-2">
