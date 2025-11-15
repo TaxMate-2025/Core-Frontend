@@ -5,6 +5,7 @@ const DEV_ONLY_ROUTES = [
     '/dashboard',
     '/advanced-tax-calculator',
     '/business-tax-calculator',
+    '/feedback',
 ]
 
 export function middleware(request: NextRequest) {
