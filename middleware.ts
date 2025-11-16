@@ -3,8 +3,6 @@ import { NextRequest, NextResponse } from 'next/server'
 // Define your restricted routes
 const DEV_ONLY_ROUTES = [
     '/dashboard',
-    '/advanced-tax-calculator',
-    '/business-tax-calculator',
 ]
 
 export function middleware(request: NextRequest) {
