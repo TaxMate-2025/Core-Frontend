@@ -68,7 +68,7 @@ export default function HomePage() {
     "advanced" | "business" | null
   >(null);
   const [isMounted, setIsMounted] = useState(false);
-  
+
 
   useEffect(() => {
     setIsMounted(true);
@@ -109,8 +109,8 @@ export default function HomePage() {
             getToken={
               user
                 ? () =>
-                    localStorage.getItem("authToken") ||
-                    sessionStorage.getItem("authToken")
+                  localStorage.getItem("authToken") ||
+                  sessionStorage.getItem("authToken")
                 : () => null
             }
           />
@@ -177,7 +177,7 @@ export default function HomePage() {
 
             {/* Advanced Calculator */}
             <motion.div variants={item}>
-              <div className="relative h-full">
+              <Link href={'/advanced-tax-calculator'} className="relative h-full">
                 <CalculatorCard
                   icon={TrendingUp}
                   title="Advanced Calculator"
@@ -192,12 +192,12 @@ export default function HomePage() {
                   buttonText={isBasicTier ? "Upgrade to Unlock" : "Get Started"}
                 />
                 {isBasicTier && <PremiumBadge />}
-              </div>
+              </Link>
             </motion.div>
 
             {/* Business Calculator */}
             <motion.div variants={item} className="md:col-span-2 lg:col-span-1">
-              <div className="relative h-full">
+              <Link href={'/business-tax-calculator'} className="relative h-full">
                 <CalculatorCard
                   icon={Building2}
                   title="Business Calculator"
@@ -212,7 +212,7 @@ export default function HomePage() {
                   buttonText={isBasicTier ? "Upgrade to Unlock" : "Get Started"}
                 />
                 {isBasicTier && <PremiumBadge />}
-              </div>
+              </Link>
             </motion.div>
           </motion.div>
 
