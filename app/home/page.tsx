@@ -51,7 +51,7 @@ const FeatureBadge = ({ children }: { children: React.ReactNode }) => (
 
 const PremiumBadge = () => (
   <motion.div
-    className="absolute top-4 right-4 bg-gradient-to-r from-blue-600 to-blue-800 text-white text-xs px-3 py-1 rounded-full font-medium flex items-center gap-1 shadow-lg shadow-blue-500/20"
+    className="absolute top-4 right-4 bg-linear-to-r from-blue-600 to-blue-800 text-white text-xs px-3 py-1 rounded-full font-medium flex items-center gap-1 shadow-lg shadow-blue-500/20"
     initial={{ scale: 0.9, opacity: 0 }}
     animate={{ scale: 1, opacity: 1 }}
     transition={{ delay: 0.2 }}
@@ -121,7 +121,7 @@ export default function HomePage() {
         {/* Animated background */}
         <div className="absolute inset-0 overflow-hidden -z-10">
           <motion.div
-            className="absolute inset-0 bg-gradient-to-br from-blue-50 via-white to-blue-50"
+            className="absolute inset-0 bg-linear-to-br from-blue-50 via-white to-blue-50"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
